@@ -9,7 +9,7 @@
 
 header {
     background-color: #333;
-    color: #fff;
+    color: #981717;
     padding: 10px;
     text-align: center;
 }
@@ -26,7 +26,7 @@ nav li {
 
 nav a {
     text-decoration: none;
-    color: #fff;
+    color: #981717;
 }
 
 section {
@@ -50,12 +50,12 @@ footer {
 
  <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sous Mon Toit - Accueil</title>
+    <title>Les Petits Enquêteurs - Accueil</title>
     <link rel="stylesheet" href="styles.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sous mon Toit - Agence Immobilière</title>
+    <title>Les Petits Enquêteurs</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -94,16 +94,18 @@ footer {
 <body>
 
     <header>
-        <h1>Sous mon Toit - Agence Immobilière</h1>
+        <h1>Les Petits Enquêteurs</h1>
     </header>
 
 <ul class="navbar">
     
     <nav>
         <li><a href="index.html">Accueil</a>
-        <li><a href="biens.html">Biens</a>
-        <li><a href="services.html">Catalogue</a>
-        <li><a href="contact.html">Contact</a>
+        <li><a href="histoires.html">Les Histoires</a>
+        <li><a href="coldscases.html">Les Colds Cases</a>
+        <li><a href="updates.html">Les Updates</a>
+        <li><a href="theories.html">Les Théories</a>
+
     </nav>
 
 </ul>
@@ -114,10 +116,13 @@ footer {
 
     <header>
     <selection>
-        <p>Vous voulez louer ou acheter une maison ou un appartement ?</p>
-        <p>Votre destination pour trouver le lieu parfait à appeler maison.</p>
-        <p>Découvrez une variété d'appartements et de maisons disponibles à la vente ou à la location.</p>
-        <li><a href="services.html" class="cta-button">Voir les Biens Disponibles</a> 
+        <p>Vous êtes fan du True Crime ? Et bah vous êtes au bon endroit !</p>
+        <p>Découvrez les histoires qui ont marquées chaque décennies !</p>
+        <p>Découvrez également les Colds Cases, les Updates et les Théories !</p>
+        <li><a href="histoires.html" class="cta-button">Voir les Histoires</a>
+        <li><a href="coldscases.html" class="cta-button">Voir les Colds Cases</a>
+        <li><a href="updates.html" class="cta-button">Voir les Updates</a>
+        <li><a href="theories.html" class="cta-button">Voir les Théories</a> 
     </section>
     </header>
 </body>
@@ -125,7 +130,7 @@ footer {
  <body>
 
       <footer>
-        <p>&copy; 2023 Sous Mon Toit. Tous droits réservés.</p>
+        <p>&copy; Les Petits Enquêteurs. 2026-Tous droits réservés.</p>
     </footer>
 
 </body>
