@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Petits Enquêteurs - Proposer une Histoire</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="video-container">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="background.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <header>
+        <h1>Les Petits Enquêteurs</h1>
+        <a href="connexion.html" class="account-button">Mon Compte</a>
+    </header>
+
+    <nav>
+        <ul class="navbar">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="histoires.html">Les Histoires</a></li>
+            <li><a href="coldscases.html">Les Colds Cases</a></li>
+            <li><a href="updates.html">Les Updates</a></li>
+            <li><a href="theories.html">Les Théories</a></li>
+        </ul>
+    </nav>
+
+    <main class="content-section">
+        <h2>Soumettre une Enquête</h2>
+        <p>Vous connaissez une affaire criminelle locale méconnue, un cold case fascinant ou une mise à jour récente ? Partagez-la avec la communauté.</p>
+        
+        <div class="warning-box">
+            <p><strong>⚠️ Note importante :</strong> Pour garantir la qualité et le respect des faits, chaque histoire soumise est relue, vérifiée et validée par notre équipe d'administrateurs avant d'être publiée sur le site.</p>
+        </div>
+
+        <form class="submission-form">
+            <div class="form-group">
+                <label for="story-title">Titre de l'affaire</label>
+                <input type="text" id="story-title" name="title" placeholder="Ex: Le mystère de la chambre 104" required>
+            </div>
+
+            <div class="form-group">
+                <label for="story-category">Catégorie principale</label>
+                <select id="story-category" name="category" required>
+                    <option value="" disabled selected>Choisissez une catégorie</option>
+                    <option value="histoire">Histoire (Affaire résolue / générale)</option>
+                    <option value="coldcase">Cold Case (Affaire non résolue)</option>
+                    <option value="update">Mise à jour (Update)</option>
+                    <option value="theorie">Théorie / Hypothèse</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="story-content">Le récit détaillé des faits</label>
+                <textarea id="story-content" name="content" rows="10" placeholder="Racontez l'histoire chronologiquement. Soyez le plus précis possible sur les indices, les lieux et les dates..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="story-sources">Sources et liens (Optionnel)</label>
+                <input type="text" id="story-sources" name="sources" placeholder="Ex: Articles de presse, documentaires, rapports de police...">
+            </div>
+
+            <button type="submit" class="submit-form-button">Envoyer pour vérification</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+    </footer>
+
+</body>
+</html>
+

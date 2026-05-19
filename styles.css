@@ -193,3 +193,88 @@ footer {
     border-top: 1px solid #1a1a1a;
     z-index: 1000;
 }
+
+/* Styles pour formulaire */
+.warning-box {
+    background-color: rgba(152, 23, 23, 0.15);
+    border-left: 4px solid #981717;
+    padding: 15px;
+    margin-bottom: 30px;
+    border-radius: 4px;
+    text-align: left;
+}
+
+.warning-box p {
+    margin: 0;
+    font-size: 1rem;
+    color: #e0e0e0;
+}
+
+.submission-form {
+    text-align: left;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #981717;
+    font-size: 1.05rem;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: #0c0c0c;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #981717;
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+/* Pour le bouton d'envoi */
+.submit-form-button {
+    display: block;
+    width: 100%;
+    background-color: #981717;
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-top: 10px;
+}
+
+.submit-form-button:hover {
+    background-color: #b51c1c;
+    transform: scale(1.01);
+}
+
+.submit-form-button:active {
+    transform: scale(0.99);
+}
