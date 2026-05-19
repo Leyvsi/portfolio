@@ -1,136 +1,50 @@
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<style>
-    body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #000000;
-    color: #981717;
-    padding: 10px;
-    text-align: center;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-nav li {
-    display: inline;
-    margin-right: 20px;
-}
-
-nav a {
-    text-decoration: none;
-    color: #981717;
-}
-
-section {
-    margin: 20px;
-}
-
-h2 {
-    border-bottom: 2px solid #000000;
-    padding-bottom: 5px;
-}
-
-footer {
-    background-color: #000000;
-    color: #981717;
-    text-align: center;
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
- <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Les Petits Enquêteurs - Accueil</title>
     <link rel="stylesheet" href="styles.css">
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #000000;
-            color: #981717;
-            padding: 10px;
-            text-align: center;
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #981717;
-            padding: 10px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #000000;
-            padding: 10px;
-            margin: 0 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        nav a:hover {
-            background-color: #ddd;
-        }
-    </style>
 </head>
 <body>
+
+    <div class="video-container">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="background.mp4" type="video/mp4">
+            </video>
+        <div class="video-overlay"></div>
+    </div>
 
     <header>
         <h1>Les Petits Enquêteurs</h1>
+        <a href="connexion.html" class="account-button">Mon Compte</a>
     </header>
 
-<ul class="navbar">
-    
     <nav>
-        <li><a href="index.html">Accueil</a>
-        <li><a href="histoires.html">Les Histoires</a>
-        <li><a href="coldscases.html">Les Colds Cases</a>
-        <li><a href="updates.html">Les Updates</a>
-        <li><a href="theories.html">Les Théories</a>
-
+        <ul class="navbar">
+            <li><a href="index.html" class="active">Accueil</a></li>
+            <li><a href="histoires.html">Les Histoires</a></li>
+            <li><a href="coldscases.html">Les Colds Cases</a></li>
+            <li><a href="updates.html">Les Updates</a></li>
+            <li><a href="theories.html">Les Théories</a></li>
+        </ul>
     </nav>
 
-</ul>
+    <main class="content-section">
+        <h2>Bienvenue, Détective</h2>
+        <p>Passionné de True Crime, d'énigmes sombres et de mystères non résolus ? Vous êtes au bon endroit. Rejoignez la communauté des Petits Enquêteurs et plongez au cœur des affaires qui ont marqué l'histoire et bravé le temps.</p>
+        <p>Explorez les récits qui ont marqué chaque décennie, analysez les indices et tentez de démêler le vrai du faux.</p>
+        
+        <div class="cta-container">
+            <a href="histoires.html" class="cta-button">Voir les Histoires</a>
+            <a href="coldscases.html" class="cta-button">Explorer les Cold Cases</a>
+        </div>
+    </main>
 
-</style>
-</head>
-<body>
+    <a href="proposer-histoire.html" class="floating-action-button" title="Proposer une histoire">+</a>
 
-    <header>
-    <selection>
-        <p>Vous êtes fan du True Crime ? Et bah vous êtes au bon endroit !</p>
-        <p>Découvrez les histoires qui ont marquées chaque décennies !</p>
-        <li><a href="histoires.html" class="cta-button">Voir les Histoires</a>
-        <p>Découvrez également les Colds Cases, les Updates et les Théories !</p>
-        <li><a href="coldscases.html" class="cta-button">Voir les Colds Cases</a>
-        <li><a href="updates.html" class="cta-button">Voir les Updates</a>
-        <li><a href="theories.html" class="cta-button">Voir les Théories</a> 
-    </section>
-    </header>
-</body>
-
- <body>
-
-      <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026-Tous droits réservés.</p>
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
 </body>

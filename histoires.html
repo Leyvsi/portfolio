@@ -1,137 +1,51 @@
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<style>
-    body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #000000;
-    color: #981717;
-    padding: 10px;
-    text-align: center;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-nav li {
-    display: inline;
-    margin-right: 20px;
-}
-
-nav a {
-    text-decoration: none;
-    color: #981717;
-}
-
-section {
-    margin: 20px;
-}
-
-h2 {
-    border-bottom: 2px solid #000000;
-    padding-bottom: 5px;
-}
-
-footer {
-    background-color: #000000;
-    color: #981717;
-    text-align: center;
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
- <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Les Petits Enquêteurs - Les Histoires</title>
     <link rel="stylesheet" href="styles.css">
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #000000;
-            color: #981717;
-            padding: 10px;
-            text-align: center;
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #981717;
-            padding: 10px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #000000;
-            padding: 10px;
-            margin: 0 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        nav a:hover {
-            background-color: #ddd;
-        }
-    </style>
 </head>
 <body>
+
+    <div class="video-container">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="background.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
 
     <header>
         <h1>Les Petits Enquêteurs</h1>
+        <a href="connexion.html" class="account-button">Mon Compte</a>
     </header>
 
-<ul class="navbar">
-    
     <nav>
-        <li><a href="index.html">Accueil</a>
-        <li><a href="histoires.html">Les Histoires</a>
-        <li><a href="coldscases.html">Les Colds Cases</a>
-        <li><a href="updates.html">Les Updates</a>
-        <li><a href="theories.html">Les Théories</a>
-
+        <ul class="navbar">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="histoires.html" class="active">Les Histoires</a></li>
+            <li><a href="coldscases.html">Les Colds Cases</a></li>
+            <li><a href="updates.html">Les Updates</a></li>
+            <li><a href="theories.html">Les Théories</a></li>
+        </ul>
     </nav>
 
-</ul>
-
-</style>
-</head>
-<body>
-
-    <header>
-    <selection>
+    <main class="content-section">
         <h2>Les Histoires</h2>
-        <p>Plongez dans les récits captivants de les enquêtes, découvrez les mystères résolus et les énigmes non élucidées. Chaque histoire vous emmène dans un voyage à travers des lieux intrigants, des protagonistes fascinants et des événements surprenants. Que vous soyez un amateur de mystères ou simplement curieux, les histoires vous tiendront en haleine et vous feront réfléchir. Explorez les détails, les indices et les rebondissements qui font de chaque enquête une aventure unique. Préparez-vous à être captivé par les récits passionnantset à découvrir les secrets cachés derrière chaque mystère.</p>
-        <p>Découvrez également les Colds Cases, les Updates et les Théories !</p>
-        <li><a href="coldscases.html" class="cta-button">Voir les Colds Cases</a>
-        <li><a href="updates.html" class="cta-button">Voir les Updates</a>
-        <li><a href="theories.html" class="cta-button">Voir les Théories</a> 
-    </section>
-    </header>
-</body>
+        <p>Plongez dans les chroniques captivantes de crimes résolus, de disparitions troublantes et de destins brisés. Des ruelles sombres du siècle dernier aux affaires numériques modernes, chaque récit vous emmène dans un voyage psychologique au plus près des protagonistes, des forces de l'ordre et des secrets les mieux gardés. Préparez-vous à être captivé par des rebondissements que même la fiction n'aurait pu inventer.</p>
+        
+        <div class="cta-container">
+            <p>Envie de pousser l'enquête encore plus loin ?</p>
+            <a href="coldscases.html" class="cta-button">Voir les Cold Cases</a>
+            <a href="theories.html" class="cta-button">Découvrir les Théories</a>
+        </div>
+    </main>
 
- <body>
+    <a href="proposer-histoire.html" class="floating-action-button" title="Proposer une histoire">+</a>
 
-      <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026-Tous droits réservés.</p>
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
 </body>
 </html>
-

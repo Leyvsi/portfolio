@@ -1,137 +1,51 @@
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<style>
-    body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #000000;
-    color: #981717;
-    padding: 10px;
-    text-align: center;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-nav li {
-    display: inline;
-    margin-right: 20px;
-}
-
-nav a {
-    text-decoration: none;
-    color: #981717;
-}
-
-section {
-    margin: 20px;
-}
-
-h2 {
-    border-bottom: 2px solid #000000;
-    padding-bottom: 5px;
-}
-
-footer {
-    background-color: #000000;
-    color: #981717;
-    text-align: center;
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
- <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Les Colds Cases</title>
-    <link rel="stylesheet" href="styles.css">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background-color: #000000;
-            color: #981717;
-            padding: 10px;
-            text-align: center;
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #981717;
-            padding: 10px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #000000;
-            padding: 10px;
-            margin: 0 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        nav a:hover {
-            background-color: #ddd;
-        }
-    </style>
+    <title>Les Petits Enquêteurs - Les Cold Cases</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <div class="video-container">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="background.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
 
     <header>
         <h1>Les Petits Enquêteurs</h1>
+        <a href="connexion.html" class="account-button">Mon Compte</a>
     </header>
 
-<ul class="navbar">
-    
     <nav>
-        <li><a href="index.html">Accueil</a>
-        <li><a href="histoires.html">Les Histoires</a>
-        <li><a href="coldscases.html">Les Colds Cases</a>
-        <li><a href="updates.html">Les Updates</a>
-        <li><a href="theories.html">Les Théories</a>
-
+        <ul class="navbar">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="histoires.html">Les Histoires</a></li>
+            <li><a href="coldscases.html" class="active">Les Colds Cases</a></li>
+            <li><a href="updates.html">Les Updates</a></li>
+            <li><a href="theories.html">Les Théories</a></li>
+        </ul>
     </nav>
 
-</ul>
+    <main class="content-section">
+        <h2>Les Cold Cases</h2>
+        <p>Quand les dossiers se referment et que les indices s'effacent, le mystère demeure. Explorez les dossiers criminels les plus énigmatiques qui défient la justice depuis des décennies. Scènes de crime sans coupable, indices oubliés sous scellés et témoignages contradictoires... Face à ces énigmes figées dans le temps, chaque détail compte. Serez-vous capable de repérer ce qui a échappé aux experts ?</p>
+        
+        <div class="cta-container">
+            <p>La vérité attend d'être découverte.</p>
+            <a href="updates.html" class="cta-button">Voir les Dernières Updates</a>
+            <a href="theories.html" class="cta-button">Consulter les Théories</a>
+        </div>
+    </main>
 
-</style>
-</head>
-<body>
+    <a href="proposer-histoire.html" class="floating-action-button" title="Proposer une histoire">+</a>
 
-    <header>
-    <selection>
-        <h2>Les Colds Cases</h2>
-        <p>Explorez les affaires les plus mystérieuses et non résolues. Ces cas restent sans réponse depuis des années, défiant les experts et les enquêteurs. Découvrez les détails les plus secrets et les indices qui pourraient mener à la vérité.</p>
-        <p>Découvrez également les Histoires, les Updates et les Théories !</p>
-        <li><a href="histoires.html" class="cta-button">Voir les Histoires</a>
-        <li><a href="updates.html" class="cta-button">Voir les Updates</a>
-        <li><a href="theories.html" class="cta-button">Voir les Théories</a> 
-    </section>
-    </header>
-</body>
-
- <body>
-
-      <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026-Tous droits réservés.</p>
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
 </body>
 </html>
-
