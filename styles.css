@@ -1,4 +1,4 @@
-/* Base styles */
+g* Base styles */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -278,3 +278,27 @@ footer {
 .submit-form-button:active {
     transform: scale(0.99);
 }
+
+.file-input {
+    background-color: #0c0c0c;
+    border: 1px dashed #981717; /* Bordure pointillée style "dossier confidentiel" */
+    padding: 15px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #e0e0e0;
+}
+
+.file-input:hover {
+    background-color: rgba(152, 23, 23, 0.05);
+    border-color: #b51c1c;
+}
+
+.file-help {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #888888;
+    font-style: italic;
+}
+
