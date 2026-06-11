@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Les Updates</title>
+    <title>Les Petits Enquêteurs - Connexion</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -17,7 +17,6 @@
 
     <header>
         <h1>Les Petits Enquêteurs</h1>
-        <a href="connexion.html" class="account-button">Mon Compte</a>
     </header>
 
     <nav>
@@ -25,22 +24,31 @@
             <li><a href="index.html">Accueil</a></li>
             <li><a href="histoires.html">Les Histoires</a></li>
             <li><a href="coldscases.html">Les Colds Cases</a></li>
-            <li><a href="updates.html" class="active">Les Updates</a></li>
+            <li><a href="updates.html">Les Updates</a></li>
             <li><a href="theories.html">Les Théories</a></li>
         </ul>
     </nav>
 
     <main class="content-section">
-        <h2>Les Updates</h2>
-        <p>Le monde du True Crime ne dort jamais. Analyses ADN révolutionnaires, réouvertures de procès, nouveaux témoignages ou arrestations inattendues : suivez en temps réel l'évolution des affaires qui vous passionnent. Ne manquez aucun rebondissement judiciaire et découvrez comment la science et la persévérance finissent par faire éclater la vérité, même des années later.</p>
-        
-        <div class="cta-container">
-            <a href="index.html" class="cta-button">Retour à l'Accueil</a>
-            <a href="histoires.html" class="cta-button">Découvrir les Histoires</a>
-        </div>
-    </main>
+        <h2>Espace Connexion</h2>
+        <p>Connectez-vous à votre compte d'enquêteur pour proposer des récits et interagir avec la communauté.</p>
 
-    <a href="proposer-histoire.html" class="floating-action-button" title="Proposer une histoire">+</a>
+        <form class="submission-form" id="login-form">
+            <div class="form-group">
+                <label for="user-email">Adresse Email</label>
+                <input type="text" id="user-email" name="email" placeholder="exemple@mail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="user-password">Mot de passe</label>
+                <input type="text" id="user-password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="submit-form-button">Se connecter</button>
+        </form>
+        
+        <p class="switch-auth">Pas encore de compte ? <a href="#">Inscrivez-vous ici</a>.</p>
+    </main>
 
     <footer>
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>

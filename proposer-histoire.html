@@ -38,7 +38,7 @@
             <p><strong>⚠️ Note importante :</strong> Pour garantir la qualité et le respect des faits, chaque histoire soumise est relue, vérifiée et validée par notre équipe d'administrateurs avant d'être publiée sur le site.</p>
         </div>
 
-        <form class="submission-form">
+        <form class="submission-form" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="story-title">Titre de l'affaire</label>
                 <input type="text" id="story-title" name="title" placeholder="Ex: Le mystère de la chambre 104" required>
@@ -57,19 +57,19 @@
 
             <div class="form-group">
                 <label for="story-content">Le récit détaillé des faits</label>
-                <textarea id="story-content" name="content" rows="10" placeholder="Racontez l'histoire chronologiquement. Soyez le plus précis possible sur les indices, les lieux et les dates..." required></textarea>
+                <textarea id="story-content" name="content" rows="10" placeholder="Racontez l'histoire chronologiquement..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="story-images">Ajouter des images, preuves ou indices (Optionnel)</label>
+                <input type="file" id="story-images" name="images" accept="image/png, image/jpeg, image/webp" multiple class="file-input">
+                <p class="file-help">Formats acceptés : PNG, JPEG, WEBP. Vous pouvez sélectionner plusieurs images d'un coup.</p>
             </div>
 
             <div class="form-group">
                 <label for="story-sources">Sources et liens (Optionnel)</label>
-                <input type="text" id="story-sources" name="sources" placeholder="Ex: Articles de presse, documentaires, rapports de police...">
+                <input type="text" id="story-sources" name="sources" placeholder="Ex: Articles de presse, rapports de police...">
             </div>
-
-	    <div class="form-group">
-                 <label for="story-images">Ajouter des images ou indices (Optionnel)</label>
-                 <input type="file" id="story-images" name="images" accept="image/png, image/jpeg, image/webp" multiple class="file-input">
-                 <p class="file-help">Formats acceptés : PNG, JPEG, WEBP. Vous pouvez sélectionner plusieurs images.</p>
-           </div>
 
             <button type="submit" class="submit-form-button">Envoyer pour vérification</button>
         </form>

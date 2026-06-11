@@ -1,14 +1,12 @@
-g* Base styles */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #0c0c0c;
     color: #ffffff;
-    padding-bottom: 80px; /* Espace pour éviter que le footer cache le texte */
+    padding-bottom: 80px;
 }
 
-/* Video Background */
 .video-container {
     position: fixed;
     top: 0;
@@ -31,11 +29,10 @@ body {
     left: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.75); /* Filtre sombre pour garantir la lisibilité du texte */
+    background: rgba(0, 0, 0, 0.75);
     z-index: -1;
 }
 
-/* Header */
 header {
     position: relative;
     background-color: #000000;
@@ -51,7 +48,6 @@ header h1 {
     letter-spacing: 2px;
 }
 
-/* Button "Mon Compte" */
 .account-button {
     position: absolute;
     top: 50%;
@@ -72,7 +68,6 @@ header h1 {
     transform: translateY(-50%) scale(1.05);
 }
 
-/* Navigation */
 nav {
     background-color: #981717;
     padding: 2px 0;
@@ -100,21 +95,21 @@ nav {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.navbar a:hover, .navbar a.active {
+.navbar a:hover, 
+.navbar a.active {
     background-color: #000000;
     color: #981717;
 }
 
-/* Main Content Section */
 .content-section {
     max-width: 850px;
     margin: 50px auto;
     padding: 40px;
     text-align: center;
-    background-color: rgba(22, 22, 22, 0.85); /* Fond semi-transparent pour l'effet cinéma */
+    background-color: rgba(22, 22, 22, 0.85);
     border-radius: 8px;
     border: 1px solid #1a1a1a;
-    backdrop-filter: blur(5px); /* Floute légèrement la vidéo derrière le bloc texte */
+    backdrop-filter: blur(5px);
 }
 
 .content-section h2 {
@@ -131,7 +126,6 @@ nav {
     color: #e0e0e0;
 }
 
-/* Buttons (CTA) */
 .cta-container {
     margin-top: 35px;
     border-top: 1px solid #333;
@@ -155,61 +149,6 @@ nav {
     transform: scale(1.05);
 }
 
-/* Floating Action Button "Proposer une histoire" */
-.floating-action-button {
-    position: fixed;
-    bottom: 75px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    background-color: #981717;
-    color: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2.2rem;
-    text-decoration: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
-    z-index: 999;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.floating-action-button:hover {
-    background-color: #b51c1c;
-    transform: scale(1.1) rotate(90deg); /* Ajoute une petite rotation sympa au survol */
-}
-
-/* Footer */
-footer {
-    background-color: #000000;
-    color: #666666;
-    text-align: center;
-    padding: 12px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    font-size: 0.85rem;
-    border-top: 1px solid #1a1a1a;
-    z-index: 1000;
-}
-
-/* Styles pour formulaire */
-.warning-box {
-    background-color: rgba(152, 23, 23, 0.15);
-    border-left: 4px solid #981717;
-    padding: 15px;
-    margin-bottom: 30px;
-    border-radius: 4px;
-    text-align: left;
-}
-
-.warning-box p {
-    margin: 0;
-    font-size: 1rem;
-    color: #e0e0e0;
-}
-
 .submission-form {
     text-align: left;
     max-width: 700px;
@@ -229,6 +168,8 @@ footer {
 }
 
 .form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
 .form-group select,
 .form-group textarea {
     width: 100%;
@@ -254,7 +195,60 @@ footer {
     cursor: pointer;
 }
 
-/* Pour le bouton d'envoi */
+.file-input {
+    background-color: #0c0c0c;
+    border: 1px dashed #981717;
+    padding: 15px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #e0e0e0;
+}
+
+.file-input:hover {
+    background-color: rgba(152, 23, 23, 0.05);
+    border-color: #b51c1c;
+}
+
+.file-help {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #888888;
+    font-style: italic;
+}
+
+.warning-box {
+    background-color: rgba(152, 23, 23, 0.15);
+    border-left: 4px solid #981717;
+    padding: 15px;
+    margin-bottom: 30px;
+    border-radius: 4px;
+    text-align: left;
+}
+
+.warning-box p {
+    margin: 0;
+    font-size: 1rem;
+    color: #e0e0e0;
+}
+
+.switch-auth {
+    margin-top: 25px;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.switch-auth a {
+    color: #981717;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.switch-auth a:hover {
+    text-decoration: underline;
+}
+
 .submit-form-button {
     display: block;
     width: 100%;
@@ -279,26 +273,40 @@ footer {
     transform: scale(0.99);
 }
 
-.file-input {
-    background-color: #0c0c0c;
-    border: 1px dashed #981717; /* Bordure pointillée style "dossier confidentiel" */
-    padding: 15px;
-    cursor: pointer;
+.floating-action-button {
+    position: fixed;
+    bottom: 75px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #981717;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.2rem;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.floating-action-button:hover {
+    background-color: #b51c1c;
+    transform: scale(1.1) rotate(90deg);
+}
+
+footer {
+    background-color: #000000;
+    color: #666666;
+    text-align: center;
+    padding: 12px;
+    position: fixed;
+    bottom: 0;
     width: 100%;
-    box-sizing: border-box;
-    border-radius: 4px;
-    color: #e0e0e0;
-}
-
-.file-input:hover {
-    background-color: rgba(152, 23, 23, 0.05);
-    border-color: #b51c1c;
-}
-
-.file-help {
-    margin-top: 5px;
     font-size: 0.85rem;
-    color: #888888;
-    font-style: italic;
+    border-top: 1px solid #1a1a1a;
+    z-index: 1000;
 }
 
