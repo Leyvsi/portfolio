@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Dossiers — Les Petits Enquêteurs</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>Les Petits Enquêteurs</h1>
+        <a href="connexion.html" class="account-button">Mon Compte</a>
+    </header>
+
+    <nav>
+        <ul class="navbar">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="histoires.html">Les Histoires</a></li>
+            <li><a href="coldscases.html">Les Colds Cases</a></li>
+            <li><a href="updates.html">Les Updates</a></li>
+            <li><a href="theories.html">Les Théories</a></li>
+            <li><a href="top-dossiers.html" class="active">Top Dossiers</a></li>
+        </ul>
+    </nav>
+
+    <main class="content-section">
+        <h2>Top Dossiers — Premier Choix</h2>
+
+        <section id="featured" class="featured-section">
+            <div class="story-grid" id="story-grid">
+                <template id="story-template">
+                    <article class="story-card" data-id="">
+                        <span class="case-tag"></span>
+                        <h3 class="title"></h3>
+                        <p class="summary"></p>
+                        <div class="rating">
+                            <div class="avg">Note moyenne : <span class="avg-score">0</span>/5</div>
+                        </div>
+                        <div class="comments">
+                            <ul class="comment-list"></ul>
+                            <form class="comment-form">
+                                <input type="text" name="author" placeholder="Votre pseudo" required>
+                                <textarea name="comment" rows="3" placeholder="Votre avis" required></textarea>
+                                <label>Note :
+                                    <select name="rating">
+                                        <option value="5">5</option>
+                                        <option value="4">4</option>
+                                        <option value="3">3</option>
+                                        <option value="2">2</option>
+                                        <option value="1">1</option>
+                                    </select>
+                                </label>
+                                <button type="submit" class="submit-form-button">Publier</button>
+                            </form>
+                        </div>
+                    </article>
+                </template>
+            </div>
+        </section>
+
+        <div style="text-align:center; margin-top:18px;">
+            <a href="coldscases.html" class="cta-button">Retour aux Cold Cases</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        (function(){
+            const stories = [
+                {id:'story-1', tag:'Top 1', title:'Le mystère du quai désert', summary:'Un appel anonyme, un corps retrouvé au petit matin et des empreintes effacées dans la boue. Seul un cahier de notes non signé reste en suspens.'},
+                {id:'story-2', tag:'Top 2', title:'La disparue de la vieille gare', summary:"Une valise abandonnée, une correspondance brûlée et un témoin qui jure n'avoir rien vu. La vérité se cache derrière les quais verrouillés."},
+                {id:'story-3', tag:'Top 3', title:'Le silence du journal intime', summary:'Un journal fermé, un messenger effacé, une alibi fragile. Les pages racontent une histoire que personne n\'a encore décryptée.'}
+            ];
+
+            function key(id){ return 'pc_reviews_'+id; }
+            function load(id){ try{ return JSON.parse(localStorage.getItem(key(id))) || {comments:[], ratings:[]} }catch(e){return {comments:[], ratings:[]}} }
+            function save(id, data){ localStorage.setItem(key(id), JSON.stringify(data)); }
+
+            function render(story){
+                const id = story.dataset.id;
+                const data = load(id);
+                const list = story.querySelector('.comment-list');
+                list.innerHTML = '';
+                data.comments.forEach(c=>{
+                    const li = document.createElement('li');
+                    li.textContent = c.author + ' — ' + c.text + ' ('+c.rating+'/5)';
+                    list.appendChild(li);
+                });
+                const avgEl = story.querySelector('.avg-score');
+                const ratings = data.ratings || [];
+                const avg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '0';
+                if(avgEl) avgEl.textContent = avg;
+            }
+
+            const grid = document.getElementById('story-grid');
+            const template = document.getElementById('story-template');
+            stories.forEach(s=>{
+                const clone = template.content.cloneNode(true);
+                const article = clone.querySelector('.story-card');
+                article.dataset.id = s.id;
+                article.querySelector('.case-tag').textContent = s.tag;
+                article.querySelector('.title').textContent = s.title;
+                article.querySelector('.summary').textContent = s.summary;
+                grid.appendChild(clone);
+            });
+
+            grid.querySelectorAll('.story-card').forEach(story=>{
+                render(story);
+                const form = story.querySelector('.comment-form');
+                form.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    const id = story.dataset.id;
+                    const data = load(id);
+                    const author = form.author.value.trim();
+                    const text = form.comment.value.trim();
+                    const rating = parseInt(form.rating.value,10) || 0;
+                    if(!author || !text) return;
+                    data.comments.unshift({author,text,rating,when:Date.now()});
+                    data.ratings.push(rating);
+                    save(id,data);
+                    form.reset();
+                    render(story);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
