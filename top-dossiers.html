@@ -69,59 +69,113 @@
     </footer>
 
     <script>
+        /* Code JavaScript simple pour remplir les cartes Top Dossiers et gérer les commentaires. */
         (function(){
+            // Liste des dossiers disponibles dans la page.
             const stories = [
-                {id:'story-1', tag:'Top 1', title:'Le mystère du quai désert', summary:'Un appel anonyme, un corps retrouvé au petit matin et des empreintes effacées dans la boue. Seul un cahier de notes non signé reste en suspens.'},
-                {id:'story-2', tag:'Top 2', title:'La disparue de la vieille gare', summary:"Une valise abandonnée, une correspondance brûlée et un témoin qui jure n'avoir rien vu. La vérité se cache derrière les quais verrouillés."},
-                {id:'story-3', tag:'Top 3', title:'Le silence du journal intime', summary:'Un journal fermé, un messenger effacé, une alibi fragile. Les pages racontent une histoire que personne n\'a encore décryptée.'}
+                {
+                    id:'story-1',
+                    tag:'Top 1',
+                    title:'Le mystère du quai désert',
+                    summary:'Un appel anonyme, un corps retrouvé au petit matin et des empreintes effacées dans la boue. Seul un cahier de notes non signé reste en suspens.'
+                },
+                {
+                    id:'story-2',
+                    tag:'Top 2',
+                    title:'La disparue de la vieille gare',
+                    summary:"Une valise abandonnée, une correspondance brûlée et un témoin qui jure n'avoir rien vu. La vérité se cache derrière les quais verrouillés."
+                },
+                {
+                    id:'story-3',
+                    tag:'Top 3',
+                    title:'Le silence du journal intime',
+                    summary:'Un journal fermé, un messenger effacé, une alibi fragile. Les pages racontent une histoire que personne n\'a encore décryptée.'
+                }
             ];
 
-            function key(id){ return 'pc_reviews_'+id; }
-            function load(id){ try{ return JSON.parse(localStorage.getItem(key(id))) || {comments:[], ratings:[]} }catch(e){return {comments:[], ratings:[]}} }
-            function save(id, data){ localStorage.setItem(key(id), JSON.stringify(data)); }
+            // Création de la clé utilisée dans localStorage.
+            function key(id) {
+                return 'pc_reviews_' + id;
+            }
 
-            function render(story){
+            // Charge les avis depuis le stockage local du navigateur.
+            function load(id) {
+                try {
+                    return JSON.parse(localStorage.getItem(key(id))) || { comments: [], ratings: [] };
+                } catch (error) {
+                    return { comments: [], ratings: [] };
+                }
+            }
+
+            // Enregistre les avis dans le stockage local.
+            function save(id, data) {
+                localStorage.setItem(key(id), JSON.stringify(data));
+            }
+
+            // Remplit la carte avec les commentaires et la note moyenne.
+            function render(story) {
                 const id = story.dataset.id;
                 const data = load(id);
                 const list = story.querySelector('.comment-list');
+
+                // Vide la liste avant de la reconstruire.
                 list.innerHTML = '';
-                data.comments.forEach(c=>{
+
+                data.comments.forEach(comment => {
                     const li = document.createElement('li');
-                    li.textContent = c.author + ' — ' + c.text + ' ('+c.rating+'/5)';
+                    li.textContent = comment.author + ' — ' + comment.text + ' (' + comment.rating + '/5)';
                     list.appendChild(li);
                 });
+
                 const avgEl = story.querySelector('.avg-score');
                 const ratings = data.ratings || [];
-                const avg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '0';
-                if(avgEl) avgEl.textContent = avg;
+                const avg = ratings.length
+                    ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
+                    : '0';
+
+                if (avgEl) {
+                    avgEl.textContent = avg;
+                }
             }
 
             const grid = document.getElementById('story-grid');
             const template = document.getElementById('story-template');
-            stories.forEach(s=>{
+
+            // Crée une carte pour chaque story et l'ajoute à la grille.
+            stories.forEach(storyData => {
                 const clone = template.content.cloneNode(true);
                 const article = clone.querySelector('.story-card');
-                article.dataset.id = s.id;
-                article.querySelector('.case-tag').textContent = s.tag;
-                article.querySelector('.title').textContent = s.title;
-                article.querySelector('.summary').textContent = s.summary;
+
+                article.dataset.id = storyData.id;
+                article.querySelector('.case-tag').textContent = storyData.tag;
+                article.querySelector('.title').textContent = storyData.title;
+                article.querySelector('.summary').textContent = storyData.summary;
+
                 grid.appendChild(clone);
             });
 
-            grid.querySelectorAll('.story-card').forEach(story=>{
+            // Pour chaque carte créée, on affiche les commentaires et on écoute le formulaire.
+            grid.querySelectorAll('.story-card').forEach(story => {
                 render(story);
+
                 const form = story.querySelector('.comment-form');
-                form.addEventListener('submit', function(e){
-                    e.preventDefault();
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+
                     const id = story.dataset.id;
                     const data = load(id);
                     const author = form.author.value.trim();
                     const text = form.comment.value.trim();
-                    const rating = parseInt(form.rating.value,10) || 0;
-                    if(!author || !text) return;
-                    data.comments.unshift({author,text,rating,when:Date.now()});
+                    const rating = parseInt(form.rating.value, 10) || 0;
+
+                    if (!author || !text) {
+                        return;
+                    }
+
+                    data.comments.unshift({ author, text, rating, when: Date.now() });
                     data.ratings.push(rating);
-                    save(id,data);
+                    save(id, data);
+
                     form.reset();
                     render(story);
                 });
