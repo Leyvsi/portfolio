@@ -17,14 +17,22 @@ def login():
     username = data.get('username')
     password = data.get('password')
     
-    if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
-        return jsonify({"status": "success", "role": "admin", "message": "Bienvenue Admin !"}), 200
-        
     for user in USERS_DATABASE:
         if (user['username'] == username or user['email'] == username) and user['password'] == password:
             return jsonify({"status": "success", "role": "user", "message": f"Bonjour {user['username']} !"}), 200
 
-    return jsonify({"status": "error", "message": "Identifiants incorrects."}), 401
+    return jsonify({"status": "error", "message": "Identifiants utilisateur incorrects."}), 401
+
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    
+    if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
+        return jsonify({"status": "success", "role": "admin", "message": "Bienvenue Admin !"}), 200
+        
+    return jsonify({"status": "error", "message": "Accès refusé. Identifiants incorrects."}), 403
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -50,4 +58,4 @@ def register():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-
+    

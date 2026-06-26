@@ -32,10 +32,6 @@
 
     <main class="content-section">
         <h2>Espace Connexion</h2>
-        
-        <div class="admin-badge" title="Espace réservé à Leyvsi & Melissa">
-            <span>pour les admins ^~^</span>
-        </div>
 
         <div id="login-area">
             <p>Connectez-vous à votre compte d'enquêteur pour proposer des récits et interagir avec la communauté.</p>
@@ -72,6 +68,10 @@
             </form>
             <p class="switch-auth">Déjà un compte ? <a href="#" id="show-login">Connectez-vous ici</a>.</p>
         </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="admin-connexion.html" class="admin-badge">pour les admins ^~^</a>
+        </div>
     </main>
 
     <footer>
@@ -106,14 +106,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.role === 'admin') {
-                    alert("Accès autorisé. Bienvenue dans l'espace Modérateur !");
-                    localStorage.setItem('user_role', 'admin');
-                } else {
+                if (data.status === 'success' && data.role === 'user') {
                     alert(data.message);
                     localStorage.setItem('user_role', 'user');
+                    window.location.href = "index.html";
+                } else {
+                    alert(data.message);
                 }
-                window.location.href = "index.html";
             })
             .catch(error => {
                 console.error('Erreur:', error);
