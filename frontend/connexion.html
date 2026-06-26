@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Petits Enquêteurs - Connexion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="video-container">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="background.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <header>
+        <h1>Les Petits Enquêteurs</h1>
+    </header>
+
+    <nav>
+        <ul class="navbar">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="histoires.html">Les Histoires</a></li>
+            <li><a href="coldscases.html">Les Colds Cases</a></li>
+            <li><a href="updates.html">Les Updates</a></li>
+            <li><a href="theories.html">Les Théories</a></li>
+            <li><a href="top-dossiers.html">Top Dossiers</a></li>
+        </ul>
+    </nav>
+
+    <main class="content-section">
+        <h2>Espace Connexion</h2>
+        
+        <div class="admin-badge" title="Espace réservé à Leyvsi & Melissa">
+            <span>pour les admins ^~^</span>
+        </div>
+
+        <div id="login-area">
+            <p>Connectez-vous à votre compte d'enquêteur pour proposer des récits et interagir avec la communauté.</p>
+            <form class="submission-form" id="login-form">
+                <div class="form-group">
+                    <label for="user-email">Adresse Email ou Identifiant</label>
+                    <input type="text" id="user-email" name="email" placeholder="exemple@mail.com ou pseudo" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-password">Mot de passe</label>
+                    <input type="password" id="user-password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="submit-form-button">Se connecter</button>
+            </form>
+            <p class="switch-auth">Pas encore de compte ? <a href="#" id="show-register">Inscrivez-vous ici</a>.</p>
+        </div>
+
+        <div id="register-area" style="display: none;">
+            <p>Rejoignez la communauté des Petits Enquêteurs !</p>
+            <form class="submission-form" id="register-form">
+                <div class="form-group">
+                    <label for="reg-username">Nom d'utilisateur / Pseudo</label>
+                    <input type="text" id="reg-username" name="username" placeholder="Votre pseudo" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Adresse Email</label>
+                    <input type="email" id="reg-email" name="email" placeholder="exemple@mail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Mot de passe</label>
+                    <input type="password" id="reg-password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="submit-form-button">Créer mon compte</button>
+            </form>
+            <p class="switch-auth">Déjà un compte ? <a href="#" id="show-login">Connectez-vous ici</a>.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        const loginArea = document.getElementById('login-area');
+        const registerArea = document.getElementById('register-area');
+        
+        document.getElementById('show-register').addEventListener('click', function(e) {
+            e.preventDefault();
+            loginArea.style.display = 'none';
+            registerArea.style.display = 'block';
+        });
+
+        document.getElementById('show-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            registerArea.style.display = 'none';
+            loginArea.style.display = 'block';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('user-email').value.trim();
+            const password = document.getElementById('user-password').value;
+
+            fetch('http://127.0.0.1:5000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.role === 'admin') {
+                    alert("Accès autorisé. Bienvenue dans l'espace Modérateur !");
+                    localStorage.setItem('user_role', 'admin');
+                } else {
+                    alert(data.message);
+                    localStorage.setItem('user_role', 'user');
+                }
+                window.location.href = "index.html";
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert("Impossible de joindre le serveur d'authentification.");
+            });
+        });
+
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('reg-username').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+
+            fetch('http://127.0.0.1:5000/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username, email: email, password: password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
+                    registerArea.style.display = 'none';
+                    loginArea.style.display = 'block';
+                } else {
+                    alert("Erreur lors de l'inscription : " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert("Impossible de joindre le serveur d'inscription.");
+            });
+        });
+    </script>
+</body>
+</html>
