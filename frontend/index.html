@@ -48,6 +48,10 @@
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
+    <script>
+        fetch('http://127.0.0.1:5000/api/visit', { method: 'POST' })
+            .catch(err => console.error(err));
+    </script>
+
 </body>
 </html>
-

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Petits Enquêteurs - Espace Admin</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>Panel Administration</h1>
+        <a href="index.html" class="account-button">Retour au Site</a>
+    </header>
+
+    <main class="content-section">
+        <h2>Statistiques de fréquentation</h2>
+        <div class="dashboard-stats">
+            <p>Nombre de visites totales : <span id="visit-count">0</span></p>
+        </div>
+
+        <h2>Propositions en attente de modération</h2>
+        <div id="proposals-list"></div>
+    </main>
+
+    <script>
+        fetch('http://127.0.0.1:5000/api/stats')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('visit-count').textContent = data.visits;
+            });
+
+        function loadProposals() {
+            const listContainer = document.getElementById('proposals-list');
+            listContainer.innerHTML = '';
+
+            fetch('http://127.0.0.1:5000/api/admin/proposals')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.proposals.length === 0) {
+                        listContainer.innerHTML = '<p>Aucune proposition en attente.</p>';
+                        return;
+                    }
+
+                    data.proposals.forEach(proposal => {
+                        const div = document.createElement('div');
+                        div.className = 'proposal-card';
+                        div.style.background = '#0f0f10';
+                        div.style.padding = '20px';
+                        div.style.marginBottom = '20px';
+                        div.style.borderRadius = '8px';
+                        div.style.border = '1px solid #c0392b';
+
+                        div.innerHTML = `
+                            <p><strong>Type :</strong> ${proposal.type.toUpperCase()}</p>
+                            <div class="form-group">
+                                <label>Titre de l'histoire</label>
+                                <input type="text" id="title-${proposal.id}" value="${proposal.title}" style="width:100%; padding:8px; margin-bottom:10px; background:#1a1a1c; color:#fff; border:1px solid #444;">
+                            </div>
+                            <div class="form-group">
+                                <label>Contenu du récit</label>
+                                <textarea id="content-${proposal.id}" rows="5" style="width:100%; padding:8px; margin-bottom:10px; background:#1a1a1c; color:#fff; border:1px solid #444;">${proposal.content}</textarea>
+                            </div>
+                            <button onclick="moderate(${proposal.id}, 'accept')" class="submit-form-button" style="display:inline-block; width:auto; margin-right:10px; background:#27ae60;">Accepter et Publier</button>
+                            <button onclick="moderate(${proposal.id}, 'reject')" class="submit-form-button" style="display:inline-block; width:auto; background:#c0392b;">Refuser</button>
+                        `;
+                        listContainer.appendChild(div);
+                    });
+                });
+        }
+
+        function moderate(id, action) {
+            const title = document.getElementById(`title-${id}`).value;
+            const content = document.getElementById(`content-${id}`).value;
+
+            fetch(`http://127.0.0.1:5000/api/admin/proposals/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, title: title, content: content })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                loadProposals();
+            });
+        }
+
+        loadProposals();
+    </script>
+</body>
+</html>
+
