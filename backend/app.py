@@ -5,13 +5,22 @@ from flask_restx import Api, Resource, fields
 app = Flask(__name__)
 CORS(app)
 
-# Initialize Swagger documentation
+authorizations = {
+    'apikey': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization',
+        'description': "Ajoutez votre jeton sous la forme : Bearer <votre_token>"
+    }
+}
+
 api = Api(
     app, 
     version='1.0', 
     title='API Les Petits Enquêteurs',
-    description='Documentation interactive (Swagger) pour le portfolio',
-    doc='/swagger/'
+    description='Documentation interactive (Swagger) pour le portfolio. Testez les accès admin ici.',
+    doc='/swagger/',
+    authorizations=authorizations
 )
 
 USERS_DATABASE = []
@@ -42,7 +51,7 @@ RESOLVED_STORIES = [
             "En mars 2022, à Kamas dans l'Utah, Eric Richins, un père de famille sans problème de santé, est retrouvé sans vie au pied de son lit. "
             "L'autopsie révèle l'impensable : une concentration massive de fentanyl, équivalente à cinq fois la dose létale, administrée par voie orale. "
             "Quelques mois plus tard, sa veuve Kouri Richins publie un livre pour enfants pour surmonter le deuil. Elle écume les plateaux TV, "
-            "s'affichant en mère courage.\n\n"
+            "s'affichant en mène courage.\n\n"
             "■ LES PAROLES DES PROCHES ET TÉMOINS\n"
             "• Amy Richins (Sœur de la victime) : « Dès le premier jour, nous avons su que quelque chose ne collait pas. Eric nous avait dit peu avant "
             "sa mort que si quelque chose lui arrivait, Kouri en serait responsable. Elle avait déjà tenté de l'empoisonner lors d'un voyage en Grèce "
@@ -124,9 +133,34 @@ RESOLVED_STORIES = [
 ]
 
 comment_model = api.model('Comment', {
-    'username': fields.String(required=True),
-    'text': fields.String(required=True)
+    'username': fields.String(required=True, description="Nom de l'utilisateur"),
+    'text': fields.String(required=True, description="Contenu du commentaire")
 })
+
+login_model = api.model('AdminLogin', {
+    'username': fields.String(required=True, description="Identifiant administrateur secret"),
+    'password': fields.String(required=True, description="Mot de passe associé")
+})
+
+@api.route('/api/admin/login')
+class AdminLogin(Resource):
+    @api.expect(login_model)
+    @api.response(200, 'Connexion réussie')
+    @api.response(401, 'Identifiants invalides')
+    def post(self):
+        """ Endpoint de connexion pour l'administration """
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        
+        if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
+            return {
+                "status": "success", 
+                "message": f"Bienvenue, session admin activée pour {username}.",
+                "token": "fake-jwt-token-for-portfolio-demonstration"
+            }, 200
+            
+        return {"status": "error", "message": "Identifiants invalides. Accès refusé."}, 401
 
 @api.route('/api/visit')
 class Visit(Resource):
