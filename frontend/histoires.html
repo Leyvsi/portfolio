@@ -33,26 +33,34 @@
 
     <main class="content-section">
         <h2>Affaires Criminelles Résolues</h2>
-        <p class="intro-text">Explorez les comptes-rendus des enquêtes réelles les plus marquantes de ces dernières années, décortiquées par notre équipe.</p>
+        <p class="intro-text">Plongez au cœur des rapports complets de la police. Découvrez les interrogatoires, témoignages des familles, des avocats et des coupables.</p>
 
         <div class="story-grid" id="stories-container"></div>
 
-        <div id="story-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; overflow-y:auto; padding:40px 20px;">
-            <div style="max-width:800px; margin:0 auto; background:#0f0f10; border:1px solid #c0392b; padding:30px; border-radius:8px; color:#fff; position:relative;">
-                <span onclick="closeModal()" style="position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; color:#c0392b;">&times;</span>
-                <h2 id="modal-title" style="border:none; margin-bottom:20px; color:#e67e22;"></h2>
-                <img id="modal-image" src="" alt="Illustration" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px; margin-bottom:20px; border:1px solid #444;">
-                <p id="modal-content" style="font-size:1.1rem; line-height:1.8; text-align:justify; margin-bottom:40px;"></p>
+        <!-- Detail Modal Section -->
+        <div id="story-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; overflow-y:auto; padding:40px 20px;">
+            <div style="max-width:850px; margin:0 auto; background:#0f0f10; border:1px solid #c0392b; padding:35px; border-radius:8px; color:#fff; position:relative;">
+                <span onclick="closeModal()" style="position:absolute; top:15px; right:20px; font-size:2.5rem; cursor:pointer; color:#c0392b;">&times;</span>
+                
+                <h2 id="modal-title" style="border:none; margin-bottom:20px; color:#e67e22; font-size:1.8rem;"></h2>
+                
+                <div style="margin-bottom:25px;">
+                    <img id="modal-image" src="" alt="Photographie officielle" style="width:100%; max-height:450px; object-fit:cover; border-radius:8px; border:1px solid #333;">
+                    <p style="font-size:0.85rem; color:#777; font-style:italic; margin-top:5px; text-align:right;">Archive officielle d'enquête / Preuve matérielle</p>
+                </div>
+                
+                <!-- Narrative box with white-space pre-wrap to keep layout perfect -->
+                <p id="modal-content" style="font-size:1.05rem; line-height:1.8; text-align:justify; margin-bottom:40px; color:#ddd; white-space:pre-wrap; background:#131316; padding:20px; border-radius:6px; border-left:3px solid #c0392b;"></p>
                 
                 <hr style="border:0; border-top:1px solid #333; margin-bottom:30px;">
                 
-                <h3>Espace Commentaires</h3>
-                <div id="comments-section" style="margin-bottom:20px; max-height:300px; overflow-y:auto; background:#141416; padding:15px; border-radius:6px; border:1px solid #222;"></div>
+                <h3>Espace de Discussion et d'Analyse</h3>
+                <div id="comments-section" style="margin-bottom:20px; max-height:350px; overflow-y:auto; background:#141416; padding:20px; border-radius:6px; border:1px solid #222;"></div>
                 
-                <div class="form-group" style="margin-top:20px;">
-                    <input type="text" id="comment-user" placeholder="Votre pseudo" style="width:100%; padding:10px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; margin-bottom:10px;">
-                    <textarea id="comment-text" placeholder="Ajouter un commentaire public..." rows="3" style="width:100%; padding:10px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; resize:vertical;"></textarea>
-                    <button onclick="submitComment()" class="submit-form-button" style="width:auto; padding:10px 25px; margin-top:10px;">Publier le commentaire</button>
+                <div class="form-group" style="margin-top:25px;">
+                    <input type="text" id="comment-user" placeholder="Votre pseudonyme d'enquêteur" style="width:100%; padding:12px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; margin-bottom:12px; font-size:1rem;">
+                    <textarea id="comment-text" placeholder="Ajouter une analyse ou votre avis sur ce rapport d'enquête..." rows="4" style="width:100%; padding:12px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; resize:vertical; font-size:1rem;"></textarea>
+                    <button onclick="submitComment()" class="submit-form-button" style="width:auto; padding:12px 30px; margin-top:10px; font-weight:bold;">Publier mon commentaire</button>
                 </div>
             </div>
         </div>
@@ -83,10 +91,10 @@
                         article.onclick = () => openModal(story);
 
                         article.innerHTML = `
-                            <img src="${story.image_summary}" alt="${story.title}" style="width:100%; height:200px; object-fit:cover; border-radius:6px; margin-bottom:15px; border:1px solid #222;">
+                            <img src="${story.image_summary}" alt="${story.title}" style="width:100%; height:220px; object-fit:cover; border-radius:6px; margin-bottom:15px; border:1px solid #222;">
                             <h3>${story.title}</h3>
                             <p>${story.summary}</p>
-                            <span style="color:#e67e22; font-weight:bold; display:inline-block; margin-top:10px;">Lire la suite →</span>
+                            <span style="color:#e67e22; font-weight:bold; display:inline-block; margin-top:12px;">Consulter le dossier et les témoignages →</span>
                         `;
                         container.appendChild(article);
                     });
@@ -115,13 +123,15 @@
                 .then(data => {
                     box.innerHTML = '';
                     if(data.comments.length === 0) {
-                        box.innerHTML = '<p style="color:#777; font-style:italic;">Aucun commentaire pour le moment. Soyez le premier à donner votre avis !</p>';
+                        box.innerHTML = '<p style="color:#777; font-style:italic;">Aucun commentaire sur cette affaire. Ouvrez le débat !</p>';
                         return;
                     }
                     data.comments.forEach(c => {
                         const p = document.createElement('p');
-                        p.style.marginBottom = '12px';
+                        p.style.marginBottom = '14px';
                         p.style.fontSize = '0.95rem';
+                        p.style.borderBottom = '1px solid #1c1c1f';
+                        p.style.paddingBottom = '8px';
                         p.innerHTML = `<strong style="color:#e67e22;">${c.username}</strong> : <span style="color:#ddd;">${c.text}</span>`;
                         box.appendChild(p);
                     });

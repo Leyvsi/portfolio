@@ -107,5 +107,13 @@
         loadAdminVotes();
         loadProposals();
     </script>
+
+    <script>
+    if (!localStorage.getItem('adminToken')) {
+        alert("Accès refusé. Autorisation administrateur manquante.");
+        window.location.href = "connexion.html";
+    }
+    </script>
+
 </body>
 </html>

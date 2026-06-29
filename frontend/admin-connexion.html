@@ -46,19 +46,24 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: username, password: password })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message); });
+                }
+                return response.json();
+            })
             .then(data => {
-                if (data.status === 'success' && data.role === 'admin') {
-                    alert("Accès autorisé. Bienvenue !");
-                    localStorage.setItem('user_role', 'admin');
-                    window.location.href = "admin-dashboard.html";
+                if (data.status === 'success') {
+                    alert(data.message);
+                    localStorage.setItem('adminToken', data.token);
+                    window.location.href = data.redirect;
                 } else {
                     alert(data.message);
                 }
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                alert("Impossible de joindre le serveur d'authentification.");
+                alert(error.message || "Impossible de joindre le serveur d'authentification.");
             });
         });
     </script>

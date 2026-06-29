@@ -99,16 +99,16 @@
             const username = document.getElementById('user-email').value.trim();
             const password = document.getElementById('user-password').value;
 
-            fetch('http://127.0.0.1:5000/api/login', {
+            fetch('http://127.0.0.1:5000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: username, password: password })
             })
             .then(response => response.json())
             .then(data => {
-                if (data.status === 'success' && data.role === 'user') {
+                if (data.status === 'success') {
                     alert(data.message);
-                    localStorage.setItem('user_role', 'user');
+                    localStorage.setItem('userSession', username);
                     window.location.href = "index.html";
                 } else {
                     alert(data.message);
@@ -123,13 +123,12 @@
         document.getElementById('register-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const username = document.getElementById('reg-username').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
             const password = document.getElementById('reg-password').value;
 
-            fetch('http://127.0.0.1:5000/api/register', {
+            fetch('http://127.0.0.1:5000/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: username, email: email, password: password })
+                body: JSON.stringify({ username: username, password: password })
             })
             .then(response => response.json())
             .then(data => {
