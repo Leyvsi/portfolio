@@ -5,6 +5,8 @@ from flask_restx import Api, Resource, fields
 app = Flask(__name__)
 CORS(app)
 
+# Simple English comments for documentation
+# Security authorization description for Swagger
 authorizations = {
     'apikey': {
         'type': 'apiKey',
@@ -23,6 +25,7 @@ api = Api(
     authorizations=authorizations
 )
 
+# Simulated in-memory databases
 USERS_DATABASE = []
 VISITS_COUNT = 0
 
@@ -100,35 +103,6 @@ RESOLVED_STORIES = [
         ),
         "image_summary": "https://images.unsplash.com/photo-1530210124550-912dc1381cb8?w=500&q=80",
         "image_full": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80"
-    },
-    {
-        "id": 3,
-        "title": "Le Drame du Yogurt Shop : Justice et Erreurs à Austin",
-        "summary": "Quatre adolescentes assassinées en 1991. Une affaire texane résolue en 2025/2026 qui met en lumière les failles du système.",
-        "content": (
-            "■ LA TRAGÉDIE ET LE SCANDALE\n"
-            "Le 6 décembre 1991, quatre adolescentes sont exécutées dans une boutique de yaourts à Austin, le commerce étant ensuite incendié. "
-            "La police subit une pression monumentale. En 1999, quatre jeunes suspects sont arrêtés. Deux sont condamnés à la prison à vie "
-            "sur la base d'aveux controversés obtenus après des interrogatoires musclés de plus de 20 heures. En 2009, ils sont libérés suite à des doutes "
-            "sur l'ADN, mais l'ombre du soupçon plane toujours. Le dénouement final survient via les techniques génétiques de pointe.\n\n"
-            "■ LA SOUFFRANCE DES FAMILLES ET LES AVEUX DES PROCHES\n"
-            "• Bob Ayers (Père d'Amy Ayers, victime) : « On nous a ballottés de tribunal en tribunal pendant trente ans. On nous a dit que les coupables "
-            "étaient derrière les barreaux, puis qu'ils étaient innocents. Ce n'est pas une justice, c'est un calvaire sans fin. »\n"
-            "• Un proche de Robert Brashers (Le véritable tueur identifié) : « Robert était un homme instable, violent, qui passait son temps à fuir "
-            "la justice. Quand il s'est suicidé en 1999 lors d'un affrontement avec la police, nous savions qu'il cachait des choses horribles, mais "
-            "personne n'imaginait qu'il était le monstre du Yogurt Shop. »\n\n"
-            "■ LA PAROLE DE LA DEFENSE ET DE LA POLICE\n"
-            "• L'Avocat des accusés à tort : « Mes clients ont eu leur vie brisée. Ils ont avoué sous la torture psychologique ce qu'ils n'avaient pas "
-            "fait. Cette affaire est l'exemple parfait des dérives des faux aveux extorqués par la pression policière. »\n"
-            "• Détective de la brigade criminelle d'Austin (Rapport de clôture) : « Le profil génétique extrait de la scène de crime correspond à 100% "
-            "à l'ADN de Robert Brashers. L'analyse par cartographie chromosomique confirme sa présence active. Les suspects initiaux sont formellement "
-            "et définitivement mis hors de cause. Ce dossier est officiellement clos. »\n\n"
-            "■ LA DÉCISION DU JUGE\n"
-            "• Le Juge fédéral (Clôturant l'affaire) : « Le tribunal ordonne l'effacement total des casiers et l'exonération pleine et entière des personnes "
-            "injustement poursuivies. Que cette erreur serve de leçon mémorable à notre système judiciaire. »"
-        ),
-        "image_summary": "https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=500&q=80",
-        "image_full": "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=800&q=80"
     }
 ]
 
@@ -157,43 +131,24 @@ COLD_CASES = [
             "Le 4 août 2003, des pêcheurs découvrent une femme d'environ 30 ans gisant sur une plage isolée de Normandie. "
             "Elle survit mais souffre d'une amnésie rétrograde totale et absolue. Elle ne reconnaît aucun nom, aucun visage, et parle trois langues sans accent distinct.\n\n"
             "■ LE SEUL INDICE PHYSIQUE\n"
-            "Dans sa poche, un trousseau de trois clés anciennes numérotées '102', '104' et '108'. Toutes les recherches menées auprès des hôtels, "
+            "Dans sa poche, un trouseau de trois clés anciennes numérotées '102', '104' et '108'. Toutes les recherches menées auprès des hôtels, "
             "des banques et des consignes de gares de la région n'ont jamais permis de trouver les serrures correspondantes."
         ),
         "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80"
-    },
-    {
-        "id": "cc3",
-        "title": "Le Vol 814 : Le Passager Fantôme",
-        "summary": "Un avion atterrit en 2011 avec un passager de moins à son bord. Les systèmes de sécurité n'indiquent aucune ouverture des portes en vol.",
-        "content": (
-            "■ L'IMPOSSIBLE DISPARITION\n"
-            "Le 15 mai 2011, le vol charter 814 relie Lisbonne à Paris. À l'embarquement, la présence d'Arthur Vance est validée par les caméras et les agents de bord. "
-            "Pourtant, à l'arrivée à Roissy, son siège est vide. Ses bagages à main sont toujours installés dans le compartiment supérieur.\n\n"
-            "■ L'ENQUÊTE TECHNIQUE\n"
-            "Les boîtes noires et les capteurs de pression certifient qu'aucune porte ni issue de secours n'a été manipulée durant les 2 heures et 15 minutes de trajet. "
-            "Les toilettes et les espaces techniques ont été fouillés de fond en comble. Arthur Vance s'est littéralement volatilisé à 10 000 mètres d'altitude."
-        ),
-        "image": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80"
     }
 ]
 
-# Stocke les listes de théories
 THEORIES_DATABASE = {
     "cc1": [
-        {"id": 1, "text": "Disparition volontaire mise en scène. Le message sur le miroir servait à aiguiller les recherches sur une fausse piste mystique.", "likes": 12, "liked_by": []},
-        {"id": 2, "text": "Accident de montagne nocturne. La neige a recouvert le corps dans une crevasse, et la veste a été déplacée plus tard par un rôdeur.", "likes": 5, "liked_by": []}
+        {"id": 1, "text": "Disparition volontaire mise en scène. Le message sur le miroir servait à aiguiller les recherches.", "likes": 12, "liked_by": []},
+        {"id": 2, "text": "Accident de montagne nocturne. La neige a recouvert le corps dans une crevasse.", "likes": 5, "liked_by": []}
     ],
     "cc2": [
-        {"id": 3, "text": "Un programme de protection de témoins qui a mal tourné ou une ancienne agente secrète laissée pour morte.", "likes": 24, "liked_by": []},
-        {"id": 4, "text": "Les clés appartiennent à des casiers de stockage privés dans un port de plaisance hors de France.", "likes": 9, "liked_by": []}
-    ],
-    "cc3": [
-        {"id": 5, "text": "Arthur Vance a utilisé une fausse identité et a réussi à s'échapper en s'habillant comme un membre du personnel navigant pendant l'escale ou avant le décollage.", "likes": 18, "liked_by": []},
-        {"id": 6, "text": "Il s'est caché dans la trappe technique d'accès à la soute électronique sous la cabine avant l'atterrissage.", "likes": 14, "liked_by": []}
+        {"id": 3, "text": "Un programme de protection de témoins qui a mal tourné.", "likes": 24, "liked_by": []}
     ]
 }
 
+# Swagger data validation models
 comment_model = api.model('Comment', {
     'username': fields.String(required=True, description="Nom de l'utilisateur"),
     'text': fields.String(required=True, description="Contenu du commentaire")
@@ -224,14 +179,21 @@ like_model = api.model('LikeTheory', {
 class UserRegister(Resource):
     @api.expect(register_model)
     def post(self):
+        # Handles user registration with max 50 chars validation
         data = request.get_json()
         username = data.get('username', '').strip()
         email = data.get('email', '').strip()
         password = data.get('password', '').strip()
+        
         if not username or not password or not email:
             return {"status": "error", "message": "Tous les champs sont obligatoires."}, 400
+            
+        if len(username) > 50:
+            return {"status": "error", "message": "Le nom d'utilisateur ne doit pas dépasser 50 caractères."}, 400
+            
         if username in ADMIN_CREDENTIALS or any(u['username'] == username for u in USERS_DATABASE):
             return {"status": "error", "message": "Ce nom d'utilisateur n'est pas disponible."}, 400
+            
         USERS_DATABASE.append({"username": username, "email": email, "password": password})
         return {"status": "success", "message": "Inscription réussie."}, 201
 
@@ -239,6 +201,7 @@ class UserRegister(Resource):
 class UserLogin(Resource):
     @api.expect(auth_model)
     def post(self):
+        # Authenticates regular users
         data = request.get_json()
         username = data.get('username', '').strip()
         password = data.get('password', '').strip()
@@ -251,6 +214,7 @@ class UserLogin(Resource):
 class AdminLogin(Resource):
     @api.expect(auth_model)
     def post(self):
+        # Authenticates system administrators
         data = request.get_json()
         username = data.get('username')
         password = data.get('password')
@@ -261,6 +225,7 @@ class AdminLogin(Resource):
 @api.route('/api/user/profile/<string:username>')
 class UserProfile(Resource):
     def get(self, username):
+        # Returns specific user profile details
         user_match = next((u for u in USERS_DATABASE if u['username'] == username), None)
         if user_match:
             return {
@@ -276,6 +241,7 @@ class UserProfile(Resource):
 class ChangePassword(Resource):
     @api.expect(change_password_model)
     def post(self):
+        # Handles secure password modifications
         data = request.get_json()
         username = data.get('username')
         current_password = data.get('current_password')
@@ -288,49 +254,16 @@ class ChangePassword(Resource):
         user_match["password"] = new_password
         return {"status": "success", "message": "Mot de passe modifié avec succès !"}, 200
 
-@api.route('/api/visit')
-class Visit(Resource):
-    def post(self):
-        global VISITS_COUNT
-        VISITS_COUNT += 1
-        return {"status": "success", "visits": VISITS_COUNT}, 200
-
-@api.route('/api/stats')
-class Stats(Resource):
-    def get(self):
-        return {"status": "success", "visits": VISITS_COUNT}, 200
-
-@api.route('/api/stories')
-class StoriesList(Resource):
-    def get(self):
-        return {"status": "success", "stories": RESOLVED_STORIES}, 200
-
-@api.route('/api/comments/<string:item_id>')
-class CommentsHandler(Resource):
-    def get(self, item_id):
-        comments = COMMENTS_DATABASE.get(item_id, [])
-        return {"status": "success", "comments": comments}, 200
-
-    @api.expect(comment_model)
-    def post(self, item_id):
-        data = request.get_json()
-        username = data.get('username', 'Anonyme')
-        text = data.get('text')
-        if not text:
-            return {"status": "error", "message": "Le commentaire ne peut pas être vide."}, 400
-        if item_id not in COMMENTS_DATABASE:
-            COMMENTS_DATABASE[item_id] = []
-        COMMENTS_DATABASE[item_id].append({"username": username, "text": text})
-        return {"status": "success", "comments": COMMENTS_DATABASE[item_id]}, 201
-
 @api.route('/api/coldcases')
 class ColdCasesList(Resource):
     def get(self):
+        # Lists all available cold cases
         return {"status": "success", "cold_cases": COLD_CASES}, 200
 
 @api.route('/api/coldcases/<string:case_id>')
 class ColdCaseDetail(Resource):
     def get(self, case_id):
+        # Fetches details for a specific single cold case
         case_match = next((c for c in COLD_CASES if c['id'] == case_id), None)
         if case_match:
             return {"status": "success", "cold_case": case_match}, 200
@@ -339,24 +272,15 @@ class ColdCaseDetail(Resource):
 @api.route('/api/theories/<string:case_id>')
 class TheoriesHandler(Resource):
     def get(self, case_id):
+        # Returns public theories related to a case
         theories = THEORIES_DATABASE.get(case_id, [])
         return {"status": "success", "theories": theories}, 200
-
-    def post(self, case_id):
-        data = request.get_json()
-        text = data.get('text', '').strip()
-        if not text:
-            return {"status": "error", "message": "Le texte ne peut pas être vide."}, 400
-        if case_id not in THEORIES_DATABASE:
-            THEORIES_DATABASE[case_id] = []
-        new_id = len(THEORIES_DATABASE[case_id]) + 1
-        THEORIES_DATABASE[case_id].append({"id": new_id, "text": text, "likes": 0, "liked_by": []})
-        return {"status": "success", "theories": THEORIES_DATABASE[case_id]}, 201
 
 @api.route('/api/theories/<string:case_id>/<int:theory_id>/like')
 class LikeTheoryHandler(Resource):
     @api.expect(like_model)
     def post(self, case_id, theory_id):
+        # Adds a unique like per user to a selected case theory
         data = request.get_json() or {}
         username = data.get('username', '').strip()
         
