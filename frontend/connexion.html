@@ -1,115 +1,116 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Connexion</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Petits Enquêteurs - Connexion</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <div class="video-container">
-        <video autoplay loop muted playsinline id="bg-video">
-            <source src="background.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
+<div class="video-container">
+<video autoplay loop muted playsinline id=\"bg-video\">
+<source src="background.mp4" type="video/mp4">
+</video>
+<div class="video-overlay"></div>
+</div>
 
-    <header>
-        <h1>Les Petits Enquêteurs</h1>
-    </header>
+<header>
+<h1>Les Petits Enquêteurs</h1>
+</header>
 
-    <nav>
-        <ul class="navbar">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="histoires.html">Les Histoires</a></li>
-            <li><a href="coldscases.html">Les Colds Cases</a></li>
-            <li><a href="updates.html">Les Updates</a></li>
-            <li><a href="theories.html">Les Théories</a></li>
-            <li><a href="top-dossiers.html">Top Dossiers</a></li>
-        </ul>
-    </nav>
+<nav>
+<ul class="navbar">
+<li><a href="index.html">Accueil</a></li>
+<li><a href="histoires.html">Les Histoires</a></li>
+<li><a href="coldscases.html">Les Colds Cases</a></li>
+<li><a href="updates.html">Les Updates</a></li>
+<li><a href="theories.html">Les Théories</a></li>
+<li><a href="top-dossiers.html">Top Dossiers</a></li>
+</ul>
+</nav>
 
-    <main class="content-section">
-        <h2>Espace Inscription & Connexion</h2>
+<main class="content-section">
+<h2>Espace Inscription & Connexion</h2>
 
-        <div id="register-area" style="margin-bottom: 50px;">
-            <h3>Créer un compte d'enquêteur</h3>
-            <form class="submission-form" id="register-form">
-                <div class="form-group">
-                    <label for="register-username">Nom d'utilisateur (50 caractères max, symboles et chiffres autorisés)</label>
-                    <input type="text" id="register-username" maxlength="50" placeholder="Pseudo" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-email">Adresse Mail</label>
-                    <input type="email" id="register-email" placeholder="adresse@mail.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-password">Mot de passe</label>
-                    <input type="password" id="register-password" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="submit-form-button">S'inscrire</button>
-            </form>
-        </div>
+<div id="register-area" style="margin-bottom: 50px;">
+<h3>Créer un compte d'enquêteur</h3>
+<form class="submission-form" id="register-form">
+<div class="form-group">
+<label for="register-username">Nom d'utilisateur (50 caractères max, symboles et chiffres acceptés)</label>
+<input type="text" id="register-username" maxlength="50" placeholder="Pseudo" required>
+</div>
+<div class="form-group">
+<label for="register-email">Adresse Mail</label>
+<input type="email" id="register-email" placeholder="adresse@mail.com" required>
+</div>
+<div class="form-group">
+<label for="register-password">Mot de passe</label>
+<input type="password" id="register-password" placeholder="••••••••" required>
+</div>
+<button type="submit" class="submit-form-button">S'inscrire</button>
+</form>
+</div>
 
-        <div id="login-area">
-            <h3>Se connecter</h3>
-            <form class="submission-form" id="login-form">
-                <div class="form-group">
-                    <label for="login-username">Nom d'utilisateur</label>
-                    <input type="text" id="login-username" placeholder="Pseudo" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Mot de passe</label>
-                    <input type="password" id="login-password" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="submit-form-button">Se connecter</button>
-            </form>
-        </div>
-    </main>
+<div id="login-area">
+<h3>Se connecter</h3>
+<form class="submission-form" id="login-form">
+<div class="form-group">
+<label for="login-username">Nom d'utilisateur</label>
+<input type="text" id="login-username" placeholder="Pseudo" required>
+</div>
+<div class="form-group">
+<label for="login-password">Mot de passe</label>
+<input type="password" id="login-password" placeholder="••••••••" required>
+</div>
+<button type="submit" class="submit-form-button">Se connecter</button>
+</form>
+</div>
+</main>
 
-    <script>
-        document.getElementById('register-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const usernameValue = document.getElementById('register-username').value;
-            const emailValue = document.getElementById('register-email').value;
-            const passwordValue = document.getElementById('register-password').value;
+<script>
+// Form submissions handling process
+document.getElementById('register-form').addEventListener('submit', function(e) {
+e.preventDefault();
+const usernameValue = document.getElementById('register-username').value;
+const emailValue = document.getElementById('register-email').value;
+const passwordValue = document.getElementById('register-password').value;
 
-            fetch('http://127.0.0.1:5000/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: usernameValue, email: emailValue, password: passwordValue })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message);
-                if (data.status === 'success') document.getElementById('register-form').reset();
-            })
-            .catch(err => alert("Erreur d'inscription"));
-        });
+fetch('http://127.0.0.1:5000/api/auth/register', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ username: usernameValue, email: emailValue, password: passwordValue })
+})
+.then(res => res.json())
+.then(data => {
+alert(data.message);
+if (data.status === 'success') document.getElementById('register-form').reset();
+})
+.catch(err => alert("Erreur d'inscription"));
+});
 
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const usernameValue = document.getElementById('login-username').value.trim();
-            const passwordValue = document.getElementById('login-password').value;
+document.getElementById('login-form').addEventListener('submit', function(e) {
+e.preventDefault();
+const usernameValue = document.getElementById('login-username').value.trim();
+const passwordValue = document.getElementById('login-password').value;
 
-            fetch('http://127.0.0.1:5000/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: usernameValue, password: passwordValue })
-            })
-            .then(res => {
-                if (!res.ok) return res.json().then(err => { throw new Error(err.message); });
-                return res.json();
-            })
-            .then(data => {
-                localStorage.setItem('username', usernameValue);
-                localStorage.setItem('user_role', data.role);
-                alert(data.message);
-                window.location.href = "index.html";
-            })
-            .catch(err => alert(err.message));
-        });
-    </script>
+fetch('http://127.0.0.1:5000/api/auth/login', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ username: usernameValue, password: passwordValue })
+})
+.then(res => {
+if (!res.ok) return res.json().then(err => { throw new Error(err.message); });
+return res.json();
+})
+.then(data => {
+localStorage.setItem('username', usernameValue);
+localStorage.setItem('user_role', data.role);
+alert(data.message);
+window.location.href = "index.html";
+})
+.catch(err => alert(err.message));
+});
+</script>
 </body>
 </html>

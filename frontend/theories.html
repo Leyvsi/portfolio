@@ -1,164 +1,137 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Les Théories</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Petits Enquêteurs - Les Théories</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
-        <h1>Les Petits Enquêteurs</h1>
-        <div id="auth-buttons-container">
-            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
-        </div>
-    </header>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+<h1>Les Petits Enquêteurs</h1>
+<div id="auth-buttons-container">
+<a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
+</div>
+</header>
 
-    <nav>
-        <ul class="navbar">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="histoires.html">Les Histoires</a></li>
-            <li><a href="coldscases.html">Les Colds Cases</a></li>
-            <li><a href="updates.html">Les Updates</a></li>
-            <li><a href="theories.html" class="active">Les Théories</a></li>
-            <li><a href="top-dossiers.html">Top Dossiers</a></li>
-        </ul>
-    </nav>
+<nav>
+<ul class="navbar">
+<li><a href="index.html">Accueil</a></li>
+<li><a href="histoires.html">Les Histoires</a></li>
+<li><a href="coldscases.html">Les Colds Cases</a></li>
+<li><a href="updates.html">Les Updates</a></li>
+<li><a href="theories.html" class="active">Les Théories</a></li>
+<li><a href="top-dossiers.html">Top Dossiers</a></li>
+</ul>
+</nav>
 
-    <main class="content-section">
-        <h2>Espace Analyse & Théories</h2>
-        
-        <div class="form-group" style="margin-bottom: 30px;">
-            <label for="case-selector" style="display:block; margin-bottom:10px; font-size:1.2rem;">Sélectionnez une affaire en cours :</label>
-            <select id="case-selector" style="width:100%; padding:12px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; font-size:1.1rem;">
-                <option value="cc1">Le Mystère d'Anthonioz : Les Empreintes de la Nuit</option>
-                <option value="cc2">L'Inconnue de la Plage de Noirval</option>
-            </select>
-        </div>
+<main class="content-section">
+<h2>Espace Analyse & Théories</h2>
 
-        <div id="theories-list" style="margin-bottom: 40px;"></div>
+<div class="form-group" style="margin-bottom: 30px;">
+<label for="case-selector" style="display:block; margin-bottom:10px; font-size:1.2rem;">Sélectionnez une affaire en cours :</label>
+<select id="case-selector" style="width:100%; padding:12px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; font-size:1.1rem;">
+<option value="cc1">Le Mystère d'Anthonioz : Les Empreintes de la Nuit</option>
+<option value="cc2">L'Inconnue de la Plage de Noirval</option>
+<option value="cc3">Le Vol 814 : Le Passager Fantôme</option>
+</select>
+</div>
 
-        <div class="story-card" style="padding: 25px; cursor: default;">
-            <h3 style="margin-top:0; color:#c0392b;">Soumettre votre propre piste d'enquête</h3>
-            <form id="theory-form" class="submission-form" style="margin-top:20px;">
-                <div class="form-group">
-                    <label for="theory-text">Développement de l'hypothèse (argumentez rigoureusement) :</label>
-                    <textarea id="theory-text" rows="5" placeholder="Partagez vos conclusions en vous appuyant sur des faits établis..." required style="width:100%; padding:12px; background:#141416; color:#fff; border:1px solid #333; border-radius:4px;"></textarea>
-                </div>
-                <button type="submit" class="submit-form-button" style="width:auto; padding:12px 30px; margin-top:10px;">Proposer la Théorie</button>
-            </form>
-        </div>
-    </main>
+<h3>Théories de la Communauté</h3>
+<div id="theories-list" style="margin-bottom:40px;"></div>
 
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
+<hr style="border-color:#333; margin-bottom:40px;">
 
-    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
+<h3>Proposer votre propre théorie</h3>
+<form id="theory-form" class="submission-form">
+<div class="form-group">
+<label for="theory-text">Votre hypothèse d'enquêteur</label>
+<textarea id="theory-text" rows="5" placeholder="Décrivez votre piste d'analyse de l'affaire..." required></textarea>
+</div>
+<button type="submit" class="submit-form-button">Soumettre la Théorie</button>
+</form>
+</main>
 
-    <script>
-        const currentUser = localStorage.getItem('username');
-        const caseSelector = document.getElementById('case-selector');
-        const theoriesList = document.getElementById('theories-list');
-        const theoryForm = document.getElementById('theory-form');
+<footer>
+<p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+</footer>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const prefilledCase = urlParams.get('case');
-        if (prefilledCase) {
-            caseSelector.value = prefilledCase;
-        }
+<script>
+const caseSelector = document.getElementById('case-selector');
+const theoriesList = document.getElementById('theories-list');
+const theoryForm = document.getElementById('theory-form');
+const currentUser = localStorage.getItem('username');
 
-        theoryForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (!currentUser) {
-                alert("Vous devez être connecté pour soumettre une théorie d'enquête.");
-                return;
-            }
+const urlParams = new URLSearchParams(window.location.search);
+const caseParam = urlParams.get('case');
+if (caseParam) {
+caseSelector.value = caseParam;
+}
 
-            const caseId = caseSelector.value;
-            const textValue = document.getElementById('theory-text').value.trim();
+// Dynamic theories loading process
+function loadTheories(caseId) {
+fetch(`http://127.0.0.1:5000/api/theories/${caseId}`)
+.then(res => res.json())
+.then(data => {
+theoriesList.innerHTML = '';
+if (data.theories.length === 0) {
+theoriesList.innerHTML = '<p style="color:#aaa;">Aucune théorie proposée pour le moment. Soyez le premier !</p>';
+return;
+}
+data.theories.forEach(theory => {
+const div = document.createElement('div');
+div.className = 'story-card';
+div.style.padding = '20px';
+div.style.marginBottom = '15px';
+div.style.display = 'flex';
+div.style.justifyContent = 'space-between';
+div.style.alignItems = 'center';
 
-            fetch(`http://127.0.0.1:5000/api/theories/${caseId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser, text: textValue })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message);
-                if (data.status === 'success') {
-                    document.getElementById('theory-text').value = '';
-                    loadTheories(caseId);
-                }
-            })
-            .catch(err => console.error(err));
-        });
+div.innerHTML = `
+<p style="margin:0; padding-right:20px; line-height:1.5;">${theory.text}</p>
+<button onclick="likeTheory('${caseId}', ${theory.id})" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; white-space:nowrap;">
+❤️ Like (<span id="like-count-${theory.id}">${theory.likes}</span>)
+</button>
+`;
+theoriesList.appendChild(div);
+});
+});
+}
 
-        function loadTheories(caseId) {
-            fetch(`http://127.0.0.1:5000/api/theories/${caseId}`)
-                .then(res => res.json())
-                .then(data => {
-                    theoriesList.innerHTML = '';
-                    if (!data.theories || data.theories.length === 0) {
-                        theoriesList.innerHTML = '<p style="color:#666; font-style:italic;">Aucune hypothèse n\'a encore été publiée sur ce dossier.</p>';
-                        return;
-                    }
-                    data.theories.forEach(t => {
-                        const div = document.createElement('div');
-                        div.className = 'story-card';
-                        div.style.cursor = 'default';
-                        div.style.marginBottom = '20px';
-                        div.style.background = '#0f0f10';
-                        div.style.border = '1px solid #222';
-                        
-                        div.innerHTML = `
-                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1a1a1c; padding-bottom:10px; margin-bottom:15px;">
-                                <span style="font-weight:bold; color:#e67e22;">🕵️ Enquêteur : ${t.username}</span>
-                                <span style="color:#666; font-size:0.85rem;">Date : ${t.date || 'Récemment'}</span>
-                            </div>
-                            <p style="line-height:1.6; color:#ddd; font-size:1rem; white-space:pre-wrap;">${t.text}</p>
-                            <div style="margin-top:15px; display:flex; align-items:center; gap:10px;">
-                                <button onclick="likeTheory('${caseId}', '${t.id}')" class="submit-form-button" style="width:auto; margin:0; padding:6px 15px; font-size:0.85rem; background:#141416; border:1px solid #333;">👍 Approuver la piste</button>
-                                <span style="font-size:0.9rem; color:#888;">Approbations : <strong id="like-count-${t.id}" style="color:#c0392b;">${t.likes || 0}</strong></span>
-                            </div>
-                        `;
-                        theoriesList.appendChild(div);
-                    });
-                });
-        }
+// Sends user identifiers to enforce single like constraint
+function likeTheory(caseId, theoryId) {
+if (!currentUser) {
+alert("Vous devez être connecté pour attribuer un vote de like.");
+return;
+}
 
-        function likeTheory(caseId, theoryId) {
-            if (!currentUser) {
-                alert("Vous devez être connecté pour attribuer un vote de like.");
-                return;
-            }
+fetch(`http://127.0.0.1:5000/api/theories/${caseId}/${theoryId}/like`, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ username: currentUser })
+})
+.then(res => res.json())
+.then(data => {
+if (data.status === 'success') {
+document.getElementById(`like-count-${theoryId}`).textContent = data.likes;
+} else {
+alert(data.message);
+}
+})
+.catch(err => console.error(err));
+}
 
-            fetch(`http://127.0.0.1:5000/api/theories/${caseId}/${theoryId}/like`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    document.getElementById(`like-count-${theoryId}`).textContent = data.likes;
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(err => console.error(err));
-        }
+caseSelector.addEventListener('change', (e) => loadTheories(e.target.value));
 
-        caseSelector.addEventListener('change', (e) => loadTheories(e.target.value));
-        loadTheories(caseSelector.value);
+loadTheories(caseSelector.value);
 
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser && authContainer) {
-            authContainer.innerHTML = `
-                <a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
-            `;
-        }
-    </script>
+const authContainer = document.getElementById('auth-buttons-container');
+if (currentUser && authContainer) {
+authContainer.innerHTML = `
+<a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
+`;
+}
+</script>
 </body>
 </html>

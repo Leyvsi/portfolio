@@ -1,117 +1,120 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Cold Cases</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Petits Enquêteurs - Cold Cases</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
-        <h1>Les Petits Enquêteurs</h1>
-        <div id="auth-buttons-container">
-            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
-        </div>
-    </header>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+<h1>Les Petits Enquêteurs</h1>
+<div id="auth-buttons-container">
+<a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
+</div>
+</header>
 
-    <nav>
-        <ul class="navbar">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="histoires.html">Les Histoires</a></li>
-            <li><a href="coldscases.html" class="active">Les Colds Cases</a></li>
-            <li><a href="updates.html">Les Updates</a></li>
-            <li><a href="theories.html">Les Théories</a></li>
-            <li><a href="top-dossiers.html">Top Dossiers</a></li>
-        </ul>
-    </nav>
+<nav>
+<ul class="navbar">
+<li><a href="index.html">Accueil</a></li>
+<li><a href="histoires.html">Les Histoires</a></li>
+<li><a href="coldscases.html" class="active">Les Colds Cases</a></li>
+<li><a href="updates.html">Les Updates</a></li>
+<li><a href="theories.html">Les Théories</a></li>
+<li><a href="top-dossiers.html">Top Dossiers</a></li>
+</ul>
+</nav>
 
-    <main class="content-section">
-        <div id="navigation-context">
-            <h2>Affaires Non Résolues (Cold Cases)</h2>
-            <p>Explorez les dossiers en suspens. Plongez dans les indices disponibles, accédez aux théories de la communauté et suivez les mises à jour.</p>
-        </div>
-        
-        <div id="coldcases-container"></div>
-    </main>
+<main class="content-section">
+<div id="navigation-context">
+<h2>Affaires Non Résolues (Cold Cases)</h2>
+<p>Explorez les dossiers en suspens. Plongez dans les indices disponibles, accédez aux théories de la communauté et suivez les mises à jour.</p>
+</div>
 
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
+<div id="coldcases-container"></div>
+</main>
 
-    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
+<footer>
+<p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+</footer>
 
-    <script>
-        const container = document.getElementById('coldcases-container');
-        const navContext = document.getElementById('navigation-context');
-        const urlParams = new URLSearchParams(window.location.search);
-        const viewId = urlParams.get('id');
+<script>
+const container = document.getElementById('coldcases-container');
+const navContext = document.getElementById('navigation-context');
+const urlParams = new URLSearchParams(window.location.search);
+const viewId = urlParams.get('id');
 
-        if (viewId) {
-            fetch(`http://127.0.0.1:5000/api/coldcases/${viewId}`)
-                .then(res => {
-                    if(!res.ok) throw new Error("Dossier introuvable");
-                    return res.json();
-                })
-                .then(caseData => {
-                    navContext.innerHTML = `
-                        <h2>${caseData.title}</h2>
-                        <p style="color:#e67e22; font-weight:bold;">Statut du dossier : ${caseData.status || 'Non résolu'}</p>
-                    `;
-                    container.innerHTML = `
-                        <div class="story-card" style="padding:30px; cursor:default; max-width:900px; margin:0 auto;">
-                            <span class="case-tag">Dossier #${caseData.id}</span>
-                            <p style="line-height:1.8; white-space:pre-wrap; margin-top:20px; font-size:1.05rem;">${caseData.content}</p>
-                            <div style="margin-top:30px; display:flex; gap:15px;">
-                                <a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; text-align:center; padding:10px 20px;">Consulter les Théories</a>
-                                <a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; text-align:center; padding:10px 20px; background:#141416; border:1px solid #444;">Suivre les Updates</a>
-                            </div>
-                        </div>
-                    `;
-                })
-                .catch(err => {
-                    container.innerHTML = `<p style="color:#c0392b; font-weight:bold;">${err.message}</p>`;
-                });
-        } else {
-            fetch('http://127.0.0.1:5000/api/coldcases')
-                .then(res => res.json())
-                .then(data => {
-                    container.innerHTML = '';
-                    if(data.length === 0) {
-                        container.innerHTML = '<p style="color:#666;">Aucun dossier en cours d\'analyse pour le moment.</p>';
-                        return;
-                    }
-                    data.forEach(caseData => {
-                        const article = document.createElement('div');
-                        article.style.marginBottom = '25px';
-                        article.innerHTML = `
-                            <div class="story-card" style="cursor:default; padding:25px; border-left:4px solid #c0392b;">
-                                <span class="case-tag" style="background:#c0392b; color:#fff; padding:3px 8px; border-radius:3px; font-size:0.8rem; font-weight:bold;">Dossier #${caseData.id}</span>
-                                <h3 style="margin:15px 0 10px 0; color:#fff; font-size:1.4rem;">${caseData.title}</h3>
-                                <p style="color:#bbb; line-height:1.6; margin-bottom:20px;">${caseData.summary}</p>
-                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
-                                    <span style="color:#e67e22; font-weight:bold; font-size:0.95rem;">Statut : ${caseData.status || 'En suspens'}</span>
-                                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
-                                        <a href="coldscases.html?id=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Lire l'histoire complète</a>
-                                        <a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Théories</a>
-                                        <a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Updates</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        container.appendChild(article);
-                    });
-                })
-                .catch(err => console.error("Erreur globale :", err));
-        }
+// Handles conditional interface loading according to url parameters
+if (viewId) {
+fetch(`http://127.0.0.1:5000/api/coldcases/${viewId}`)
+.then(res => res.json())
+.then(data => {
+if (data.status === 'success') {
+const caseData = data.cold_case;
 
-        const currentUser = localStorage.getItem('username');
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser && authContainer) {
-            authContainer.innerHTML = `
-                <a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
-            `;
-        }
-    </script>
+navContext.innerHTML = `
+<a href="coldscases.html" style="color:var(--accent-color, #c0392b); text-decoration:none; font-weight:bold; display:inline-block; margin-bottom:15px;">← Retour à la liste des affaires</a>
+<h2>Dossier Complet</h2>
+`;
+
+container.innerHTML = `
+<article class="story-card" style="padding:30px;">
+<img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:500px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
+<h3 style="font-size:2.2rem; margin-bottom:15px;">${caseData.title}</h3>
+<p style="font-weight:bold; color:#aaa; font-size:1.2rem; margin-bottom:25px; border-left:4px solid var(--accent-color, #c0392b); padding-left:15px;">${caseData.summary}</p>
+<p style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px;">${caseData.content}</p>
+
+<div style="display:flex; flex-wrap:wrap; gap:15px; border-top:1px solid #333; padding-top:25px;">
+<a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto;">Accéder aux Théories</a>
+<a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto;">Accéder aux Updates</a>
+</div>
+</article>
+`;
+} else {
+container.innerHTML = `<p style="color:var(--accent-color, #c0392b);">Affaire introuvable.</p>`;
+}
+})
+.catch(err => console.error("Erreur de récupération :", err));
+} else {
+fetch('http://127.0.0.1:5000/api/coldcases')
+.then(res => res.json())
+.then(data => {
+container.innerHTML = '';
+data.cold_cases.forEach(caseData => {
+const article = document.createElement('article');
+article.className = 'story-card';
+article.style.marginBottom = '40px';
+
+article.innerHTML = `
+<div style="display:flex; flex-direction:column; gap:15px;">
+<img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px;">
+<div>
+<h3 style="font-size:1.6rem; margin-bottom:10px; cursor:pointer;" onclick="window.location.href='coldscases.html?id=${caseData.id}'">${caseData.title}</h3>
+<p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${caseData.summary}</p>
+
+<div style="display:flex; flex-wrap:wrap; gap:10px;">
+<a href="coldscases.html?id=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Lire l'histoire complète</a>
+<a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Théories</a>
+<a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Updates</a>
+</div>
+</div>
+</div>
+`;
+container.appendChild(article);
+});
+})
+.catch(err => console.error("Erreur globale :", err));
+}
+
+// Check authentication state for navbar buttons synchronization
+const currentUser = localStorage.getItem('username');
+const authContainer = document.getElementById('auth-buttons-container');
+if (currentUser && authContainer) {
+authContainer.innerHTML = `
+<a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
+`;
+}
+</script>
 </body>
 </html>
