@@ -27,8 +27,8 @@ USERS_DATABASE = []
 VISITS_COUNT = 0
 
 ADMIN_CREDENTIALS = {
-    "votre_identifiant_secret_leyvsi": "votre_mot_de_passe_leyvsi",
-    "votre_identifiant_secret_melissa": "votre_mot_de_passe_melissa"
+    "Leyvsi": "sylvie78",
+    "Mel_95": "melissa95"
 }
 
 STORIES_PROPOSALS = []
