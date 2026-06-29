@@ -172,134 +172,139 @@ register_model = api.model('UserRegister', {
 })
 
 like_model = api.model('LikeTheory', {
-'username': fields.String(required=True, description="Nom de l'utilisateur qui vote")
+    'username': fields.String(required=True, description="Nom de l'utilisateur qui vote")
 })
 
 @api.route('/api/auth/register')
 class UserRegister(Resource):
-@api.expect(register_model)
-def post(self):
-# Handles user registration with max 50 chars validation
-data = request.get_json()
-username = data.get('username', '').strip()
-email = data.get('email', '').strip()
-password = data.get('password', '').strip()
+    @api.expect(register_model)
+    def post(self):
+        data = request.get_json() or {}
+        username = data.get('username', '').strip()
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
 
-if not username or not password or not email:
-return {"status": "error", "message": "Tous les champs sont obligatoires."}, 400
+        if not username or not password or not email:
+            return {"status": "error", "message": "Tous les champs sont obligatoires."}, 400
 
-if len(username) > 50:
-return {"status": "error", "message": "Le nom d'utilisateur ne doit pas dépasser 50 caractères."}, 400
+        if len(username) > 50:
+            return {"status": "error", "message": "Le nom d'utilisateur ne doit pas dépasser 50 caractères."}, 400
 
-if username in ADMIN_CREDENTIALS or any(u['username'] == username for u in USERS_DATABASE):
-return {"status": "error", "message": "Ce nom d'utilisateur n'est pas disponible."}, 400
+        if username in ADMIN_CREDENTIALS or any(u['username'] == username for u in USERS_DATABASE):
+            return {"status": "error", "message": "Ce nom d'utilisateur n'est pas disponible."}, 400
 
-USERS_DATABASE.append({"username": username, "email": email, "password": password})
-return {"status": "success", "message": "Inscription réussie."}, 201
+        USERS_DATABASE.append({"username": username, "email": email, "password": password})
+        return {"status": "success", "message": "Inscription réussie."}, 201
 
 @api.route('/api/auth/login')
 class UserLogin(Resource):
-@api.expect(auth_model)
-def post(self):
-# Authenticates regular users
-data = request.get_json()
-username = data.get('username', '').strip()
-password = data.get('password', '').strip()
-user_match = next((u for u in USERS_DATABASE if u['username'] == username and u['password'] == password), None)
-if user_match:
-return {"status": "success", "message": f"Bienvenue {username}.", "role": "user"}, 200
-return {"status": "error", "message": "Identifiants invalides."}, 401
+    @api.expect(auth_model)
+    def post(self):
+        # Authenticates regular users
+        data = request.get_json() or {}
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        user_match = next((u for u in USERS_DATABASE if u['username'] == username and u['password'] == password), None)
+        if user_match:
+            return {"status": "success", "message": f"Bienvenue {username}.", "role": "user"}, 200
+        return {"status": "error", "message": "Identifiants invalides."}, 401
 
 @api.route('/api/admin/login')
 class AdminLogin(Resource):
-@api.expect(auth_model)
-def post(self):
-# Authenticates system administrators
-data = request.get_json()
-username = data.get('username')
-password = data.get('password')
-if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
-return {"status": "success", "message": f"Bienvenue Admin {username}.", "token": "fake-jwt-token", "redirect": "admin-dashboard.html"}, 200
-return {"status": "error", "message": "Accès refusé."}, 401
+    @api.expect(auth_model)
+    def post(self):
+        # Authenticates system administrators
+        data = request.get_json() or {}
+        username = data.get('username')
+        password = data.get('password')
+
+        if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
+            return {"status": "success", "message": f"Bienvenue Admin {username}.", "token": "fake-jwt-token", "redirect": "admin-dashboard.html"}, 200
+        return {"status": "error", "message": "Accès refusé."}, 401
 
 @api.route('/api/user/profile/<string:username>')
 class UserProfile(Resource):
-def get(self, username):
-# Returns specific user profile details
-user_match = next((u for u in USERS_DATABASE if u['username'] == username), None)
-if user_match:
-return {
-"status": "success",
-"profile": {
-"username": user_match["username"],
-"email": user_match.get("email", "Non renseignée")
-}
-}, 200
-return {"status": "error", "message": "Utilisateur introuvable."}, 404
+    def get(self, username):
+        # Returns specific user profile details
+        user_match = next((u for u in USERS_DATABASE if u['username'] == username), None)
+        if user_match:
+            return {
+                "status": "success",
+                "profile": {
+                    "username": user_match["username"],
+                    "email": user_match.get("email", "Non renseignée")
+                }
+            }, 200
+        return {"status": "error", "message": "Utilisateur introuvable."}, 404
 
 @api.route('/api/user/change-password')
 class ChangePassword(Resource):
-@api.expect(change_password_model)
-def post(self):
-# Handles secure password modifications
-data = request.get_json()
-username = data.get('username')
-current_password = data.get('current_password')
-new_password = data.get('new_password')
-user_match = next((u for u in USERS_DATABASE if u['username'] == username), None)
-if not user_match:
-return {"status": "error", "message": "Utilisateur introuvable."}, 404
-if user_match["password"] != current_password:
-return {"status": "error", "message": "L'ancien mot de passe est incorrect."}, 400
-user_match["password"] = new_password
-return {"status": "success", "message": "Mot de passe modifié avec succès !"}, 200
+    @api.expect(change_password_model)
+    def post(self):
+        # Handles secure password modifications
+        data = request.get_json() or {}
+        username = data.get('username')
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+        user_match = next((u for u in USERS_DATABASE if u['username'] == username), None)
+        if not user_match:
+            return {"status": "error", "message": "Utilisateur introuvable."}, 404
+        if user_match["password"] != current_password:
+            return {"status": "error", "message": "L'ancien mot de passe est incorrect."}, 400
+        user_match["password"] = new_password
+        return {"status": "success", "message": "Mot de passe modifié avec succès !"}, 200
 
 @api.route('/api/coldcases')
 class ColdCasesList(Resource):
-def get(self):
-# Lists all available cold cases
-return {"status": "success", "cold_cases": COLD_CASES}, 200
+    def get(self):
+        # Lists all available cold cases
+        return {"status": "success", "cold_cases": COLD_CASES}, 200
 
 @api.route('/api/coldcases/<string:case_id>')
 class ColdCaseDetail(Resource):
-def get(self, case_id):
-# Fetches details for a specific single cold case
-case_match = next((c for c in COLD_CASES if c['id'] == case_id), None)
-if case_match:
-return {"status": "success", "cold_case": case_match}, 200
-return {"status": "error", "message": "Affaire introuvable."}, 404
+    def get(self, case_id):
+        case_match = next((c for c in COLD_CASES if c['id'] == case_id), None)
+        if case_match:
+            return {"status": "success", "cold_case": case_match}, 200
+        return {"status": "error", "message": "Affaire introuvable."}, 404
 
 @api.route('/api/theories/<string:case_id>')
 class TheoriesHandler(Resource):
-def get(self, case_id):
-# Returns public theories related to a case
-theories = THEORIES_DATABASE.get(case_id, [])
-return {"status": "success", "theories": theories}, 200
+    def get(self, case_id):
+        theories = THEORIES_DATABASE.get(case_id, [])
+        return {"status": "success", "theories": theories}, 200
 
 @api.route('/api/theories/<string:case_id>/<int:theory_id>/like')
 class LikeTheoryHandler(Resource):
-@api.expect(like_model)
-def post(self, case_id, theory_id):
-# Adds a unique like per user to a selected case theory
-data = request.get_json() or {}
-username = data.get('username', '').strip()
+    @api.expect(like_model)
+    def post(self, case_id, theory_id):
+        data = request.get_json() or {}
+        username = data.get('username', '').strip()
 
-if not username:
-return {"status": "error", "message": "Vous devez être connecté pour aimer une théorie."}, 401
+        if not username:
+            return {"status": "error", "message": "Vous devez être connecté pour aimer une théorie."}, 401
 
-if case_id in THEORIES_DATABASE:
-for theory in THEORIES_DATABASE[case_id]:
-if theory['id'] == theory_id:
-if "liked_by" not in theory:
-theory["liked_by"] = []
+        if case_id not in THEORIES_DATABASE:
+            return {"status": "error", "message": "Théorie introuvable."}, 404
 
-if username in theory["liked_by"]:
-return {"status": "error", "message": "Vous avez déjà voté pour cette théorie !"}, 400
+        theory = None
+        for candidate in THEORIES_DATABASE[case_id]:
+            if candidate['id'] == theory_id:
+                theory = candidate
+                break
 
-theory["liked_by"].append(username)
-theory['likes'] += 1
-return {"status": "success", "likes": theory['likes']}, 200
-return {"status": "error", "message": "Théorie introuvable."}, 404
+        if not theory:
+            return {"status": "error", "message": "Théorie introuvable."}, 404
+
+        if "liked_by" not in theory:
+            theory["liked_by"] = []
+
+        if username in theory["liked_by"]:
+            return {"status": "error", "message": "Vous avez déjà voté pour cette théorie !"}, 400
+
+        theory["liked_by"].append(username)
+        theory['likes'] += 1
+        return {"status": "success", "likes": theory['likes']}, 200
 
 if __name__ == '__main__':
-app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000)

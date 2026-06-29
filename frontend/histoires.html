@@ -8,17 +8,10 @@
 </head>
 <body>
 
-    <div class="video-container">
-        <video autoplay loop muted playsinline id="bg-video">
-            <source src="background.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
-
-    <header>
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
         <h1>Les Petits Enquêteurs</h1>
         <div id="auth-buttons-container">
-            <a href="connexion.html" class="account-button">Connexion / Inscription</a>
+            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
         </div>
     </header>
 
@@ -34,150 +27,203 @@
     </nav>
 
     <main class="content-section">
-        <h2>Affaires Criminelles Résolues</h2>
-        <p class="intro-text">Plongez au cœur des rapports complets de la police. Découvrez les interrogatoires, témoignages des familles, des avocats et des coupables.</p>
-
-        <div class="story-grid" id="stories-container"></div>
-
-        <div id="story-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; overflow-y:auto; padding:40px 20px;">
-            <div style="max-width:850px; margin:0 auto; background:#0f0f10; border:1px solid #c0392b; padding:35px; border-radius:8px; color:#fff; position:relative;">
-                <span onclick="closeModal()" style="position:absolute; top:15px; right:20px; font-size:2.5rem; cursor:pointer; color:#c0392b;">&times;</span>
-                
-                <h2 id="modal-title" style="border:none; margin-bottom:20px; color:#e67e22; font-size:1.8rem;"></h2>
-                
-                <div style="margin-bottom:25px;">
-                    <img id="modal-image" src="" alt="Photographie officielle" style="width:100%; max-height:450px; object-fit:cover; border-radius:8px; border:1px solid #333;">
-                    <p style="margin-top:10px; font-size:0.9rem; color:#888; text-align:center;">Pièce à conviction officielle rattachée au dossier d'instruction.</p>
-                </div>
-
-                <div class="story-card" style="background:#141416; padding:25px; border:1px solid #222; border-radius:6px; margin-bottom:30px;">
-                    <h4 style="margin-top:0; color:#c0392b; border-bottom:1px solid #333; padding-bottom:8px; font-size:1.1rem;">Rapport de Synthèse de la Police Judiciaire</h4>
-                    <p id="modal-content" style="line-height:1.7; color:#eceff1; font-size:1.05rem; white-space:pre-wrap;"></p>
-                </div>
-
-                <div style="border-top:1px solid #222; padding-top:25px;">
-                    <h3 style="color:#fff; margin-bottom:15px; font-size:1.3rem;">Espace Débats & Commentaires</h3>
-                    
-                    <div id="comments-box" style="max-height:250px; overflow-y:auto; background:#09090a; padding:15px; border-radius:6px; border:1px solid #222; margin-bottom:20px;"></div>
-
-                    <div style="display:flex; flex-direction:column; gap:12px;">
-                        <input type="hidden" id="comment-user">
-                        <textarea id="comment-text" rows="3" placeholder="Ajoutez votre analyse technique ou votre avis constructif..." style="width:100%; padding:12px; background:#141416; border:1px solid #333; border-radius:4px; color:#fff; font-size:0.95rem; resize:vertical;"></textarea>
-                        <button onclick="submitComment()" class="submit-form-button" style="width:auto; align-self:flex-end; padding:10px 25px;">Publier le commentaire</button>
-                    </div>
-                </div>
-            </div>
+        <div id="navigation-context">
+            <h2>Affaires Criminelles Résolues</h2>
+            <p>Plongez au cœur des rapports complets et découvrez comment la justice et la science ont fini par éclater la vérité sur de grands dossiers récents.</p>
         </div>
+        
+        <div id="stories-container"></div>
     </main>
 
     <footer>
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
-    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
-
     <script>
-        let currentStoryId = null;
-        const currentUser = localStorage.getItem('username');
+        const container = document.getElementById('stories-container');
+        const navContext = document.getElementById('navigation-context');
+        const currentUser = localStorage.getItem('username') || 'Anonyme';
 
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser && authContainer) {
-            authContainer.innerHTML = `
-                <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
+        // Base de données : 3 vraies affaires résolues ces 10 dernières années
+        const storiesData = [
+            {
+                id: "h1",
+                title: "L'Affaire du Golden State Killer (2018)",
+                summary: "Comment l'utilisation révolutionnaire de la généalogie génétique a permis d'arrêter Joseph James DeAngelo après 40 ans de traque.",
+                image: "https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=600",
+                content: "Recherché pour 13 meurtres et plus de 50 viols commis en Californie dans les années 70/80, le tueur restait insaisissable. En 2018, les enquêteurs ont téléversé le profil ADN du suspect sur un site public de généalogie (GEDmatch). En reconstituant l'arbre généalogique, ils ont ciblé Joseph James DeAngelo, un ancien policier de 72 ans vivant paisiblement en banlieue.",
+                testimonies: [
+                    { role: "Inspecteur Paul Holes", text: "« Quand nous avons vu les correspondances familiales converger vers un ancien flic, tout s'est imbriqué. C'était le moment le plus intense de ma carrière. »" },
+                    { role: "Procureure Anne Marie Schubert", text: "« La science génétique a rendu la dignité aux victimes. Ce verdict prouve qu'il n'est jamais trop tard pour que justice soit faite. »" },
+                    { role: "Avocat de la défense", text: "« Mon client a choisi de plaider coupable pour éviter la peine de mort et mettre fin aux souffrances des familles lors d'un procès prolongé. »" }
+                ]
+            },
+            {
+                id: "h2",
+                title: "Les Meurtres de la Famille Watts (2018)",
+                summary: "Derrière les sourires de façade des réseaux sociaux, l'effroyable vérité sur la disparition de Shanann Watts et ses enfants.",
+                image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600",
+                content: "En août 2018, Chris Watts apparaît devant les caméras de télévision locales du Colorado, suppliant pour le retour de sa femme enceinte Shanann et de leurs deux filles. Très vite, son comportement suspect et l'analyse de ses messages révèlent une liaison extra-conjugale. Confronté aux preuves récoltées par le FBI, il avoue avoir étranglé sa famille avant de cacher les corps sur un site pétrolier.",
+                testimonies: [
+                    { role: "Agent du FBI au polygraphe", text: "« Ses micro-expressions et ses récits changeants montraient clairement qu'il feignait l'inquiétude. Le test du détecteur de mensonges a brisé sa façade. »" },
+                    { role: "Mère de Shanann (Victime)", text: "« Nous lui faisions totalement confiance. Il a détruit notre monde en une nuit par pure lâcheté. »" },
+                    { role: "Le Juge Michael Kopcow", text: "« C'est sans aucun doute l'affaire la plus inhumaine et terrifiante que j'aie eue à juger. Trois peines de prison à perpétuité consécutives étaient la seule option. »" }
+                ]
+            },
+            {
+                id: "h3",
+                title: "L'Affaire Michelle Carter (2017)",
+                summary: "Un précédent judiciaire historique où de simples SMS d'incitation ont conduit à une condamnation pour homicide involontaire.",
+                image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600",
+                content: "En 2014, le jeune Conrad Roy met fin à ses jours dans son camion. L'examen de son téléphone révèle une vérité troublante : sa petite amie, Michelle Carter, l'a activement poussé par SMS à passer à l'acte, lui disant même de 'remonter dans le véhicule' alors qu'il hésitait. En 2017, le tribunal l'a reconnue coupable d'homicide involontaire, une première juridique majeure.",
+                testimonies: [
+                    { role: "Chef de la police locale", text: "« Les transcriptions des messages étaient glaçantes. Elle a exercé une manipulation psychologique constante à distance. »" },
+                    { role: "Avocat de Michelle Carter", text: "« Les mots ne peuvent être assimilés à une arme physique. Ce jugement restreint dangereusement la liberté d'expression et crée un précédent flou. »" },
+                    { role: "Père de Conrad Roy", text: "« Notre fils avait besoin d'aide, pas d'une personne qui l'encourageait à mourir pour attirer l'attention sur elle. »" }
+                ]
+            }
+        ];
+
+        // Rendu de la liste principale
+        function renderListView() {
+            navContext.innerHTML = `
+                <h2>Affaires Criminelles Résolues</h2>
+                <p>Plongez au cœur des rapports complets et découvrez comment la justice et la science ont fini par éclater la vérité sur de grands dossiers récents.</p>
             `;
-            document.getElementById('comment-user').value = currentUser;
-        }
+            
+            container.innerHTML = '';
+            storiesData.forEach(story => {
+                const caseLikes = JSON.parse(localStorage.getItem(`likes_resolved_${story.id}`)) || [];
+                const hasLiked = caseLikes.includes(currentUser);
 
-        function loadStories() {
-            fetch('http://127.0.0.1:5000/api/stories')
-                .then(res => res.json())
-                .then(data => {
-                    const container = document.getElementById('stories-container');
-                    container.innerHTML = '';
-                    data.forEach(story => {
-                        const article = document.createElement('article');
-                        article.className = 'story-card';
-                        article.onclick = () => openModal(story.id);
-                        
-                        article.innerHTML = `
-                            <span class="case-tag">${story.category || 'Récit'}</span>
-                            <div class="title"><h3>${story.title}</h3></div>
-                            <p class="summary">${story.summary}</p>
-                        `;
-                        container.appendChild(article);
-                    });
-                })
-                .catch(err => console.error("Erreur d'acquisition des récits :", err));
-        }
+                const article = document.createElement('article');
+                article.className = 'story-card';
+                article.style.marginBottom = '40px';
 
-        function openModal(id) {
-            currentStoryId = id;
-            fetch(`http://127.0.0.1:5000/api/stories/${id}`)
-                .then(res => res.json())
-                .then(story => {
-                    document.getElementById('modal-title').textContent = story.title;
-                    document.getElementById('modal-content').textContent = story.content;
-                    
-                    const img = document.getElementById('modal-image');
-                    if(story.image_url) {
-                        img.src = story.image_url;
-                        img.style.display = 'block';
-                    } else {
-                        img.style.display = 'none';
-                    }
-
-                    loadComments();
-                    document.getElementById('story-modal').style.display = 'block';
-                    document.body.style.overflow = 'hidden';
-                });
-        }
-
-        function closeModal() {
-            document.getElementById('story-modal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        function loadComments() {
-            fetch(`http://127.0.0.1:5000/api/comments/${currentStoryId}`)
-                .then(res => res.json())
-                .then(data => {
-                    const box = document.getElementById('comments-box');
-                    box.innerHTML = '';
-                    if(!data.comments || data.comments.length === 0) {
-                        box.innerHTML = '<p style="color:#666; font-style:italic;">Aucun commentaire sur cette affaire. Ouvrez le débat !</p>';
-                        return;
-                    }
-                    data.comments.forEach(c => {
-                        const p = document.createElement('p');
-                        p.style.marginBottom = '14px';
-                        p.style.fontSize = '0.95rem';
-                        p.style.borderBottom = '1px solid #1c1c1f';
-                        p.style.paddingBottom = '8px';
-                        p.innerHTML = `<strong style=\"color:#e67e22;\">${c.username}</strong> : <span style=\"color:#ddd;\">${c.text}</span>`;
-                        box.appendChild(p);
-                    });
-                    box.scrollTop = box.scrollHeight;
-                });
-        }
-
-        function submitComment() {
-            const user = document.getElementById('comment-user').value.trim() || 'Anonyme';
-            const text = document.getElementById('comment-text').value.trim();
-            if(!text) return;
-
-            fetch(`http://127.0.0.1:5000/api/comments/${currentStoryId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: user, text: text })
-            })
-            .then(res => res.json())
-            .then(() => {
-                document.getElementById('comment-text').value = '';
-                loadComments();
+                article.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:15px; width: 100%;">
+                        <img src="${story.image}" alt="Photo de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="renderDetailView('${story.id}')">
+                        <div style="text-align: left; width: 100%;">
+                            <h3 style="font-size:1.6rem; margin-bottom:10px; cursor:pointer; color: #f39c12;" onclick="renderDetailView('${story.id}')">${story.title}</h3>
+                            <p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${story.summary}</p>
+                            
+                            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:15px;">
+                                <button onclick="renderDetailView('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Voir l'analyse complète & témoignages</button>
+                                <button onclick="toggleLike('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; background-color: ${hasLiked ? '#c0392b' : '#333'};">
+                                    ❤️ ${caseLikes.length} ${hasLiked ? 'Aimé' : 'Like'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(article);
             });
         }
 
-        loadStories();
+        // Rendu détaillé avec espace commentaires dynamique
+        function renderDetailView(id) {
+            const story = storiesData.find(s => s.id === id);
+            if (!story) return;
+
+            navContext.innerHTML = `
+                <button onclick="renderListView()" class="submit-form-button" style="width:auto; display:inline-block; margin-bottom:15px; padding: 8px 15px; font-size: 0.9rem; background:#444;">← Retour aux dossiers résolus</button>
+                <h2>Analyse de Pièces à Conviction</h2>
+            `;
+            
+            let testimoniesHTML = "";
+            story.testimonies.forEach(t => {
+                testimoniesHTML += `
+                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-left: 3px solid #e67e22; margin-bottom: 12px; border-radius: 4px;">
+                        <span style="display:block; font-size:0.85rem; color:#e67e22; font-weight:bold; margin-bottom:5px;">${t.role} :</span>
+                        <p style="margin:0; font-style:italic; font-size:0.95rem; line-height:1.4; color:#ddd;">${t.text}</p>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <article class="story-card" style="padding:30px; text-align: left; width: 100%; box-sizing: border-box;">
+                    <img src="${story.image}" alt="Photo de l'affaire" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
+                    <h3 style="font-size:2.2rem; margin-bottom:15px; color:#f39c12;">${story.title}</h3>
+                    
+                    <p style="font-weight:bold; color:#aaa; font-size:1.2rem; margin-bottom:25px; border-left:4px solid #e67e22; padding-left:15px;">${story.summary}</p>
+                    
+                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:10px;">Compte-rendu de l'Instruction</h4>
+                    <p style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${story.content}</p>
+                    
+                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions Judiciaires & Auditions</h4>
+                    <div style="margin-bottom: 40px;">
+                        ${testimoniesHTML}
+                    </div>
+
+                    <div style="border-top: 1px solid #333; padding-top: 30px; margin-top: 40px;">
+                        <h4 style="color:#fff; font-size:1.4rem; margin-bottom:20px;">Espace de Discussion de la Communauté</h4>
+                        
+                        <div id="comments-list-${story.id}" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 6px;"></div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="comment-input-${story.id}" placeholder="Ajouter une analyse ou un avis public..." style="flex: 1; padding: 12px; background: #151518; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                            <button onclick="postComment('${story.id}')" class="submit-form-button" style="width: auto; margin: 0; padding: 0 25px;">Envoyer</button>
+                        </div>
+                    </div>
+                </article>
+            `;
+            
+            loadComments(story.id);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Système de Likes Unique par Utilisateur
+        function toggleLike(storyId) {
+            let caseLikes = JSON.parse(localStorage.getItem(`likes_resolved_${storyId}`)) || [];
+            if (caseLikes.includes(currentUser)) {
+                caseLikes = caseLikes.filter(u => u !== currentUser); // Enlever le like si déjà mis
+            } else {
+                caseLikes.push(currentUser); // Ajouter le like unique
+            }
+            localStorage.setItem(`likes_resolved_${storyId}`, JSON.stringify(caseLikes));
+            renderListView();
+        }
+
+        // Gestion Locale des Commentaires
+        function loadComments(storyId) {
+            const commentsBox = document.getElementById(`comments-list-${storyId}`);
+            const comments = JSON.parse(localStorage.getItem(`comments_resolved_${storyId}`)) || [];
+            commentsBox.innerHTML = '';
+            
+            if (comments.length === 0) {
+                commentsBox.innerHTML = '<p style="color:#666; font-style:italic;">Aucun avis enregistré. Initiez la discussion !</p>';
+                return;
+            }
+
+            comments.forEach(c => {
+                const div = document.createElement('div');
+                div.style.marginBottom = '12px';
+                div.style.borderBottom = '1px solid #222';
+                div.style.paddingBottom = '8px';
+                div.innerHTML = `<strong style="color:#f39c12;">${c.author}</strong> <span style="font-size:0.8rem; color:#666; margin-left:10px;">${c.date}</span><p style="margin:5px 0 0 0; color:#bbb;">${c.text}</p>`;
+                commentsBox.appendChild(div);
+            });
+            commentsBox.scrollTop = commentsBox.scrollHeight;
+        }
+
+        function postComment(storyId) {
+            const input = document.getElementById(`comment-input-${storyId}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const comments = JSON.parse(localStorage.getItem(`comments_resolved_${storyId}`)) || [];
+            comments.push({
+                author: currentUser,
+                text: text,
+                date: new Date().toLocaleString('fr-FR')
+            });
+            
+            localStorage.setItem(`comments_resolved_${storyId}`, JSON.stringify(comments));
+            input.value = '';
+            loadComments(storyId);
+        }
+
+        renderListView();
     </script>
 </body>
 </html>

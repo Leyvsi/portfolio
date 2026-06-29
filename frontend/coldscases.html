@@ -1,120 +1,175 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Les Petits Enquêteurs - Cold Cases</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Petits Enquêteurs - Cold Cases</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
-<h1>Les Petits Enquêteurs</h1>
-<div id="auth-buttons-container">
-<a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
-</div>
-</header>
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+        <h1>Les Petits Enquêteurs</h1>
+        <div id="auth-buttons-container">
+            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
+        </div>
+    </header>
 
-<nav>
-<ul class="navbar">
-<li><a href="index.html">Accueil</a></li>
-<li><a href="histoires.html">Les Histoires</a></li>
-<li><a href="coldscases.html" class="active">Les Colds Cases</a></li>
-<li><a href="updates.html">Les Updates</a></li>
-<li><a href="theories.html">Les Théories</a></li>
-<li><a href="top-dossiers.html">Top Dossiers</a></li>
-</ul>
-</nav>
+    <nav>
+        <ul class="navbar">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="histoires.html">Les Histoires</a></li>
+            <li><a href="coldscases.html" class="active">Les Colds Cases</a></li>
+            <li><a href="updates.html">Les Updates</a></li>
+            <li><a href="theories.html">Les Théories</a></li>
+            <li><a href="top-dossiers.html">Top Dossiers</a></li>
+        </ul>
+    </nav>
 
-<main class="content-section">
-<div id="navigation-context">
-<h2>Affaires Non Résolues (Cold Cases)</h2>
-<p>Explorez les dossiers en suspens. Plongez dans les indices disponibles, accédez aux théories de la communauté et suivez les mises à jour.</p>
-</div>
+    <main class="content-section">
+        <div id="navigation-context">
+            <h2>Affaires Non Résolues (Cold Cases)</h2>
+            <p>Explorez les dossiers en suspens. Plongez dans les indices disponibles, accédez aux théories de la communauté et suivez les mises à jour.</p>
+        </div>
+        
+        <div id="coldcases-container"></div>
+    </main>
 
-<div id="coldcases-container"></div>
-</main>
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+    </footer>
 
-<footer>
-<p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-</footer>
+    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
 
-<script>
-const container = document.getElementById('coldcases-container');
-const navContext = document.getElementById('navigation-context');
-const urlParams = new URLSearchParams(window.location.search);
-const viewId = urlParams.get('id');
+    <script>
+        const container = document.getElementById('coldcases-container');
+        const navContext = document.getElementById('navigation-context');
 
-// Handles conditional interface loading according to url parameters
-if (viewId) {
-fetch(`http://127.0.0.1:5000/api/coldcases/${viewId}`)
-.then(res => res.json())
-.then(data => {
-if (data.status === 'success') {
-const caseData = data.cold_case;
+        // Base de données contenant les 3 affaires
+        const coldCasesData = [
+            {
+                id: "cc1",
+                title: "Le Mystère d'Anthonioz : Les Empreintes de la Nuit",
+                summary: "Une disparition inexpliquée lors d'une nuit de tempête, ne laissant que des traces de pas interrompues au milieu de nulle part.",
+                image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=600",
+                content: "Le 14 novembre, la jeune Léa d'Anthonioz s'est volatilisée. Les enquêteurs n'ont retrouvé que sa voiture, warnings allumés, au bord d'une route isolée. Des empreintes de pas s'éloignent du véhicule sur 20 mètres dans la boue... avant de s'arrêter net, comme si elle s'était envolée sans laisser la moindre trace supplémentaire.",
+                testimonies: [
+                    { role: "Gendarme divisionnaire", text: "« Les chiens de piste ont perdu l'odeur exactement là où les traces s'arrêtent. C'est du jamais vu. »" },
+                    { role: "Frère de la victime", text: "« Elle m'a appelé à 23h04, terrifiée, en disant que quelqu'un coupait ses phares derrière elle. Puis plus rien. »" }
+                ]
+            },
+            {
+                id: "cc2",
+                title: "L'Inconnue de la Plage de Noirval",
+                summary: "Retrouvée sur le sable sans aucune pièce d'identité, personne ne sait qui elle est ni comment elle est arrivée là.",
+                image: "https://images.unsplash.com/photo-1475113548554-5a36f1f523d6?q=80&w=600",
+                content: "Une mystérieuse femme vêtue d'un manteau d'époque a été découverte inanimée au petit matin sur les galets de Noirval. Aucun signalement ne correspond, ses étiquettes de vêtements ont été soigneusement découpées, et aucun échantillon d'ADN ne concorde avec les fichiers internationaux.",
+                testimonies: [
+                    { role: "Médecin légiste", text: "« Aucune trace de violence, aucune substance suspecte. Son cœur s'est simplement arrêté de battre. »" },
+                    { role: "Gardien du phare", text: "« J'ai vu une lueur étrange près des rochers aux alentours de 3 heures du matin, comme des signaux lumineux. »" }
+                ]
+            },
+            {
+                id: "cc3",
+                title: "Le Secret du Manoir de l'Ombre",
+                summary: "Quatre membres d'une même famille se sont volatilisés pendant un dîner, laissant leurs assiettes encore pleines.",
+                image: "https://images.unsplash.com/photo-1513438205128-16af16280739?q=80&w=600",
+                content: "En octobre dernier, la demeure des Belmont est devenue le théâtre d'une énigme absolue. La table était dressée, les repas servis et encore tièdes lorsque les voisins ont alerté la police. Les téléphones, portefeuilles et voitures de la famille étaient tous sur place, mais aucune trace des résidents.",
+                testimonies: [
+                    { role: "Premier enquêteur", text: "« Il n'y a aucun signe d'effraction. Les portes étaient verrouillées de l'intérieur et les alarmes désactivées normalement. »" },
+                    { role: "Voisine directe", text: "« J'ai entendu le piano jouer une mélodie mélancolique vers 21h, puis un grand silence pesant s'est installé. »" }
+                ]
+            }
+        ];
 
-navContext.innerHTML = `
-<a href="coldscases.html" style="color:var(--accent-color, #c0392b); text-decoration:none; font-weight:bold; display:inline-block; margin-bottom:15px;">← Retour à la liste des affaires</a>
-<h2>Dossier Complet</h2>
-`;
+        // Affichage de la liste principale avec les 3 affaires
+        function renderListView() {
+            navContext.innerHTML = `
+                <h2>Affaires Non Résolues (Cold Cases)</h2>
+                <p>Explorez les dossiers en suspens. Plongez dans les indices disponibles, accédez aux théories de la communauté et suivez les mises à jour.</p>
+            `;
+            
+            container.innerHTML = '';
+            coldCasesData.forEach(caseData => {
+                const article = document.createElement('article');
+                article.className = 'story-card';
+                article.style.marginBottom = '40px';
 
-container.innerHTML = `
-<article class="story-card" style="padding:30px;">
-<img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:500px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
-<h3 style="font-size:2.2rem; margin-bottom:15px;">${caseData.title}</h3>
-<p style="font-weight:bold; color:#aaa; font-size:1.2rem; margin-bottom:25px; border-left:4px solid var(--accent-color, #c0392b); padding-left:15px;">${caseData.summary}</p>
-<p style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px;">${caseData.content}</p>
+                article.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:15px; width: 100%;">
+                        <img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="renderDetailView('${caseData.id}')">
+                        <div style="text-align: left; width: 100%;">
+                            <h3 style="font-size:1.6rem; margin-bottom:10px; cursor:pointer; color: #f39c12;" onclick="renderDetailView('${caseData.id}')">${caseData.title}</h3>
+                            <p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${caseData.summary}</p>
+                            
+                            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                                <button onclick="renderDetailView('${caseData.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Lire l'histoire complète & témoignages</button>
+                                <a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px; background-color:#e67e22;">Accéder aux Théories</a>
+                                <a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px; background-color:#2980b9;">Accéder aux Updates</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(article);
+            });
+        }
 
-<div style="display:flex; flex-wrap:wrap; gap:15px; border-top:1px solid #333; padding-top:25px;">
-<a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto;">Accéder aux Théories</a>
-<a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto;">Accéder aux Updates</a>
-</div>
-</article>
-`;
-} else {
-container.innerHTML = `<p style="color:var(--accent-color, #c0392b);">Affaire introuvable.</p>`;
-}
-})
-.catch(err => console.error("Erreur de récupération :", err));
-} else {
-fetch('http://127.0.0.1:5000/api/coldcases')
-.then(res => res.json())
-.then(data => {
-container.innerHTML = '';
-data.cold_cases.forEach(caseData => {
-const article = document.createElement('article');
-article.className = 'story-card';
-article.style.marginBottom = '40px';
+        // Affichage détaillé de l'affaire sélectionnée sur la même page
+        function renderDetailView(id) {
+            const caseData = coldCasesData.find(c => c.id === id);
+            if (!caseData) return;
 
-article.innerHTML = `
-<div style="display:flex; flex-direction:column; gap:15px;">
-<img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px;">
-<div>
-<h3 style="font-size:1.6rem; margin-bottom:10px; cursor:pointer;" onclick="window.location.href='coldscases.html?id=${caseData.id}'">${caseData.title}</h3>
-<p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${caseData.summary}</p>
+            navContext.innerHTML = `
+                <button onclick="renderListView()" class="submit-form-button" style="width:auto; display:inline-block; margin-bottom:15px; padding: 8px 15px; font-size: 0.9rem; background:#444;">← Retour à la liste des affaires</button>
+                <h2>Dossier d'Enquête Approfondi</h2>
+            `;
+            
+            let testimoniesHTML = "";
+            caseData.testimonies.forEach(t => {
+                testimoniesHTML += `
+                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-left: 3px solid #f39c12; margin-bottom: 12px; border-radius: 4px;">
+                        <span style="display:block; font-size:0.85rem; color:#f39c12; font-weight:bold; margin-bottom:5px;">${t.role} :</span>
+                        <p style="margin:0; font-style:italic; font-size:0.95rem; line-height:1.4; color:#ddd;">${t.text}</p>
+                    </div>
+                `;
+            });
 
-<div style="display:flex; flex-wrap:wrap; gap:10px;">
-<a href="coldscases.html?id=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Lire l'histoire complète</a>
-<a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Théories</a>
-<a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Updates</a>
-</div>
-</div>
-</div>
-`;
-container.appendChild(article);
-});
-})
-.catch(err => console.error("Erreur globale :", err));
-}
+            container.innerHTML = `
+                <article class="story-card" style="padding:30px; text-align: left; width: 100%; box-sizing: border-box;">
+                    <img src="${caseData.image}" alt="Photo de l'affaire détaillée" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
+                    <h3 style="font-size:2.2rem; margin-bottom:15px; color:#e74c3c;">${caseData.title}</h3>
+                    
+                    <p style="font-weight:bold; color:#aaa; font-size:1.2rem; margin-bottom:25px; border-left:4px solid #c0392b; padding-left:15px;">${caseData.summary}</p>
+                    
+                    <h4 style="color:#f39c12; font-size:1.3rem; margin-top:30px; margin-bottom:10px;">Rapport détaillé des faits</h4>
+                    <p style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${caseData.content}</p>
+                    
+                    <h4 style="color:#f39c12; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions & Témoignages officiels</h4>
+                    <div style="margin-bottom: 40px;">
+                        ${testimoniesHTML}
+                    </div>
+                    
+                    <div style="display:flex; flex-wrap:wrap; gap:15px; border-top:1px solid #333; padding-top:25px; width: 100%;">
+                        <a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; padding: 12px 25px; background-color:#e67e22;">Rejoindre les Théories concernant cette histoire</a>
+                        <a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; padding: 12px 25px; background-color:#2980b9;">Consulter les Updates</a>
+                    </div>
+                </article>
+            `;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-// Check authentication state for navbar buttons synchronization
-const currentUser = localStorage.getItem('username');
-const authContainer = document.getElementById('auth-buttons-container');
-if (currentUser && authContainer) {
-authContainer.innerHTML = `
-<a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
-`;
-}
-</script>
+        // Chargement initial
+        renderListView();
+
+        // Affichage dynamique du compte utilisateur
+        const currentUser = localStorage.getItem('username');
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUser && authContainer) {
+            authContainer.innerHTML = `
+                <a href=\"mon-compte.html\" class=\"submit-form-button\" style=\"width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;\">👤 Mon Compte (${currentUser})</a>
+            `;
+        }
+    </script>
 </body>
 </html>
