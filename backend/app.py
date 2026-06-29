@@ -91,7 +91,7 @@ RESOLVED_STORIES = [
             "• L'expert légiste de DNA Labs International : « Nous avons utilisé des technologies d'enrichissement d'ADN qui n'existaient pas il y a dix ans. "
             "À partir d'une micro-trace prélevée sur les scellés textiles de 1979, nous avons extrait un marqueur parfait. Ce marqueur a été intégré aux "
             "bases généalogiques publiques, construisant un arbre familial qui convergeait vers un seul homme. »\n"
-            "• Le Chef de la Police de North Aurora : « Bruce Lindahl était un monstre. Il est mort in 1981 en poignardant un jeune homme, se tuant "
+            "• Le Chef de la Police de North Aurora : « Bruce Lindahl était un monstre. Il est mort en 1981 en poignardant un jeune homme, se tuant "
             "accidentellement avec son propre couteau lors de la lutte. Grâce à la résolution du dossier Kathy Halle, nous l'avons relié à au moins quatre "
             "autres meurtres commis à la fin des années 70. Il a emporté ses secrets dans la tombe, mais la science l'a démasqué. »\n\n"
             "■ LE POINT DE VUE DE LA JUSTICE\n"
@@ -148,7 +148,6 @@ class UserRegister(Resource):
     @api.response(201, 'Compte créé avec succès')
     @api.response(400, 'Nom d’utilisateur déjà existant ou invalide')
     def post(self):
-        """ Inscription d'un nouvel utilisateur classique """
         data = request.get_json()
         username = data.get('username', '').strip()
         password = data.get('password', '').strip()
@@ -168,7 +167,6 @@ class UserLogin(Resource):
     @api.response(200, 'Connexion réussie')
     @api.response(401, 'Identifiants invalides')
     def post(self):
-        """ Connexion d'un utilisateur classique """
         data = request.get_json()
         username = data.get('username', '').strip()
         password = data.get('password', '').strip()
@@ -190,7 +188,6 @@ class AdminLogin(Resource):
     @api.response(200, 'Connexion réussie')
     @api.response(401, 'Identifiants invalides')
     def post(self):
-        """ Endpoint de connexion pour l'administration """
         data = request.get_json()
         username = data.get('username')
         password = data.get('password')
@@ -199,7 +196,8 @@ class AdminLogin(Resource):
             return {
                 "status": "success", 
                 "message": f"Bienvenue, session admin activée pour {username}.",
-                "token": "fake-jwt-token-for-portfolio-demonstration"
+                "token": "fake-jwt-token-for-portfolio-demonstration",
+                "redirect": "admin-dashboard.html"
             }, 200
             
         return {"status": "error", "message": "Identifiants invalides. Accès refusé."}, 401
