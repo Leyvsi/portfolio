@@ -8,8 +8,11 @@
 </head>
 <body>
 
-    <header>
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
         <h1>Les Petits Enquêteurs</h1>
+        <div id="auth-buttons-container">
+            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Connexion / Inscription</a>
+        </div>
     </header>
 
     <nav>
@@ -42,7 +45,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const viewId = urlParams.get('id');
 
-        // SI UNE HISTOIRE EST CLIQUÉE : Affichage détaillé sur cette même page
         if (viewId) {
             fetch(`http://127.0.0.1:5000/api/coldcases/${viewId}`)
                 .then(res => res.json())
@@ -50,37 +52,30 @@
                     if (data.status === 'success') {
                         const caseData = data.cold_case;
                         
-                        // Modifie le titre du haut pour ajouter le lien de retour
                         navContext.innerHTML = `
-                            <a href="coldscases.html" style="color:#e67e22; text-decoration:none; font-weight:bold; display:inline-block; margin-bottom:15px;">← Retour à la liste des affaires</a>
+                            <a href="coldscases.html" style="color:var(--accent-color, #c0392b); text-decoration:none; font-weight:bold; display:inline-block; margin-bottom:15px;">← Retour à la liste des affaires</a>
                             <h2>Dossier Complet</h2>
                         `;
                         
-                        // Affiche l'histoire complète et détaillée
                         container.innerHTML = `
-                            <article class="story-card" style="background:#0f0f10; border:1px solid #444; border-radius:8px; padding:30px;">
+                            <article class="story-card" style="padding:30px;">
                                 <img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:500px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
-                                <h3 style="color:#c0392b; font-size:2.2rem; margin-bottom:15px;">${caseData.title}</h3>
-                                <p style="font-weight:bold; color:#aaa; font-size:1.2rem; margin-bottom:25px; border-left:4px solid #c0392b; padding-left:15px;">${caseData.summary}</p>
+                                <h3 style="font-size:2.2rem; margin-bottom:15px;">${caseData.title}</h3>
+                                <p style="font-weight:bold; color:#aaa; font-size:1.2rem; margin-bottom:25px; border-left:4px solid var(--accent-color, #c0392b); padding-left:15px;">${caseData.summary}</p>
+                                <p style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px;">${caseData.content}</p>
                                 
-                                <!-- Histoire bien détaillée -->
-                                <p style="white-space: pre-wrap; line-height:1.8; color:#fff; font-size:1.1rem; margin-bottom:35px;">${caseData.content}</p>
-                                
-                                <!-- Boutons de redirection en bas de l'histoire -->
-                                <div style="display:flex; gap:15px; border-top:1px solid #333; padding-top:25px;">
-                                    <a href="theories.html?case=${caseData.id}" class="submit-form-button" style="display:inline-block; text-decoration:none; width:auto; background:#e67e22; border-color:#e67e22;">Accéder aux Théories</a>
-                                    <a href="updates.html?case=${caseData.id}" class="submit-form-button" style="display:inline-block; text-decoration:none; width:auto; background:#2980b9; border-color:#2980b9;">Accéder aux Updates</a>
+                                <div style="display:flex; flex-wrap:wrap; gap:15px; border-top:1px solid #333; padding-top:25px;">
+                                    <a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto;">Accéder aux Théories</a>
+                                    <a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto;">Accéder aux Updates</a>
                                 </div>
                             </article>
                         `;
                     } else {
-                        container.innerHTML = `<p style="color:#c0392b;">Affaire introuvable.</p>`;
+                        container.innerHTML = `<p style="color:var(--accent-color, #c0392b);">Affaire introuvable.</p>`;
                     }
                 })
-                .catch(err => console.error("Erreur:", err));
-        } 
-        // PAR DÉFAUT : Affichage de la liste des résumés
-        else {
+                .catch(err => console.error("Erreur de récupération :", err));
+        } else {
             fetch('http://127.0.0.1:5000/api/coldcases')
                 .then(res => res.json())
                 .then(data => {
@@ -89,23 +84,18 @@
                         const article = document.createElement('article');
                         article.className = 'story-card';
                         article.style.marginBottom = '40px';
-                        article.style.background = '#0f0f10';
-                        article.style.border = '1px solid #444';
-                        article.style.borderRadius = '8px';
-                        article.style.padding = '20px';
 
                         article.innerHTML = `
                             <div style="display:flex; flex-direction:column; gap:15px;">
                                 <img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px;">
                                 <div>
-                                    <h3 style="color:#c0392b; font-size:1.6rem; margin-bottom:10px; cursor:pointer;" onclick="window.location.href='coldscases.html?id=${caseData.id}'">${caseData.title}</h3>
+                                    <h3 style="font-size:1.6rem; margin-bottom:10px; cursor:pointer;" onclick="window.location.href='coldscases.html?id=${caseData.id}'">${caseData.title}</h3>
                                     <p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${caseData.summary}</p>
                                     
-                                    <!-- Boutons sur les résumés -->
                                     <div style="display:flex; flex-wrap:wrap; gap:10px;">
-                                        <a href="coldscases.html?id=${caseData.id}" class="submit-form-button" style="display:inline-block; text-decoration:none; width:auto; background:#c0392b; border-color:#c0392b; font-size:0.9rem; padding:8px 15px;">Lire l'histoire complète</a>
-                                        <a href="theories.html?case=${caseData.id}" class="submit-form-button" style="display:inline-block; text-decoration:none; width:auto; background:#e67e22; border-color:#e67e22; font-size:0.9rem; padding:8px 15px;">Théories</a>
-                                        <a href="updates.html?case=${caseData.id}" class="submit-form-button" style="display:inline-block; text-decoration:none; width:auto; background:#2980b9; border-color:#2980b9; font-size:0.9rem; padding:8px 15px;">Updates</a>
+                                        <a href="coldscases.html?id=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Lire l'histoire complète</a>
+                                        <a href="theories.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Théories</a>
+                                        <a href="updates.html?case=${caseData.id}" class="submit-form-button" style="text-decoration:none; width:auto; font-size:0.9rem; padding:8px 15px;">Updates</a>
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +103,15 @@
                         container.appendChild(article);
                     });
                 })
-                .catch(err => console.error("Erreur de chargement des cold cases:", err));
+                .catch(err => console.error("Erreur globale :", err));
+        }
+
+        const currentUser = localStorage.getItem('username');
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUser && authContainer) {
+            authContainer.innerHTML = `
+                <a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
+            `;
         }
     </script>
 </body>

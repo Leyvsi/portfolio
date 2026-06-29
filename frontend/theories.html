@@ -8,8 +8,11 @@
 </head>
 <body>
 
-    <header>
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
         <h1>Les Petits Enquêteurs</h1>
+        <div id="auth-buttons-container">
+            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Connexion / Inscription</a>
+        </div>
     </header>
 
     <nav>
@@ -58,6 +61,7 @@
         const caseSelector = document.getElementById('case-selector');
         const theoriesList = document.getElementById('theories-list');
         const theoryForm = document.getElementById('theory-form');
+        const currentUser = localStorage.getItem('username');
 
         const urlParams = new URLSearchParams(window.location.search);
         const caseParam = urlParams.get('case');
@@ -76,18 +80,16 @@
                     }
                     data.theories.forEach(theory => {
                         const div = document.createElement('div');
-                        div.style.background = '#0f0f10';
-                        div.style.border = '1px solid #333';
+                        div.className = 'story-card';
                         div.style.padding = '20px';
-                        div.style.borderRadius = '6px';
                         div.style.marginBottom = '15px';
                         div.style.display = 'flex';
                         div.style.justifyContent = 'space-between';
                         div.style.alignItems = 'center';
 
                         div.innerHTML = `
-                            <p style="color:#fff; margin:0; padding-right:20px; line-height:1.5;">${theory.text}</p>
-                            <button onclick="likeTheory('${caseId}', ${theory.id})" style="background:#222; border:1px solid #555; color:#fff; padding:8px 15px; border-radius:4px; cursor:pointer; font-weight:bold; white-space:nowrap; transition: background 0.2s;">
+                            <p style="margin:0; padding-right:20px; line-height:1.5;">${theory.text}</p>
+                            <button onclick="likeTheory('${caseId}', ${theory.id})" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; white-space:nowrap;">
                                 ❤️ Like (<span id="like-count-${theory.id}">${theory.likes}</span>)
                             </button>
                         `;
@@ -97,15 +99,25 @@
         }
 
         function likeTheory(caseId, theoryId) {
+            if (!currentUser) {
+                alert("Vous devez être connecté pour attribuer un vote de like.");
+                return;
+            }
+
             fetch(`http://127.0.0.1:5000/api/theories/${caseId}/${theoryId}/like`, {
-                method: 'POST'
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
                     document.getElementById(`like-count-${theoryId}`).textContent = data.likes;
+                } else {
+                    alert(data.message);
                 }
-            });
+            })
+            .catch(err => console.error(err));
         }
 
         caseSelector.addEventListener('change', (e) => loadTheories(e.target.value));
@@ -132,6 +144,13 @@
         });
 
         loadTheories(caseSelector.value);
+
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUser && authContainer) {
+            authContainer.innerHTML = `
+                <a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
+            `;
+        }
     </script>
 </body>
 </html>

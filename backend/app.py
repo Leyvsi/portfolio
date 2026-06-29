@@ -157,7 +157,7 @@ COLD_CASES = [
             "Le 4 août 2003, des pêcheurs découvrent une femme d'environ 30 ans gisant sur une plage isolée de Normandie. "
             "Elle survit mais souffre d'une amnésie rétrograde totale et absolue. Elle ne reconnaît aucun nom, aucun visage, et parle trois langues sans accent distinct.\n\n"
             "■ LE SEUL INDICE PHYSIQUE\n"
-            "Dans sa poche, un trouseau de trois clés anciennes numérotées '102', '104' et '108'. Toutes les recherches menées auprès des hôtels, "
+            "Dans sa poche, un trousseau de trois clés anciennes numérotées '102', '104' et '108'. Toutes les recherches menées auprès des hôtels, "
             "des banques et des consignes de gares de la région n'ont jamais permis de trouver les serrures correspondantes."
         ),
         "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80"
@@ -178,18 +178,19 @@ COLD_CASES = [
     }
 ]
 
+# Stocke les listes de théories
 THEORIES_DATABASE = {
     "cc1": [
-        {"id": 1, "text": "Disparition volontaire mise en scène. Le message sur le miroir servait à aiguiller les recherches sur une fausse piste mystique.", "likes": 12},
-        {"id": 2, "text": "Accident de montagne nocturne. La neige a recouvert le corps dans une crevasse, et la veste a été déplacée plus tard par un rôdeur.", "likes": 5}
+        {"id": 1, "text": "Disparition volontaire mise en scène. Le message sur le miroir servait à aiguiller les recherches sur une fausse piste mystique.", "likes": 12, "liked_by": []},
+        {"id": 2, "text": "Accident de montagne nocturne. La neige a recouvert le corps dans une crevasse, et la veste a été déplacée plus tard par un rôdeur.", "likes": 5, "liked_by": []}
     ],
     "cc2": [
-        {"id": 3, "text": "Un programme de protection de témoins qui a mal tourné ou une ancienne agente secrète laissée pour morte.", "likes": 24},
-        {"id": 4, "text": "Les clés appartiennent à des casiers de stockage privés dans un port de plaisance hors de France.", "likes": 9}
+        {"id": 3, "text": "Un programme de protection de témoins qui a mal tourné ou une ancienne agente secrète laissée pour morte.", "likes": 24, "liked_by": []},
+        {"id": 4, "text": "Les clés appartiennent à des casiers de stockage privés dans un port de plaisance hors de France.", "likes": 9, "liked_by": []}
     ],
     "cc3": [
-        {"id": 5, "text": "Arthur Vance a utilisé une fausse identité et a réussi à s'échapper en s'habillant comme un membre du personnel navigant pendant l'escale ou avant le décollage.", "likes": 18},
-        {"id": 6, "text": "Il s'est caché dans la trappe technique d'accès à la soute électronique sous la cabine avant l'atterrissage.", "likes": 14}
+        {"id": 5, "text": "Arthur Vance a utilisé une fausse identité et a réussi à s'échapper en s'habillant comme un membre du personnel navigant pendant l'escale ou avant le décollage.", "likes": 18, "liked_by": []},
+        {"id": 6, "text": "Il s'est caché dans la trappe technique d'accès à la soute électronique sous la cabine avant l'atterrissage.", "likes": 14, "liked_by": []}
     ]
 }
 
@@ -203,65 +204,89 @@ auth_model = api.model('UserAuth', {
     'password': fields.String(required=True, description="Mot de passe")
 })
 
+change_password_model = api.model('ChangePassword', {
+    'username': fields.String(required=True, description="Nom de l'utilisateur"),
+    'current_password': fields.String(required=True, description="Ancien mot de passe"),
+    'new_password': fields.String(required=True, description="Nouveau mot de passe")
+})
+
+register_model = api.model('UserRegister', {
+    'username': fields.String(required=True, description="Nom d'utilisateur"),
+    'email': fields.String(required=True, description="Adresse mail"),
+    'password': fields.String(required=True, description="Mot de passe")
+})
+
+like_model = api.model('LikeTheory', {
+    'username': fields.String(required=True, description="Nom de l'utilisateur qui vote")
+})
+
 @api.route('/api/auth/register')
 class UserRegister(Resource):
-    @api.expect(auth_model)
-    @api.response(201, 'Compte créé avec succès')
-    @api.response(400, 'Nom d’utilisateur déjà existant ou invalide')
+    @api.expect(register_model)
     def post(self):
         data = request.get_json()
         username = data.get('username', '').strip()
+        email = data.get('email', '').strip()
         password = data.get('password', '').strip()
-        
-        if not username or not password:
+        if not username or not password or not email:
             return {"status": "error", "message": "Tous les champs sont obligatoires."}, 400
-            
         if username in ADMIN_CREDENTIALS or any(u['username'] == username for u in USERS_DATABASE):
             return {"status": "error", "message": "Ce nom d'utilisateur n'est pas disponible."}, 400
-            
-        USERS_DATABASE.append({"username": username, "password": password})
+        USERS_DATABASE.append({"username": username, "email": email, "password": password})
         return {"status": "success", "message": "Inscription réussie."}, 201
 
 @api.route('/api/auth/login')
 class UserLogin(Resource):
     @api.expect(auth_model)
-    @api.response(200, 'Connexion réussie')
-    @api.response(401, 'Identifiants invalides')
     def post(self):
         data = request.get_json()
         username = data.get('username', '').strip()
         password = data.get('password', '').strip()
-        
         user_match = next((u for u in USERS_DATABASE if u['username'] == username and u['password'] == password), None)
-        
         if user_match:
-            return {
-                "status": "success", 
-                "message": f"Bienvenue, session utilisateur activée pour {username}.",
-                "role": "user"
-            }, 200
-            
-        return {"status": "error", "message": "Identifiants invalides. Accès refusé."}, 401
+            return {"status": "success", "message": f"Bienvenue {username}.", "role": "user"}, 200
+        return {"status": "error", "message": "Identifiants invalides."}, 401
 
 @api.route('/api/admin/login')
 class AdminLogin(Resource):
     @api.expect(auth_model)
-    @api.response(200, 'Connexion réussie')
-    @api.response(401, 'Identifiants invalides')
     def post(self):
         data = request.get_json()
         username = data.get('username')
         password = data.get('password')
-        
         if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
+            return {"status": "success", "message": f"Bienvenue Admin {username}.", "token": "fake-jwt-token", "redirect": "admin-dashboard.html"}, 200
+        return {"status": "error", "message": "Accès refusé."}, 401
+
+@api.route('/api/user/profile/<string:username>')
+class UserProfile(Resource):
+    def get(self, username):
+        user_match = next((u for u in USERS_DATABASE if u['username'] == username), None)
+        if user_match:
             return {
-                "status": "success", 
-                "message": f"Bienvenue, session admin activée pour {username}.",
-                "token": "fake-jwt-token-for-portfolio-demonstration",
-                "redirect": "admin-dashboard.html"
+                "status": "success",
+                "profile": {
+                    "username": user_match["username"],
+                    "email": user_match.get("email", "Non renseignée")
+                }
             }, 200
-            
-        return {"status": "error", "message": "Identifiants invalides. Accès refusé."}, 401
+        return {"status": "error", "message": "Utilisateur introuvable."}, 404
+
+@api.route('/api/user/change-password')
+class ChangePassword(Resource):
+    @api.expect(change_password_model)
+    def post(self):
+        data = request.get_json()
+        username = data.get('username')
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+        user_match = next((u for u in USERS_DATABASE if u['username'] == username), None)
+        if not user_match:
+            return {"status": "error", "message": "Utilisateur introuvable."}, 404
+        if user_match["password"] != current_password:
+            return {"status": "error", "message": "L'ancien mot de passe est incorrect."}, 400
+        user_match["password"] = new_password
+        return {"status": "success", "message": "Mot de passe modifié avec succès !"}, 200
 
 @api.route('/api/visit')
 class Visit(Resource):
@@ -303,6 +328,14 @@ class ColdCasesList(Resource):
     def get(self):
         return {"status": "success", "cold_cases": COLD_CASES}, 200
 
+@api.route('/api/coldcases/<string:case_id>')
+class ColdCaseDetail(Resource):
+    def get(self, case_id):
+        case_match = next((c for c in COLD_CASES if c['id'] == case_id), None)
+        if case_match:
+            return {"status": "success", "cold_case": case_match}, 200
+        return {"status": "error", "message": "Affaire introuvable."}, 404
+
 @api.route('/api/theories/<string:case_id>')
 class TheoriesHandler(Resource):
     def get(self, case_id):
@@ -316,17 +349,30 @@ class TheoriesHandler(Resource):
             return {"status": "error", "message": "Le texte ne peut pas être vide."}, 400
         if case_id not in THEORIES_DATABASE:
             THEORIES_DATABASE[case_id] = []
-        
         new_id = len(THEORIES_DATABASE[case_id]) + 1
-        THEORIES_DATABASE[case_id].append({"id": new_id, "text": text, "likes": 0})
+        THEORIES_DATABASE[case_id].append({"id": new_id, "text": text, "likes": 0, "liked_by": []})
         return {"status": "success", "theories": THEORIES_DATABASE[case_id]}, 201
 
 @api.route('/api/theories/<string:case_id>/<int:theory_id>/like')
 class LikeTheoryHandler(Resource):
+    @api.expect(like_model)
     def post(self, case_id, theory_id):
+        data = request.get_json() or {}
+        username = data.get('username', '').strip()
+        
+        if not username:
+            return {"status": "error", "message": "Vous devez être connecté pour aimer une théorie."}, 401
+
         if case_id in THEORIES_DATABASE:
             for theory in THEORIES_DATABASE[case_id]:
                 if theory['id'] == theory_id:
+                    if "liked_by" not in theory:
+                        theory["liked_by"] = []
+                    
+                    if username in theory["liked_by"]:
+                        return {"status": "error", "message": "Vous avez déjà voté pour cette théorie !"}, 400
+                    
+                    theory["liked_by"].append(username)
                     theory['likes'] += 1
                     return {"status": "success", "likes": theory['likes']}, 200
         return {"status": "error", "message": "Théorie introuvable."}, 404
