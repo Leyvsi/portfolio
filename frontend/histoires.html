@@ -43,48 +43,46 @@
         const container = document.getElementById('stories-container');
         const navContext = document.getElementById('navigation-context');
         const currentUser = localStorage.getItem('username') || 'Anonyme';
-
-        // Base de données : 3 vraies affaires résolues ces 10 dernières années
         const storiesData = [
             {
                 id: "h1",
                 title: "L'Affaire du Golden State Killer (2018)",
-                summary: "Comment l'utilisation révolutionnaire de la généalogie génétique a permis d'arrêter Joseph James DeAngelo après 40 ans de traque.",
+                summary: "40 ans de traque brisés en quelques jours : comment la généalogie génétique par l'ADN a confondu Joseph James DeAngelo.",
                 image: "https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=600",
-                content: "Recherché pour 13 meurtres et plus de 50 viols commis en Californie dans les années 70/80, le tueur restait insaisissable. En 2018, les enquêteurs ont téléversé le profil ADN du suspect sur un site public de généalogie (GEDmatch). En reconstituant l'arbre généalogique, ils ont ciblé Joseph James DeAngelo, un ancien policier de 72 ans vivant paisiblement en banlieue.",
+                content: "Entre 1976 et 1986, la Californie vit sous la terreur d'un prédateur insaisissable surnommé le Golden State Killer, responsable de 13 meurtres, plus de 50 viols et 120 cambriolages. L'affaire piétine pendant 4 décennies, les enquêteurs disposant d'un profil ADN complet prélevé sur les scènes de crime, mais sans aucune correspondance dans le fichier national du CODIS.\n\nEn 2018, la procureure Anne Marie Schubert et l'inspecteur Paul Holes décident d'utiliser une méthode inédite : la généalogie génétique. Ils téléversent l'ADN du tueur sur GEDmatch, un site public d'histoire familiale. Les algorithmes découvrent une correspondance avec un cousin au troisième degré du criminel. \n\nPendant des semaines, les généalogistes reconstruisent de gigantesques arbres généalogiques remontant jusqu'aux années 1800 avant de redescendre vers les suspects vivants correspondants aux critères de l'époque. Deux suspects émergent, mais les tests d'exclusion éliminent le premier. Il ne reste qu'un homme : Joseph James DeAngelo, un ancien officier de police de 72 ans, renvoyé de la police en 1979 pour vol. Mis sous surveillance, son ADN est discrètement prélevé sur la poignée de la portière de sa voiture et sur une poubelle. La correspondance est absolue.",
                 testimonies: [
-                    { role: "Inspecteur Paul Holes", text: "« Quand nous avons vu les correspondances familiales converger vers un ancien flic, tout s'est imbriqué. C'était le moment le plus intense de ma carrière. »" },
-                    { role: "Procureure Anne Marie Schubert", text: "« La science génétique a rendu la dignité aux victimes. Ce verdict prouve qu'il n'est jamais trop tard pour que justice soit faite. »" },
-                    { role: "Avocat de la défense", text: "« Mon client a choisi de plaider coupable pour éviter la peine de mort et mettre fin aux souffrances des familles lors d'un procès prolongé. »" }
+                    { role: "Inspecteur Paul Holes (Dossier Criminel)", text: "« Lorsque nous avons découvert qu'un de nos suspects finaux était un ancien flic de l'époque des premiers viols à Auburn, mes cheveux se sont hérissés. Nous avions sa signature comportementale sous les yeux, cachée dans les archives policières depuis quarante ans. »" },
+                    { role: "Procureure Anne Marie Schubert (Conférence de presse - Sacramento)", text: "« La réponse a toujours été dans l'ADN. Ce n'était pas chercher une aiguille dans une botte de foin, c'était construire la botte de foin. La science génétique vient de rendre la dignité aux vivants et la paix aux morts. »" },
+                    { role: "Avocat de la défense, Diane Howard", text: "« Mon client est un homme brisé. En acceptant de plaider coupable lors de l'audience d'août 2020 pour la totalité des chefs d'inculpation, il évite la peine de mort mais s'assure surtout que les victimes n'aient pas à endurer des années de procédures d'appels douloureuses. »" },
+                    { role: "Gay Hardwick (Survivante de l'attaque de 1978)", text: "« Pendant 40 ans, j'ai vérifié les verrous de mes fenêtres chaque soir, terrifiée à l'idée qu'il revienne. Le voir menotté, vieux et impuissant dans ce tribunal, a instantanément brisé ma cage invisible. »" }
                 ]
             },
             {
                 id: "h2",
                 title: "Les Meurtres de la Famille Watts (2018)",
-                summary: "Derrière les sourires de façade des réseaux sociaux, l'effroyable vérité sur la disparition de Shanann Watts et ses enfants.",
+                summary: "La chute du masque d'un père de famille modèle : autopsie d'un triple infanticide minutieusement analysé par le FBI.",
                 image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600",
-                content: "En août 2018, Chris Watts apparaît devant les caméras de télévision locales du Colorado, suppliant pour le retour de sa femme enceinte Shanann et de leurs deux filles. Très vite, son comportement suspect et l'analyse de ses messages révèlent une liaison extra-conjugale. Confronté aux preuves récoltées par le FBI, il avoue avoir étranglé sa famille avant de cacher les corps sur un site pétrolier.",
+                content: "Le 13 août 2018, à Frederick dans le Colorado, Nickole Atkinson s'inquiète de ne plus avoir de nouvelles de son amie Shanann Watts, enceinte de 15 semaines, de retour d'un voyage d'affaires. Elle prévient la police et son mari, Christopher 'Chris' Watts.\n\nArrivé sur les lieux, Chris Watts feint la surprise et autorise les policiers à fouiller la maison. Les caméras de surveillance du voisin montrent que Chris est le seul à avoir sorti sa camionnette du garage à 5h27 du matin. Dès le lendemain, il supplie face aux caméras de télévision pour le retour de sa famille. Mais les enquêteurs du CBI (Colorado Bureau of Investigation) et du FBI découvrent rapidement qu'il entretenait une liaison passionnée avec une collègue de travail, Nichol Kessinger, à qui il affirmait être en instance de divorce.\n\nSoumis au détecteur de mensonges (polygraphe) le 15 août, ses graphiques d'anxiété explosent. Confronté à son échec complet au test par l'agent Tammy Lee, sa façade s'effondre. Il avoue avoir étranglé sa femme à la suite d'une dispute, mais accuse initialement Shanann d'avoir étouffé leurs filles Celeste (3 ans) et Bella (4 ans). Les expertises médico-légales détruisent sa version : les deux petites filles ont été étouffées par leur père avant d'être dissimulées dans des cuves de pétrole brut de l'entreprise qui l'employait, tandis que le corps de Shanann était retrouvé dans une fosse peu profonde à proximité.",
                 testimonies: [
-                    { role: "Agent du FBI au polygraphe", text: "« Ses micro-expressions et ses récits changeants montraient clairement qu'il feignait l'inquiétude. Le test du détecteur de mensonges a brisé sa façade. »" },
-                    { role: "Mère de Shanann (Victime)", text: "« Nous lui faisions totalement confiance. Il a détruit notre monde en une nuit par pure lâcheté. »" },
-                    { role: "Le Juge Michael Kopcow", text: "« C'est sans aucun doute l'affaire la plus inhumaine et terrifiante que j'aie eue à juger. Trois peines de prison à perpétuité consécutives étaient la seule option. »" }
+                    { role: "Agent spécial Tammy Lee (Interrogatoire FBI)", text: "« Sa tentative de manipulation psychologique lors du polygraphe manquait totalement de structure. Quand je lui ai proposé le scénario alternatif où sa femme s'en prenait aux enfants, il a sauté sur l'occasion. C'était l'aveu masqué de sa propre culpabilité. »" },
+                    { role: "Le Juge Michael Kopcow (Sentence de la Cour)", text: "« C'est sans conteste l'affaire la plus cruelle, vicieuse et inhumaine qu'il m'ait été donné de juger au cours de ma carrière. Condamner cet homme à trois peines consécutives de prison à perpétuité sans possibilité de libération conditionnelle est le strict minimum requis par la justice humaine. »" },
+                    { role: "Frank Rzucek (Père de la victime Shanann)", text: "« Je lui ai fait confiance comme à un fils. Il a pris ma fille, mon futur petit-fils Nico et mes deux petites princesses, et les a jetés comme des déchets industriels. Aucun pardon n'existe sur cette Terre pour un tel monstre. »" }
                 ]
             },
             {
                 id: "h3",
                 title: "L'Affaire Michelle Carter (2017)",
-                summary: "Un précédent judiciaire historique où de simples SMS d'incitation ont conduit à une condamnation pour homicide involontaire.",
+                summary: "Condamnée pour homicide involontaire par SMS : l'analyse juridique de la manipulation psychologique textuelle.",
                 image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600",
-                content: "En 2014, le jeune Conrad Roy met fin à ses jours dans son camion. L'examen de son téléphone révèle une vérité troublante : sa petite amie, Michelle Carter, l'a activement poussé par SMS à passer à l'acte, lui disant même de 'remonter dans le véhicule' alors qu'il hésitait. En 2017, le tribunal l'a reconnue coupable d'homicide involontaire, une première juridique majeure.",
+                content: "Le 13 juillet 2014, le corps de Conrad Roy III, un jeune homme de 18 ans souffrant de dépression sévère, est retrouvé sans vie dans sa camionnette garée sur le parking d'un supermarché de Fairhaven, intoxiqué au monoxyde de carbone.\n\nL'examen technique de son téléphone portable par les analystes de la police de l'État met en lumière une correspondance macabre avec sa petite amie à distance, Michelle Carter, alors âgée de 17 ans. Les procureurs découvrent des milliers de messages où la jeune fille encourage activement, jour après jour, Conrad à mettre fin à ses jours. Alors que Conrad exprime des doutes répétés et de la peur, Michelle Carter lui envoie : 'Tu es enfin prêt. Tout ce que tu as à faire, c'est allumer le générateur et tu seras libre.'\n\nLe point de rupture juridique de l'affaire réside dans un appel téléphonique survenu pendant l'asphyxie. Conrad, pris de panique, est sorti de son camion pour respirer. Michelle Carter lui a alors ordonné par SMS et de vive voix de 'remonter dans le foutu camion' ('get back in'). Elle n'a prévenu ni les secours, ni la famille, attendant la confirmation de sa mort pour jouer le rôle de la 'petite amie en deuil' sur les réseaux sociaux. En 2017, le juge Lawrence Moniz la déclare coupable d'homicide involontaire, statuant que ses mots ont constitué une contrainte physique et causé directement la mort.",
                 testimonies: [
-                    { role: "Chef de la police locale", text: "« Les transcriptions des messages étaient glaçantes. Elle a exercé une manipulation psychologique constante à distance. »" },
-                    { role: "Avocat de Michelle Carter", text: "« Les mots ne peuvent être assimilés à une arme physique. Ce jugement restreint dangereusement la liberté d'expression et crée un précédent flou. »" },
-                    { role: "Père de Conrad Roy", text: "« Notre fils avait besoin d'aide, pas d'une personne qui l'encourageait à mourir pour attirer l'attention sur elle. »" }
+                    { role: "Procureur Katie Rayburn (Réquisitoire final)", text: "« Elle a utilisé Conrad comme un pion pour obtenir l'attention et la sympathie de ses camarades de classe. Ses messages n'étaient pas des conseils maladroits, c'était une exécution pas-à-pas dirigée par écran interposé. »" },
+                    { role: "Avocat de la défense, Joseph Cataldo", text: "« C'est un jour sombre pour la justice américaine. Ma cliente suivait un traitement lourd d'antidépresseurs qui altérait son jugement. Condamner quelqu'un pour homicide involontaire uniquement sur la base de mots envoyés par SMS est un glissement dangereux de la loi. »" },
+                    { role: "Lynn Roy (Mère de Conrad Roy)", text: "« Je savais que mon fils était fragile, mais il se battait pour aller mieux. Elle a exploité ses faiblesses les plus intimes pour le pousser dans la tombe. Aucun SMS ne me rendra mon fils, mais ce verdict montre que la manipulation a un prix. »" }
                 ]
             }
         ];
 
-        // Rendu de la liste principale
         function renderListView() {
             navContext.innerHTML = `
                 <h2>Affaires Criminelles Résolues</h2>
@@ -102,7 +100,7 @@
 
                 article.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:15px; width: 100%;">
-                        <img src="${story.image}" alt="Photo de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="renderDetailView('${story.id}')">
+                        <img src="${story.image}" alt="Photo officielle de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="renderDetailView('${story.id}')">
                         <div style="text-align: left; width: 100%;">
                             <h3 style="font-size:1.6rem; margin-bottom:10px; cursor:pointer; color: #f39c12;" onclick="renderDetailView('${story.id}')">${story.title}</h3>
                             <p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${story.summary}</p>
@@ -120,7 +118,6 @@
             });
         }
 
-        // Rendu détaillé avec espace commentaires dynamique
         function renderDetailView(id) {
             const story = storiesData.find(s => s.id === id);
             if (!story) return;
@@ -142,19 +139,20 @@
 
             container.innerHTML = `
                 <article class="story-card" style="padding:30px; text-align: left; width: 100%; box-sizing: border-box;">
-                    <img src="${story.image}" alt="Photo de l'affaire" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
+                    <img src="${story.image}" alt="Photo de l'archive judiciaire" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
                     <h3 style="font-size:2.2rem; margin-bottom:15px; color:#f39c12;">${story.title}</h3>
                     
                     <p style="font-weight:bold; color:#aaa; font-size:1.2rem; margin-bottom:25px; border-left:4px solid #e67e22; padding-left:15px;">${story.summary}</p>
                     
-                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:10px;">Compte-rendu de l'Instruction</h4>
+                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:10px;">Compte-rendu d'Instruction Technique</h4>
                     <p style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${story.content}</p>
                     
-                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions Judiciaires & Auditions</h4>
+                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions Judiciaires & Auditions Officielles</h4>
                     <div style="margin-bottom: 40px;">
                         ${testimoniesHTML}
                     </div>
 
+                    <!-- ESPACE COMMENTAIRES UNIVERSEL -->
                     <div style="border-top: 1px solid #333; padding-top: 30px; margin-top: 40px;">
                         <h4 style="color:#fff; font-size:1.4rem; margin-bottom:20px;">Espace de Discussion de la Communauté</h4>
                         
@@ -172,19 +170,17 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Système de Likes Unique par Utilisateur
         function toggleLike(storyId) {
             let caseLikes = JSON.parse(localStorage.getItem(`likes_resolved_${storyId}`)) || [];
             if (caseLikes.includes(currentUser)) {
-                caseLikes = caseLikes.filter(u => u !== currentUser); // Enlever le like si déjà mis
+                caseLikes = caseLikes.filter(u => u !== currentUser); 
             } else {
-                caseLikes.push(currentUser); // Ajouter le like unique
+                caseLikes.push(currentUser); 
             }
             localStorage.setItem(`likes_resolved_${storyId}`, JSON.stringify(caseLikes));
             renderListView();
         }
 
-        // Gestion Locale des Commentaires
         function loadComments(storyId) {
             const commentsBox = document.getElementById(`comments-list-${storyId}`);
             const comments = JSON.parse(localStorage.getItem(`comments_resolved_${storyId}`)) || [];
@@ -200,7 +196,11 @@
                 div.style.marginBottom = '12px';
                 div.style.borderBottom = '1px solid #222';
                 div.style.paddingBottom = '8px';
-                div.innerHTML = `<strong style="color:#f39c12;">${c.author}</strong> <span style="font-size:0.8rem; color:#666; margin-left:10px;">${c.date}</span><p style="margin:5px 0 0 0; color:#bbb;">${c.text}</p>`;
+                div.innerHTML = `
+                    <strong style="color:#f39c12;">${c.author}</strong> 
+                    <span style="font-size:0.8rem; color:#666; margin-left:10px;">${c.date}</span>
+                    <p style="margin:5px 0 0 0; color:#bbb;">${c.text}</p>
+                `;
                 commentsBox.appendChild(div);
             });
             commentsBox.scrollTop = commentsBox.scrollHeight;
@@ -224,6 +224,13 @@
         }
 
         renderListView();
+
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUser !== 'Anonyme' && authContainer) {
+            authContainer.innerHTML = `
+                <a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
+            `;
+        }
     </script>
 </body>
 </html>

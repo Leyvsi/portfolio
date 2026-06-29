@@ -1,98 +1,135 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Les Petits Enquêteurs - Les Updates</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Updates — Les Petits Enquêteurs</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<header>
-<h1>Les Petits Enquêteurs</h1>
-</header>
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+        <h1>Les Petits Enquêteurs</h1>
+        <div id="auth-buttons-container">
+            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
+        </div>
+    </header>
 
-<nav>
-<ul class="navbar">
-<li><a href="index.html">Accueil</a></li>
-<li><a href="histoires.html">Les Histoires</a></li>
-<li><a href="coldscases.html">Les Colds Cases</a></li>
-<li><a href="updates.html" class="active">Les Updates</a></li>
-<li><a href="theories.html">Les Théories</a></li>
-<li><a href="top-dossiers.html">Top Dossiers</a></li>
-</ul>
-</nav>
+    <nav>
+        <ul class="navbar">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="histoires.html">Les Histoires</a></li>
+            <li><a href="coldscases.html">Les Colds Cases</a></li>
+            <li><a href="updates.html" class="active">Les Updates</a></li>
+            <li><a href="theories.html">Les Théories</a></li>
+            <li><a href="top-dossiers.html">Top Dossiers</a></li>
+        </ul>
+    </nav>
 
-<main class="content-section">
-<h2>Mises à jour des enquêtes</h2>
+    <main class="content-section">
+        <h2>Derniers Rebondissements & Updates</h2>
+        <p class="intro-text">Suivez en temps réel l'évolution des analyses de laboratoire, les nouveaux témoignages et les rapports officiels soumis.</p>
 
-<div class="form-group" style="margin-bottom: 30px;">
-<label for="update-case-selector" style="display:block; margin-bottom:10px; font-size:1.2rem;">Sélectionnez une affaire pour voir ses développements :</label>
-<select id="update-case-selector" style="width:100%; padding:12px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; font-size:1.1rem;">
-<option value="cc1">Le Mystère d'Anthonioz : Les Empreintes de la Nuit</option>
-<option value="cc2">L'Inconnue de la Plage de Noirval</option>
-<option value="cc3">Le Vol 814 : Le Passager Fantôme</option>
-</select>
-</div>
+        <div id="updates-container"></div>
+    </main>
 
-<h3>Évolution du Dossier & Actus</h3>
-<div id="updates-list"></div>
-</main>
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+    </footer>
 
-<footer>
-<p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-</footer>
+    <script>
+        const container = document.getElementById('updates-container');
+        const currentUser = localStorage.getItem('username') || 'Anonyme';
 
-<script>
-const updateSelector = document.getElementById('update-case-selector');
-const updatesList = document.getElementById('updates-list');
+        const updatesData = [
+            {
+                id: "u1",
+                caseTitle: "Le Mystère d'Anthonioz",
+                title: "Flash Info : Nouvelles analyses ADN en cours",
+                date: "Mis à jour le 28 Juin 2026",
+                text: "Le procureur vient d'ordonner une ré-analyse complète des prélèvements biologiques retrouvés sur le volant de la voiture abandonnée grâce aux nouvelles techniques de séquençage."
+            },
+            {
+                id: "u2",
+                caseTitle: "L'Inconnue de la Plage de Noirval",
+                title: "Appel à témoins international lancé",
+                date: "Mis à jour le 14 Mai 2026",
+                text: "Une cellule de coopération avec Interpol a été ouverte ce matin. Les fiches anthropométriques ont été transmises à 12 pays voisins."
+            }
+        ];
 
-const urlParams = new URLSearchParams(window.location.search);
-const caseParam = urlParams.get('case');
-if (caseParam) {
-updateSelector.value = caseParam;
-}
+        function renderUpdates() {
+            container.innerHTML = '';
+            updatesData.forEach(up => {
+                const likes = JSON.parse(localStorage.getItem(`likes_update_${up.id}`)) || [];
+                const hasLiked = likes.includes(currentUser);
 
-const mockUpdates = {
-"cc1": [
-{ "date": "14 Avril 2026", "text": "Nouvel examen des scellés de la veste de Marc Anthonioz à l'aide de filtres spectraux modernes pour rechercher d'éventuelles micro-traces de solvants." },
-{ "date": "12 Janvier 2026", "text": "Commémoration des 32 ans de la disparition. Un appel à témoins citoyen a été relancé dans la région des Carroz par un collectif d'habitants." }
-],
-"cc2": [
-{ "date": "02 Mai 2026", "text": "Une correspondance partielle d'empreinte digitale a été rejetée par la base de données internationale Interpol. La piste européenne reste à l'étude." }
-],
-"cc3": [
-{ "date": "21 Juin 2026", "text": "Une contre-expertise complète des registres de maintenance de la cabine pressurisée confirme qu'aucune anomalie de structure n'a été ignorée." }
-]
-};
+                const article = document.createElement('article');
+                article.className = 'story-card';
+                article.style.marginBottom = '30px';
+                article.style.padding = '25px';
+                article.style.textAlign = 'left';
 
-function displayUpdates(caseId) {
-updatesList.innerHTML = '';
-const updates = mockUpdates[caseId] || [];
+                article.innerHTML = `
+                    <span style="font-size:0.85rem; color:#f39c12; font-weight:bold; text-transform:uppercase;">[${up.caseTitle}]</span>
+                    <h3 style="margin-top:5px; margin-bottom:5px; font-size:1.5rem; color:#fff;">${up.title}</h3>
+                    <small style="color:#666; display:block; margin-bottom:15px;">${up.date}</small>
+                    <p style="line-height:1.6; color:#ccc; margin-bottom:25px; font-size:1.05rem;">${up.text}</p>
+                    
+                    <div style="display:flex; align-items:center; gap:15px; margin-bottom:25px;">
+                        <button onclick="toggleUpdateLike('${up.id}')" class="submit-form-button" style="width:auto; font-size:0.85rem; padding:6px 15px; background:${hasLiked ? '#c0392b' : '#222'};">
+                            ❤️ ${likes.length} ${hasLiked ? 'Suivi' : 'Suivre l\'update'}
+                        </button>
+                    </div>
 
-if (updates.length === 0) {
-updatesList.innerHTML = '<p style="color:#aaa;">Aucune mise à jour récente sur cette affaire en cours.</p>';
-return;
-}
+                    <div style="background: rgba(255,255,255,0.01); padding:20px; border-radius:6px; border-top:1px solid #222;">
+                        <h4 style="font-size:1rem; color:#fff; margin-bottom:15px;">Réactions à chaud :</h4>
+                        <div id="comments-update-${up.id}" style="max-height:150px; overflow-y:auto; margin-bottom:15px;"></div>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="input-update-${up.id}" placeholder="Votre avis sur ce rebondissement..." style="flex:1; padding:10px; background:#111; border:1px solid #444; color:#fff; border-radius:4px;">
+                            <button onclick="postUpdateComment('${up.id}')" class="submit-form-button" style="width:auto; margin:0; padding:0 20px;">Commenter</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(article);
+                loadUpdateComments(up.id);
+            });
+        }
 
-updates.forEach(up => {
-const block = document.createElement('div');
-block.style.background = '#0f0f10';
-block.style.border = '1px solid #333';
-block.style.padding = '20px';
-block.style.borderRadius = '6px';
-block.style.marginBottom = '15px';
+        function toggleUpdateLike(updateId) {
+            let likes = JSON.parse(localStorage.getItem(`likes_update_${updateId}`)) || [];
+            if (likes.includes(currentUser)) {
+                likes = likes.filter(u => u !== currentUser);
+            } else {
+                likes.push(currentUser);
+            }
+            localStorage.setItem(`likes_update_${updateId}`, JSON.stringify(likes));
+            renderUpdates();
+        }
 
-block.innerHTML = `
-<span style="color:#c0392b; font-weight:bold; font-size:0.9rem; display:block; margin-bottom:5px;">[UPDATE - ${up.date}]</span>
-<p style="color:#fff; margin:0; line-height:1.6;">${up.text}</p>
-`;
-updatesList.appendChild(block);
-});
-}
+        function loadUpdateComments(updateId) {
+            const box = document.getElementById(`comments-update-${updateId}`);
+            const comments = JSON.parse(localStorage.getItem(`comments_update_${updateId}`)) || [];
+            box.innerHTML = comments.length === 0 ? '<p style="color:#444; font-size:0.9rem; font-style:italic;">Aucun commentaire.</p>' : '';
+            comments.forEach(c => {
+                box.innerHTML += `<p style="font-size:0.9rem; margin-bottom:6px;"><strong style="color:#2980b9;">${c.author}</strong>: <span style="color:#bbb;">${c.text}</span></p>`;
+            });
+            box.scrollTop = box.scrollHeight;
+        }
 
-updateSelector.addEventListener('change', (e) => displayUpdates(e.target.value));
-displayUpdates(updateSelector.value);
-</script>
+        function postUpdateComment(updateId) {
+            const input = document.getElementById(`input-update-${updateId}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const comments = JSON.parse(localStorage.getItem(`comments_update_${updateId}`)) || [];
+            comments.push({ author: currentUser, text: text });
+            localStorage.setItem(`comments_update_${updateId}`, JSON.stringify(comments));
+            input.value = '';
+            loadUpdateComments(updateId);
+        }
+
+        renderUpdates();
+    </script>
 </body>
 </html>
