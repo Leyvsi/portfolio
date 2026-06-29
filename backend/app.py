@@ -1,10 +1,11 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_restx import Api, Resource, fields
 
 app = Flask(__name__)
 CORS(app)
 
+# Initialize Swagger documentation
 api = Api(
     app, 
     version='1.0', 
@@ -21,15 +22,7 @@ ADMIN_CREDENTIALS = {
     "votre_identifiant_secret_melissa": "votre_mot_de_passe_melissa"
 }
 
-STORIES_PROPOSALS = [
-    {
-        "id": 1,
-        "type": "coldcase",
-        "title": "L'affaire de la montre arrêtée",
-        "content": "Un corps retrouvé dans un manoir avec une montre brisée...",
-        "status": "pending"
-    }
-]
+STORIES_PROPOSALS = []
 
 VOTE_STORIES = [
     {"id": 1, "title": "Le Mystère de la Chambre 104", "summary": "Un dossier complexe impliquant des indices contradictoires laissés dans un hôtel abandonné.", "votes": 0},
@@ -37,21 +30,38 @@ VOTE_STORIES = [
     {"id": 3, "title": "L'Ombre du Viaduc", "summary": "Une disparition inexpliquée survenue au cours d'une nuit de brouillard intense.", "votes": 0}
 ]
 
-login_model = api.model('Login', {
-    'username': fields.String(required=True),
-    'password': fields.String(required=True)
-})
+COMMENTS_DATABASE = {}
 
-register_model = api.model('Register', {
-    'username': fields.String(required=True),
-    'email': fields.String(required=True),
-    'password': fields.String(required=True)
-})
+RESOLVED_STORIES = [
+    {
+        "id": 1,
+        "title": "L'Affaire Kouri Richins (Résolue en 2025/2026)",
+        "summary": "Une autrice de livres pour enfants sur le deuil est démasquée pour le meurtre par empoisonnement de son propre mari.",
+        "content": "En 2022, Eric Richins meurt soudainement d'une overdose de fentanyl administrée à son insu. Son épouse, Kouri Richins, écrit peu après un livre à succès pour aider leurs enfants à surmonter la perte de leur père. L'enquête minutieuse de la police américaine menée sur ses appareils numériques révèle des recherches suspectes et des achats dissimulés de drogues dures. En mars 2026, un jury la déclare officiellement coupable de meurtre au premier degré.",
+        "image_summary": "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?w=500&q=80",
+        "image_full": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80"
+    },
+    {
+        "id": 2,
+        "title": "Le Tueur des Tueuses en Série (L'affaire Bruce Lindahl - Résolue fin 2024)",
+        "summary": "Le meurtre non élucidé de Kathy Halle en 1979 trouve sa réponse grâce aux avancées spectaculaires de la généalogie génétique.",
+        "content": "Pendant 45 ans, la disparition et la mort de Kathy Halle en Illinois sont restées un cold case frustrant. Fin 2024, le laboratoire DNA Labs International parvient à extraire une micro-trace d'ADN sur les vêtements conservés de la victime. Les résultats croisés établissent avec une certitude absolue la culpabilité de Bruce Lindahl, un tueur en série décédé depuis longtemps, apportant enfin des réponses et une clôture définitive à la famille.",
+        "image_summary": "https://images.unsplash.com/photo-1530210124550-912dc1381cb8?w=500&q=80",
+        "image_full": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80"
+    },
+    {
+        "id": 3,
+        "title": "Le Mystère des Meurtres du Yogurt Shop (Résolu fin 2025/2026)",
+        "summary": "Une tragédie texane datant de 1991 élucidée après l'identification ADN d'un suspect mort et l'exonération des accusés.",
+        "content": "L'assassinat de quatre adolescentes dans une boutique de yaourts à Austin avait mené à l'incarcération injuste de quatre hommes. En septembre 2025, de nouvelles analyses d'empreintes génétiques avancées lient formellement le crime à Robert Brashers, un criminel décédé. En février 2026, un juge boucle définitivement l'affaire en déclarant l'innocence absolue des quatre hommes injustement poursuivis.",
+        "image_summary": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&q=80",
+        "image_full": "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=800&q=80"
+    }
+]
 
-moderate_model = api.model('Moderate', {
-    'action': fields.String(required=True),
-    'title': fields.String(required=True),
-    'content': fields.String(required=True)
+comment_model = api.model('Comment', {
+    'username': fields.String(required=True),
+    'text': fields.String(required=True)
 })
 
 @api.route('/api/visit')
@@ -66,84 +76,28 @@ class Stats(Resource):
     def get(self):
         return {"status": "success", "visits": VISITS_COUNT}, 200
 
-@api.route('/api/votes')
-class VotesList(Resource):
+@api.route('/api/stories')
+class StoriesList(Resource):
     def get(self):
-        return {"status": "success", "stories": VOTE_STORIES}, 200
+        return {"status": "success", "stories": RESOLVED_STORIES}, 200
 
-@api.route('/api/votes/<int:story_id>')
-class CastVote(Resource):
-    def post(self, story_id):
-        for story in VOTE_STORIES:
-            if story['id'] == story_id:
-                story['votes'] += 1
-                return {"status": "success", "message": "Votre vote a bien été pris en compte !", "stories": VOTE_STORIES}, 200
-        return {"status": "error", "message": "Histoire introuvable."}, 404
+@api.route('/api/comments/<string:item_id>')
+class CommentsHandler(Resource):
+    def get(self, item_id):
+        comments = COMMENTS_DATABASE.get(item_id, [])
+        return {"status": "success", "comments": comments}, 200
 
-@api.route('/api/login')
-class UserLogin(Resource):
-    @api.expect(login_model)
-    def post(self):
+    @api.expect(comment_model)
+    def post(self, item_id):
         data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
-        for user in USERS_DATABASE:
-            if (user['username'] == username or user['email'] == username) and user['password'] == password:
-                return {"status": "success", "role": "user", "message": f"Bonjour {user['username']} !"}, 200
-        return {"status": "error", "message": "Identifiants utilisateur incorrects."}, 401
-
-@api.route('/api/admin/login')
-class AdminLogin(Resource):
-    @api.expect(login_model)
-    def post(self):
-        data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
-        if username in ADMIN_CREDENTIALS and ADMIN_CREDENTIALS[username] == password:
-            return {"status": "success", "role": "admin", "message": "Bienvenue Admin !"}, 200
-        return {"status": "error", "message": "Accès refusé. Identifiants incorrects."}, 403
-
-@api.route('/api/register')
-class UserRegister(Resource):
-    @api.expect(register_model)
-    def post(self):
-        data = request.get_json()
-        username = data.get('username')
-        email = data.get('email')
-        password = data.get('password')
-        if not username or not email or not password:
-            return {"status": "error", "message": "Tous les champs sont obligatoires."}, 400
-        for user in USERS_DATABASE:
-            if user['username'] == username or user['email'] == email:
-                return {"status": "error", "message": "Ce pseudo ou cet email est déjà utilisé."}, 400
-        USERS_DATABASE.append({"username": username, "email": email, "password": password})
-        return {"status": "success", "message": "Utilisateur enregistré avec succès !"}, 201
-
-@api.route('/api/admin/proposals')
-class AdminProposals(Resource):
-    def get(self):
-        pending_proposals = [p for p in STORIES_PROPOSALS if p['status'] == 'pending']
-        return {"status": "success", "proposals": pending_proposals}, 200
-
-@api.route('/api/admin/proposals/<int:proposal_id>')
-class AdminModerate(Resource):
-    @api.expect(moderate_model)
-    def post(self, proposal_id):
-        data = request.get_json()
-        action = data.get('action')
-        updated_title = data.get('title')
-        updated_content = data.get('content')
-        for p in STORIES_PROPOSALS:
-            if p['id'] == proposal_id:
-                if action == 'accept':
-                    p['status'] = 'accepted'
-                    p['title'] = updated_title
-                    p['content'] = updated_content
-                    return {"status": "success", "message": "Proposition acceptée et mise à jour !"}, 200
-                elif action == 'reject':
-                    p['status'] = 'rejected'
-                    return {"status": "success", "message": "Proposition refusée."}, 200
-        return {"status": "error", "message": "Proposition introuvable."}, 404
+        username = data.get('username', 'Anonyme')
+        text = data.get('text')
+        if not text:
+            return {"status": "error", "message": "Le commentaire ne peut pas être vide."}, 400
+        if item_id not in COMMENTS_DATABASE:
+            COMMENTS_DATABASE[item_id] = []
+        COMMENTS_DATABASE[item_id].append({"username": username, "text": text})
+        return {"status": "success", "comments": COMMENTS_DATABASE[item_id]}, 201
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

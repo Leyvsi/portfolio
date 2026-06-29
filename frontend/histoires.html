@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Les Histoires</title>
+    <title>Les Histoires — Les Petits Enquêteurs</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -32,22 +32,121 @@
     </nav>
 
     <main class="content-section">
-        <h2>Les Histoires</h2>
-        <p>Plongez dans les chroniques captivantes de crimes résolus, de disparitions troublantes et de destins brisés. Des ruelles sombres du siècle dernier aux affaires numériques modernes, chaque récit vous emmène dans un voyage psychologique au plus près des protagonistes, des forces de l'ordre et des secrets les mieux gardés. Préparez-vous à être captivé par des rebondissements que même la fiction n'aurait pu inventer.</p>
-        
-        <div class="cta-container">
-            <p>Envie de pousser l'enquête encore plus loin ?</p>
-            <a href="coldscases.html" class="cta-button">Voir les Cold Cases</a>
-            <a href="theories.html" class="cta-button">Découvrir les Théories</a>
+        <h2>Affaires Criminelles Résolues</h2>
+        <p class="intro-text">Explorez les comptes-rendus des enquêtes réelles les plus marquantes de ces dernières années, décortiquées par notre équipe.</p>
+
+        <div class="story-grid" id="stories-container"></div>
+
+        <div id="story-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; overflow-y:auto; padding:40px 20px;">
+            <div style="max-width:800px; margin:0 auto; background:#0f0f10; border:1px solid #c0392b; padding:30px; border-radius:8px; color:#fff; position:relative;">
+                <span onclick="closeModal()" style="position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; color:#c0392b;">&times;</span>
+                <h2 id="modal-title" style="border:none; margin-bottom:20px; color:#e67e22;"></h2>
+                <img id="modal-image" src="" alt="Illustration" style="width:100%; max-height:400px; object-fit:cover; border-radius:8px; margin-bottom:20px; border:1px solid #444;">
+                <p id="modal-content" style="font-size:1.1rem; line-height:1.8; text-align:justify; margin-bottom:40px;"></p>
+                
+                <hr style="border:0; border-top:1px solid #333; margin-bottom:30px;">
+                
+                <h3>Espace Commentaires</h3>
+                <div id="comments-section" style="margin-bottom:20px; max-height:300px; overflow-y:auto; background:#141416; padding:15px; border-radius:6px; border:1px solid #222;"></div>
+                
+                <div class="form-group" style="margin-top:20px;">
+                    <input type="text" id="comment-user" placeholder="Votre pseudo" style="width:100%; padding:10px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; margin-bottom:10px;">
+                    <textarea id="comment-text" placeholder="Ajouter un commentaire public..." rows="3" style="width:100%; padding:10px; background:#1a1a1c; color:#fff; border:1px solid #444; border-radius:4px; resize:vertical;"></textarea>
+                    <button onclick="submitComment()" class="submit-form-button" style="width:auto; padding:10px 25px; margin-top:10px;">Publier le commentaire</button>
+                </div>
+            </div>
         </div>
     </main>
-
-    <a href="proposer-histoire.html" class="floating-action-button" title="Proposer une histoire">+</a>
 
     <footer>
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
+    <script>
+        let currentStoryId = null;
+
+        function loadStories() {
+            const container = document.getElementById('stories-container');
+            fetch('http://127.0.0.1:5000/api/stories')
+                .then(res => res.json())
+                .then(data => {
+                    container.innerHTML = '';
+                    data.stories.forEach(story => {
+                        const article = document.createElement('article');
+                        article.className = 'story-card';
+                        article.style.background = '#0f0f10';
+                        article.style.padding = '20px';
+                        article.style.marginBottom = '20px';
+                        article.style.borderRadius = '8px';
+                        article.style.border = '1px solid #444';
+                        article.style.cursor = 'pointer';
+                        article.onclick = () => openModal(story);
+
+                        article.innerHTML = `
+                            <img src="${story.image_summary}" alt="${story.title}" style="width:100%; height:200px; object-fit:cover; border-radius:6px; margin-bottom:15px; border:1px solid #222;">
+                            <h3>${story.title}</h3>
+                            <p>${story.summary}</p>
+                            <span style="color:#e67e22; font-weight:bold; display:inline-block; margin-top:10px;">Lire la suite →</span>
+                        `;
+                        container.appendChild(article);
+                    });
+                });
+        }
+
+        function openModal(story) {
+            currentStoryId = `story_${story.id}`;
+            document.getElementById('modal-title').textContent = story.title;
+            document.getElementById('modal-image').src = story.image_full;
+            document.getElementById('modal-content').textContent = story.content;
+            document.getElementById('story-modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            loadComments();
+        }
+
+        function closeModal() {
+            document.getElementById('story-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function loadComments() {
+            const box = document.getElementById('comments-section');
+            fetch(`http://127.0.0.1:5000/api/comments/${currentStoryId}`)
+                .then(res => res.json())
+                .then(data => {
+                    box.innerHTML = '';
+                    if(data.comments.length === 0) {
+                        box.innerHTML = '<p style="color:#777; font-style:italic;">Aucun commentaire pour le moment. Soyez le premier à donner votre avis !</p>';
+                        return;
+                    }
+                    data.comments.forEach(c => {
+                        const p = document.createElement('p');
+                        p.style.marginBottom = '12px';
+                        p.style.fontSize = '0.95rem';
+                        p.innerHTML = `<strong style="color:#e67e22;">${c.username}</strong> : <span style="color:#ddd;">${c.text}</span>`;
+                        box.appendChild(p);
+                    });
+                    box.scrollTop = box.scrollHeight;
+                });
+        }
+
+        function submitComment() {
+            const user = document.getElementById('comment-user').value.trim() || 'Anonyme';
+            const text = document.getElementById('comment-text').value.trim();
+            if(!text) return;
+
+            fetch(`http://127.0.0.1:5000/api/comments/${currentStoryId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, text: text })
+            })
+            .then(res => res.json())
+            .then(() => {
+                document.getElementById('comment-text').value = '';
+                loadComments();
+            });
+        }
+
+        loadStories();
+    </script>
 </body>
 </html>
-
