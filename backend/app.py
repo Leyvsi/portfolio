@@ -18,7 +18,7 @@ api = Api(
     app, 
     version='1.0', 
     title='API Les Petits Enquêteurs',
-    description='Documentation interactive (Swagger) pour le portfolio. Testez les accès admin ici.',
+    description='Documentation interactive (Swagger) pour le portfolio. Testez les accès utilisateurs et admin ici.',
     doc='/swagger/',
     authorizations=authorizations
 )
@@ -27,8 +27,8 @@ USERS_DATABASE = []
 VISITS_COUNT = 0
 
 ADMIN_CREDENTIALS = {
-    "Leyvsi": "sylvie78",
-    "Mel_95": "melissa95"
+    "Leyvsi": "sylvie",
+    "Melissa": "melissa123"
 }
 
 STORIES_PROPOSALS = []
@@ -51,7 +51,7 @@ RESOLVED_STORIES = [
             "En mars 2022, à Kamas dans l'Utah, Eric Richins, un père de famille sans problème de santé, est retrouvé sans vie au pied de son lit. "
             "L'autopsie révèle l'impensable : une concentration massive de fentanyl, équivalente à cinq fois la dose létale, administrée par voie orale. "
             "Quelques mois plus tard, sa veuve Kouri Richins publie un livre pour enfants pour surmonter le deuil. Elle écume les plateaux TV, "
-            "s'affichant en mène courage.\n\n"
+            "s'affichant en mère courage.\n\n"
             "■ LES PAROLES DES PROCHES ET TÉMOINS\n"
             "• Amy Richins (Sœur de la victime) : « Dès le premier jour, nous avons su que quelque chose ne collait pas. Eric nous avait dit peu avant "
             "sa mort que si quelque chose lui arrivait, Kouri en serait responsable. Elle avait déjà tenté de l'empoisonner lors d'un voyage en Grèce "
@@ -91,7 +91,7 @@ RESOLVED_STORIES = [
             "• L'expert légiste de DNA Labs International : « Nous avons utilisé des technologies d'enrichissement d'ADN qui n'existaient pas il y a dix ans. "
             "À partir d'une micro-trace prélevée sur les scellés textiles de 1979, nous avons extrait un marqueur parfait. Ce marqueur a été intégré aux "
             "bases généalogiques publiques, construisant un arbre familial qui convergeait vers un seul homme. »\n"
-            "• Le Chef de la Police de North Aurora : « Bruce Lindahl était un monstre. Il est mort en 1981 en poignardant un jeune homme, se tuant "
+            "• Le Chef de la Police de North Aurora : « Bruce Lindahl était un monstre. Il est mort in 1981 en poignardant un jeune homme, se tuant "
             "accidentellement avec son propre couteau lors de la lutte. Grâce à la résolution du dossier Kathy Halle, nous l'avons relié à au moins quatre "
             "autres meurtres commis à la fin des années 70. Il a emporté ses secrets dans la tombe, mais la science l'a démasqué. »\n\n"
             "■ LE POINT DE VUE DE LA JUSTICE\n"
@@ -137,14 +137,56 @@ comment_model = api.model('Comment', {
     'text': fields.String(required=True, description="Contenu du commentaire")
 })
 
-login_model = api.model('AdminLogin', {
-    'username': fields.String(required=True, description="Identifiant administrateur secret"),
-    'password': fields.String(required=True, description="Mot de passe associé")
+auth_model = api.model('UserAuth', {
+    'username': fields.String(required=True, description="Nom d'utilisateur"),
+    'password': fields.String(required=True, description="Mot de passe")
 })
+
+@api.route('/api/auth/register')
+class UserRegister(Resource):
+    @api.expect(auth_model)
+    @api.response(201, 'Compte créé avec succès')
+    @api.response(400, 'Nom d’utilisateur déjà existant ou invalide')
+    def post(self):
+        """ Inscription d'un nouvel utilisateur classique """
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        
+        if not username or not password:
+            return {"status": "error", "message": "Tous les champs sont obligatoires."}, 400
+            
+        if username in ADMIN_CREDENTIALS or any(u['username'] == username for u in USERS_DATABASE):
+            return {"status": "error", "message": "Ce nom d'utilisateur n'est pas disponible."}, 400
+            
+        USERS_DATABASE.append({"username": username, "password": password})
+        return {"status": "success", "message": "Inscription réussie."}, 201
+
+@api.route('/api/auth/login')
+class UserLogin(Resource):
+    @api.expect(auth_model)
+    @api.response(200, 'Connexion réussie')
+    @api.response(401, 'Identifiants invalides')
+    def post(self):
+        """ Connexion d'un utilisateur classique """
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+        
+        user_match = next((u for u in USERS_DATABASE if u['username'] == username and u['password'] == password), None)
+        
+        if user_match:
+            return {
+                "status": "success", 
+                "message": f"Bienvenue, session utilisateur activée pour {username}.",
+                "role": "user"
+            }, 200
+            
+        return {"status": "error", "message": "Identifiants invalides. Accès refusé."}, 401
 
 @api.route('/api/admin/login')
 class AdminLogin(Resource):
-    @api.expect(login_model)
+    @api.expect(auth_model)
     @api.response(200, 'Connexion réussie')
     @api.response(401, 'Identifiants invalides')
     def post(self):
