@@ -33,7 +33,7 @@
             .then(data => {
                 document.getElementById('visit-count').textContent = data.visits;
             })
-            .catch(err => console.error("Erreur de récupération des stats:", err));
+            .catch(err => console.error(err));
     </script>
 </body>
 </html>

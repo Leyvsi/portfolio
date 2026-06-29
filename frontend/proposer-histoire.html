@@ -17,7 +17,9 @@
 
     <header>
         <h1>Les Petits Enquêteurs</h1>
-        <a href="connexion.html" class="account-button">Mon Compte</a>
+        <div id="auth-buttons-container">
+            <a href="connexion.html" class="account-button">Connexion / Inscription</a>
+        </div>
     </header>
 
     <nav>
@@ -35,21 +37,25 @@
         <h2>Soumettre une Enquête</h2>
         <p>Vous connaissez une affaire criminelle locale méconnue, un cold case fascinant ou une mise à jour récente ? Partagez-la avec la communauté.</p>
         
-        <div class="warning-box">
-            <p><strong>⚠️ Note importante :</strong> Pour garantir la qualité et le respect des faits, chaque histoire soumise est relue, vérifiée et validée par notre équipe d'administrateurs avant d'être publiée sur le site.</p>
+        <div class="warning-box" style="background: rgba(192, 57, 43, 0.1); border: 1px solid #c0392b; padding: 15px; border-radius: 4px; margin-bottom: 30px; color: #eceff1;">
+            <strong>⚠️ Charte de Modération :</strong> Les propositions à caractère diffamatoire, non documentées ou irrespectueuses envers les familles des victimes seront immédiatement rejetées.
         </div>
 
-        <form class="submission-form" enctype="multipart/form-data">
+        <form class="submission-form" id="story-proposal-form">
             <div class="form-group">
-                <label for="story-title">Titre de l'affaire</label>
-                <input type="text" id="story-title" name="title" placeholder="Ex: Le mystère de la chambre 104" required>
+                <label for="story-title">Intitulé de l'Affaire / Titre du Dossier</label>
+                <input type="text" id="story-title" name="title" placeholder="Ex: Le Mystère de la Lande Rouge" required>
             </div>
 
             <div class="form-group">
-                <label for="story-category">Catégorie principale</label>
-                <select id="story-category" name="category" required>
-                    <option value="" disabled selected>Choisissez une catégorie</option>
-                    <option value="histoire">Histoire (Affaire résolue / générale)</option>
+                <label for="story-summary">Résumé global condensé (Pour affichage sur la page d'accueil)</label>
+                <input type="text" id="story-summary" name="summary" placeholder="Ex: En octobre 1994, un véhicule est retrouvé moteur tournant..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="story-category">Typologie de la proposition</label>
+                <select id="story-category" name="category" required style="width: 100%; padding: 10px; background: #1a1a1c; color: #fff; border: 1px solid #444; border-radius: 4px;">
+                    <option value="resolu">Affaire Résolue (Histoire complète)</option>
                     <option value="coldcase">Cold Case (Affaire non résolue)</option>
                     <option value="update">Mise à jour (Update)</option>
                     <option value="theorie">Théorie / Hypothèse</option>
@@ -80,5 +86,45 @@
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
+    <script>
+        const currentUser = localStorage.getItem('username');
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUser && authContainer) {
+            authContainer.innerHTML = `
+                <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
+            `;
+        }
+
+        document.getElementById('story-proposal-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('title', document.getElementById('story-title').value);
+            formData.append('summary', document.getElementById('story-summary').value);
+            formData.append('category', document.getElementById('story-category').value);
+            formData.append('content', document.getElementById('story-content').value);
+            formData.append('sources', document.getElementById('story-sources').value);
+            formData.append('author', currentUser || 'Anonyme');
+
+            const files = document.getElementById('story-images').files;
+            for(let i = 0; i < files.length; i++) {
+                formData.append('images', files[i]);
+            }
+
+            fetch('http://127.0.0.1:5000/api/stories/propose', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === 'success') {
+                    document.getElementById('story-proposal-form').reset();
+                    window.location.href = 'histoires.html';
+                }
+            })
+            .catch(err => alert("Erreur d'envoi de la proposition"));
+        });
+    </script>
 </body>
 </html>

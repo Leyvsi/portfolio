@@ -17,7 +17,9 @@
 
     <header>
         <h1>Les Petits Enquêteurs</h1>
-        <a href="connexion.html" class="account-button">Mon Compte</a>
+        <div id="auth-buttons-container">
+            <a href="connexion.html" class="account-button">Connexion / Inscription</a>
+        </div>
     </header>
 
     <nav>
@@ -32,26 +34,24 @@
     </nav>
 
     <main class="content-section">
-        <h2>Bienvenue, Détective</h2>
-        <p>Passionné de True Crime, d'énigmes sombres et de mystères non résolus ? Vous êtes au bon endroit. Rejoignez la communauté des Petits Enquêteurs et plongez au cœur des affaires qui ont marqué l'histoire et bravé le temps.</p>
-        <p>Explorez les récits qui ont marqué chaque décennie, analysez les indices et tentez de démêler le vrai du faux.</p>
-        
-        <div class="cta-container">
-            <a href="histoires.html" class="cta-button">Voir les Histoires</a>
-            <a href="coldscases.html" class="cta-button">Explorer les Cold Cases</a>
-        </div>
+        <h2>Bienvenue sur la plateforme des Enquêteurs</h2>
+        <p class="intro-text">Rejoignez la communauté, analysez les indices, découvrez de nouvelles histoires et soumettez vos propres théories criminelles.</p>
     </main>
-
-    <a href="proposer-histoire.html" class="floating-action-button" title="Proposer une histoire">+</a>
 
     <footer>
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
-    <script>
-        fetch('http://127.0.0.1:5000/api/visit', { method: 'POST' })
-            .catch(err => console.error(err));
-    </script>
+    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
 
+    <script>
+        const currentUser = localStorage.getItem('username');
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUser && authContainer) {
+            authContainer.innerHTML = `
+                <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
+            `;
+        }
+    </script>
 </body>
 </html>

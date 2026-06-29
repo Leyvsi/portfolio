@@ -9,7 +9,7 @@
 <body>
 
     <div class="video-container">
-        <video autoplay loop muted playsinline id=\"bg-video\">
+        <video autoplay loop muted playsinline id="bg-video">
             <source src="background.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
@@ -37,7 +37,7 @@
             <h3>Créer un compte d'enquêteur</h3>
             <form class="submission-form" id="register-form">
                 <div class="form-group">
-                    <label for="register-username">Nom d'utilisateur (50 caractères max, symboles et chiffres acceptés)</label>
+                    <label for="register-username">Nom d'utilisateur (50 caractères max, symboles et chiffres autorisés)</label>
                     <input type="text" id="register-username" maxlength="50" placeholder="Pseudo" required>
                 </div>
                 <div class="form-group">
@@ -69,7 +69,6 @@
     </main>
 
     <script>
-        // Form submissions handling process
         document.getElementById('register-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const usernameValue = document.getElementById('register-username').value;

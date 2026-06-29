@@ -17,7 +17,9 @@
 
     <header>
         <h1>Les Petits Enquêteurs</h1>
-        <a href="connexion.html" class="account-button">Mon Compte</a>
+        <div id="auth-buttons-container">
+            <a href="connexion.html" class="account-button">Connexion / Inscription</a>
+        </div>
     </header>
 
     <nav>
@@ -41,12 +43,20 @@
         </div>
     </main>
 
-    <a href="proposer-histoire.html" class="floating-action-button" title="Proposer une histoire">+</a>
-
     <footer>
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
+    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
+
+    <script>
+        const currentUser = localStorage.getItem('username');
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUser && authContainer) {
+            authContainer.innerHTML = `
+                <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
+            `;
+        }
+    </script>
 </body>
 </html>
-

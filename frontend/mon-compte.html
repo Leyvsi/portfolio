@@ -27,26 +27,26 @@
     <main class="content-section">
         <h2>Mes Informations Personnelles</h2>
         
-        <div class="story-card" style="padding: 25px; margin-bottom: 40px;">
-            <p style="font-size: 1.2rem; margin-bottom: 15px;">🕵️‍♂️ <strong>Pseudo :</strong> <span id="profile-username" style="font-weight: bold; color: var(--accent-color, #c0392b);">Chargement...</span></p>
-            <p style="font-size: 1.2rem; margin-bottom: 0;">📧 <strong>Adresse Mail :</strong> <span id="profile-email">Chargement...</span></p>
+        <div class="story-card" style="padding: 25px; margin-bottom: 40px; cursor: default;">
+            <p style="font-size: 1.2rem; margin-bottom: 15px;">🕵️‍♂️ <strong>Pseudo :</strong> <span id="profile-username" style="font-weight: bold; color: var(--accent-2);">Invité</span></p>
+            <p style="font-size: 1.1rem; margin-bottom: 0;">🛡️ <strong>Rôle d'accréditation :</strong> <span id="profile-role" style="font-weight: bold; color: #4caf50;">Utilisateur</span></p>
         </div>
 
-        <h2>Sécurité - Modifier mon mot de passe</h2>
-        <form id="change-password-form" class="submission-form" style="max-width: 500px;">
+        <h2>Sécurisation du Profil</h2>
+        <form class="submission-form" id="change-password-form">
             <div class="form-group">
                 <label for="current-password">Mot de passe actuel</label>
-                <input type="password" id="current-password" required placeholder="••••••••">
+                <input type="password" id="current-password" placeholder="••••••••" required>
             </div>
             <div class="form-group">
                 <label for="new-password">Nouveau mot de passe</label>
-                <input type="password" id="new-password" required placeholder="••••••••">
+                <input type="password" id="new-password" placeholder="••••••••" required>
             </div>
             <div class="form-group">
                 <label for="confirm-new-password">Confirmer le nouveau mot de passe</label>
-                <input type="password" id="confirm-new-password" required placeholder="••••••••">
+                <input type="password" id="confirm-new-password" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="submit-form-button">Mettre à jour le mot de passe</button>
+            <button type="submit" class="submit-form-button">Appliquer les modifications</button>
         </form>
     </main>
 
@@ -56,24 +56,17 @@
 
     <script>
         const loggedUser = localStorage.getItem('username');
-        
-        if (!loggedUser) {
-            alert("Vous devez être connecté pour accéder à cette page.");
-            window.location.href = "connexion.html";
-        }
+        const userRole = localStorage.getItem('user_role');
 
-        fetch(`http://127.0.0.1:5000/api/user/profile/${loggedUser}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    document.getElementById('profile-username').textContent = data.profile.username;
-                    document.getElementById('profile-email').textContent = data.profile.email;
-                } else {
-                    alert(data.message);
-                    logout();
-                }
-            })
-            .catch(err => console.error("Erreur profil :", err));
+        if (!loggedUser) {
+            alert("Accès non autorisé. Redirection immédiate.");
+            window.location.href = "connexion.html";
+        } else {
+            document.getElementById('profile-username').textContent = loggedUser;
+            if(userRole) {
+                document.getElementById('profile-role').textContent = userRole.toUpperCase();
+            }
+        }
 
         document.getElementById('change-password-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -116,4 +109,3 @@
     </script>
 </body>
 </html>
-

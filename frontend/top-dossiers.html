@@ -17,7 +17,9 @@
 
     <header>
         <h1>Les Petits Enquêteurs</h1>
-        <a href="connexion.html" class="account-button">Mon Compte</a>
+        <div id="auth-buttons-container">
+            <a href="connexion.html" class="account-button">Connexion / Inscription</a>
+        </div>
     </header>
 
     <nav>
@@ -27,29 +29,38 @@
             <li><a href="coldscases.html">Les Colds Cases</a></li>
             <li><a href="updates.html">Les Updates</a></li>
             <li><a href="theories.html">Les Théories</a></li>
-            <li><a href="top-dossiers.html" class=\"active\">Top Dossiers</a></li>
+            <li><a href="top-dossiers.html" class="active">Top Dossiers</a></li>
         </ul>
     </nav>
 
     <main class="content-section">
         <h2>Votez pour le prochain Top Dossier</h2>
-        <p class="intro-text">Sélectionnez la meilleure proposition parmi les trois récits retenus ce mois-ci. L'histoire récoltant le plus grand nombre de suffrages sera officiellement ajoutée au site par l'équipe d'administration.</p>
+        <p class="intro-text">Sélectionnez la meilleure proposition parmi les trois récits retenus ce mois-ci. L'histoire récoltant le plus grand nombre de suffrages sera officiellement intégrée avec l'ouverture des forums associés.</p>
 
-        <div class="story-grid" id="voting-grid"></div>
+        <div id="voting-stories-grid" style="margin-top: 30px;"></div>
     </main>
 
     <footer>
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
-    <script>
-        function loadVotingStories() {
-            const grid = document.getElementById('voting-grid');
-            grid.innerHTML = '';
+    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
 
+    <script>
+        const currentUser = localStorage.getItem('username');
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUser && authContainer) {
+            authContainer.innerHTML = `
+                <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
+            `;
+        }
+
+        function loadVotingStories() {
             fetch('http://127.0.0.1:5000/api/votes')
                 .then(res => res.json())
                 .then(data => {
+                    const grid = document.getElementById('voting-stories-grid');
+                    grid.innerHTML = '';
                     data.stories.forEach(story => {
                         const card = document.createElement('article');
                         card.className = 'story-card';
@@ -58,6 +69,7 @@
                         card.style.marginBottom = '20px';
                         card.style.borderRadius = '8px';
                         card.style.border = '1px solid #444';
+                        card.style.cursor = 'default';
 
                         card.innerHTML = `
                             <h3>${story.title}</h3>
