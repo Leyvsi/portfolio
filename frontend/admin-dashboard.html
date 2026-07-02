@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Les Petits Enquêteurs - Espace Admin</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Petits Enquêteurs - Espace Admin</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<script>
-if (!localStorage.getItem('adminToken')) {
-alert("Accès refusé. Autorisation administrateur manquante.");
-window.location.href = "admin-connexion.html";
-}
-</script>
+    <header style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;">
+        <h1>Panel Administration</h1>
+        <a href="index.html" class="submit-form-button" style="text-decoration:none; width:auto; padding:8px 15px;">Retour au Site</a>
+    </header>
 
-<header>
-<h1>Panel Administration</h1>
-<a href="index.html" class="account-button">Retour au Site</a>
-</header>
+    <main class="content-section">
+        <h2>Statistiques globales du Stockage REST (HBnB v1)</h2>
+        <div class="dashboard-stats" style="background: #0f0f10; padding: 20px; border-radius: 8px; border: 1px solid #444; margin-bottom: 30px; text-align:left;">
+            <p style="font-size:1.1rem; margin-bottom:10px;">Dossiers enregistrés en Base : <span id="stories-count" style="color: #f39c12; font-weight: bold;">0</span></p>
+            <p style="font-size:1.1rem; margin-bottom:10px;">Théories postées sur le serveur : <span id="theories-count" style="color: #f39c12; font-weight: bold;">0</span></p>
+            <p style="font-size:1.1rem;">Comptes utilisateurs actifs : <span id="users-count" style="color: #f39c12; font-weight: bold;">0</span></p>
+        </div>
+    </main>
 
-<main class="content-section">
-<h2>Statistiques de fréquentation</h2>
-<div class="dashboard-stats" style="background: #0f0f10; padding: 20px; border-radius: 8px; border: 1px solid #444; margin-bottom: 30px;">
-<p style="font-size: 1.2rem;">Nombre de visites totales : <span id="visit-count" style="color: #c0392b; font-weight: bold;">0</span></p>
-</div>
-</main>
-
-<script>
-fetch('http://127.0.0.1:5000/api/stats')
-.then(res => res.json())
-.then(data => {
-document.getElementById('visit-count').textContent = data.visits;
-})
-.catch(err => console.error("Erreur de récupération des stats:", err));
-</script>
+    <script>
+        fetch('http://127.0.0.1:5000/api/v1/stats')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('stories-count').textContent = data.stories;
+                document.getElementById('theories-count').textContent = data.theories;
+                document.getElementById('users-count').textContent = data.users;
+            })
+            .catch(() => {
+                console.log("API déconnectée : les statistiques réelles restent à zéro.");
+            });
+    </script>
 </body>
 </html>

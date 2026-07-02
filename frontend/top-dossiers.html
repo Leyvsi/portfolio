@@ -8,13 +8,6 @@
 </head>
 <body>
 
-    <div class="video-container">
-        <video autoplay loop muted playsinline id="bg-video">
-            <source src="background.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
-
     <header class="main-header">
         <h1>Les Petits Enquêteurs</h1>
         <div id="auth-buttons-container">
@@ -35,64 +28,44 @@
 
     <main class="content-section">
         <h2>Votez pour le prochain Top Dossier</h2>
-        <p class="intro-text">Sélectionnez la meilleure proposition parmi les trois récits retenus ce mois-ci. L'histoire récoltant le plus grand nombre de suffrages sera officiellement intégrée avec l'ouverture des forums associés.</p>
-
+        <p class="intro-text">Sélectionnez la meilleure proposition. L'histoire récoltant le plus grand nombre de suffrages sera officiellement intégrée avec l'ouverture des forums associés.</p>
         <div id="voting-stories-grid" style="margin-top: 30px;"></div>
     </main>
 
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
-
-    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
-
     <script>
-        const currentUser = localStorage.getItem('username');
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser && authContainer) {
-            authContainer.innerHTML = `
-                <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
-            `;
-        }
-
         function loadVotingStories() {
-            fetch('http://127.0.0.1:5000/api/votes')
+            const grid = document.getElementById('voting-stories-grid');
+            
+            fetch('http://127.0.0.1:5000/api/v1/stories')
                 .then(res => res.json())
-                .then(data => {
-                    const grid = document.getElementById('voting-stories-grid');
+                .then(stories => {
                     grid.innerHTML = '';
-                    data.stories.forEach(story => {
+                    stories.forEach(story => {
                         const card = document.createElement('article');
                         card.className = 'story-card';
-                        card.style.background = '#0f0f10';
                         card.style.padding = '20px';
                         card.style.marginBottom = '20px';
-                        card.style.borderRadius = '8px';
-                        card.style.border = '1px solid #444';
-                        card.style.cursor = 'default';
-
                         card.innerHTML = `
                             <h3>${story.title}</h3>
                             <p>${story.summary}</p>
-                            <p style="color: #e67e22; font-weight: bold; margin-top: 15px;">Votes actuels : ${story.votes}</p>
-                            <button onclick="vote(${story.id})" class="submit-form-button" style="width: auto; padding: 10px 20px; margin-top: 10px;">Voter pour ce récit</button>
+                            <p style="color: #e67e22; font-weight: bold; margin-top: 15px;">Votes actuels (Serveur API) : ${story.votes || 0}</p>
+                            <button onclick="vote('${story.id}')" class="submit-form-button" style="width: auto; padding: 10px 20px; margin-top: 10px;">Voter pour ce récit</button>
                         `;
                         grid.appendChild(card);
                     });
                 })
-                .catch(err => console.error(err));
+                .catch(() => {
+                    grid.innerHTML = '<p style="color:#e74c3c; font-style:italic;">Lancer l\'API v1 backend pour charger les dossiers de vote.</p>';
+                });
         }
 
         function vote(storyId) {
-            fetch(`http://127.0.0.1:5000/api/votes/${storyId}`, {
-                method: 'POST'
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message);
-                loadVotingStories();
-            })
-            .catch(err => console.error(err));
+            fetch(`http://127.0.0.1:5000/api/v1/stories/${storyId}/vote`, { method: 'POST' })
+                .then(res => res.json())
+                .then(() => {
+                    alert("Votre vote a bien été pris en compte par l'API backend !");
+                    loadVotingStories();
+                }).catch(() => alert("Erreur : Le serveur n'a pas pu comptabiliser le vote."));
         }
 
         loadVotingStories();

@@ -44,21 +44,17 @@
 
         <hr style="border-color:#333; margin-bottom:40px;">
 
-        <h3>Proposer votre propre théorie</h3>
+        <h3>Proposer votre propre théorie (Poste sur l'API backend v1)</h3>
         <form id="theory-form" class="submission-form">
             <div class="form-group">
-                <label for="theory-text">Votre hypothèse d'enquêteur</label>
-                <textarea id="theory-text" rows="5" placeholder="Décrivez votre piste d'analyse, vos indices clés..." required></textarea>
+                <label for="theory-title">Titre de votre hypothèse</label>
+                <input type="text" id="theory-title" placeholder="Ex: Hypothèse du complice externe" required style="width:100%; padding:10px; margin-bottom:15px; background:#151518; color:#fff; border:1px solid #444;">
+                <label for="theory-text">Votre piste d'analyse</label>
+                <textarea id="theory-text" rows="5" placeholder="Décrivez votre piste d'analyse, vos indices clés..." required style="width:100%; background:#151518; color:#fff; border:1px solid #444; padding:10px;"></textarea>
             </div>
-            <button type="submit" class="submit-form-button">Soumettre la Théorie</button>
+            <button type="submit" class="submit-form-button">Soumettre la Théorie sur l'API</button>
         </form>
     </main>
-
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
-
-    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
 
     <script>
         const caseSelector = document.getElementById('case-selector');
@@ -66,37 +62,30 @@
         const theoryForm = document.getElementById('theory-form');
         const currentUser = localStorage.getItem('username') || 'Anonyme';
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const caseParam = urlParams.get('case');
-        if (caseParam) {
-            caseSelector.value = caseParam;
-        }
-
         const mockTheories = {
-            cc1: [
-                { id: "t1", author: "Lupin99", text: "Je pense que les traces s'arrêtent net parce qu'elle est montée à bord d'un véhicule qui reculait." }
-            ],
-            cc2: [
-                { id: "t2", author: "SherlockParis", text: "Le vêtement d'époque montre une mise en scène volontaire pour brouiller l'origine géographique." }
-            ],
-            cc3: [
-                { id: "t3", author: "LeChasseur", text: "La mélodie au piano était peut-être un signal codé pour indiquer que la voie était libre." }
-            ]
+            cc1: [{ id: "t1", username: "Lupin99", title: "Véhicule en marche arrière", content: "Je pense que les traces s'arrêtent net parce qu'elle est montée à bord d'un véhicule qui reculait[cite: 5].", likes: 12 }],
+            cc2: [{ id: "t2", username: "SherlockParis", title: "Mise en scène vestimentaire", content: "Le vêtement d'époque montre une mise en scène volontaire pour brouiller l'origine géographique[cite: 5].", likes: 8 }],
+            cc3: [{ id: "t3", username: "LeChasseur", title: "Signal musical codé", content: "La mélodie au piano était peut-être un signal codé pour indiquer que la voie était libre[cite: 5].", likes: 21 }]
         };
 
         function loadTheories(caseId) {
             theoriesList.innerHTML = '';
-            const list = mockTheories[caseId] || [];
+            let currentList = [...(mockTheories[caseId] || [])];[cite: 5]
 
-            if (list.length === 0) {
-                theoriesList.innerHTML = '<p style="color:#666; font-style:italic;">Aucune théorie proposée pour le moment. Soyez le premier !</p>';
-                return;
-            }
+            fetch(`http://127.0.0.1:5000/api/v1/stories/${caseId}/theories`)
+                .then(res => res.json())
+                .then(apiTheories => {
+                    currentList = currentList.concat(apiTheories);
+                    displayTheories(currentList);
+                })
+                .catch(() => {
+                    displayTheories(currentList);[cite: 5]
+                });
+        }
 
+        function displayTheories(list) {
+            theoriesList.innerHTML = '';
             list.forEach(theory => {
-                const caseLikes = JSON.parse(localStorage.getItem(`likes_theory_${theory.id}`)) || [];
-                const hasLiked = caseLikes.includes(currentUser);
-
                 const div = document.createElement('div');
                 div.className = 'story-card';
                 div.style.padding = '25px';
@@ -104,88 +93,49 @@
                 div.style.textAlign = 'left';
 
                 div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
-                        <strong style="color:#f39c12; font-size:1.1rem;">Hypothèse de : ${theory.author}</strong>
-                        <button onclick="toggleTheoryLike('${caseId}', '${theory.id}')" class="submit-form-button" style="width:auto; font-size:0.85rem; padding:6px 12px; margin:0; background-color: ${hasLiked ? '#c0392b' : '#222'};">
-                            ❤️ ${caseLikes.length} ${hasLiked ? 'Aimé' : 'Like'}
-                        </button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:10px;">
+                        <strong style="color:#f39c12; font-size:1.1rem;">${theory.title} (Par : ${theory.username})</strong>
                     </div>
-                    <p style="line-height:1.6; color:#ddd; font-size:1.05rem; margin-bottom:25px;">${theory.text}</p>
-                    
-                    <div style="background: rgba(0,0,0,0.2); padding:15px; border-radius:6px;">
-                        <h4 style="font-size:0.95rem; color:#fff; margin-bottom:10px;">Débat & Contre-expertises :</h4>
-                        <div id="comments-box-${theory.id}" style="max-height:150px; overflow-y:auto; margin-bottom:15px;"></div>
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="input-${theory.id}" placeholder="Ajouter un argument..." style="flex:1; padding:8px; background:#111; border:1px solid #444; color:#fff; border-radius:4px; font-size:0.9rem;">
-                            <button onclick="postTheoryComment('${theory.id}')" class="submit-form-button" style="width:auto; margin:0; padding:0 15px; font-size:0.9rem;">Répondre</button>
-                        </div>
-                    </div>
+                    <p style="line-height:1.6; color:#ddd; margin-top:15px;">${theory.content}</p>
+                    <button onclick="likeTheory('${theory.id}')" class="submit-form-button" style="width:auto; margin-top:15px; background:#222;">
+                        ❤️ Likes (<span id="like-count-${theory.id}">${theory.likes}</span>)
+                    </button>
                 `;
                 theoriesList.appendChild(div);
-                loadTheoryComments(theory.id);
             });
         }
 
-        function toggleTheoryLike(caseId, theoryId) {
-            let likes = JSON.parse(localStorage.getItem(`likes_theory_${theoryId}`)) || [];
-            if (likes.includes(currentUser)) {
-                likes = likes.filter(u => u !== currentUser);
-            } else {
-                likes.push(currentUser);
-            }
-            localStorage.setItem(`likes_theory_${theoryId}`, JSON.stringify(likes));
-            loadTheories(caseId);
-        }
-
-        function loadTheoryComments(theoryId) {
-            const box = document.getElementById(`comments-box-${theoryId}`);
-            const comments = JSON.parse(localStorage.getItem(`comments_theory_${theoryId}`)) || [];
-            box.innerHTML = '';
-            if (comments.length === 0) {
-                box.innerHTML = '<p style="color:#555; font-size:0.85rem; font-style:italic;">Aucun avis contraire ou confirmation émis.</p>';
-                return;
-            }
-            comments.forEach(c => {
-                box.innerHTML += `<p style="font-size:0.9rem; margin-bottom:6px;"><strong style="color:#e67e22;">${c.author}</strong>: <span style="color:#ccc;">${c.text}</span></p>`;
-            });
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function postTheoryComment(theoryId) {
-            const input = document.getElementById(`input-${theoryId}`);
-            const text = input.value.trim();
-            if (!text) return;
-
-            const comments = JSON.parse(localStorage.getItem(`comments_theory_${theoryId}`)) || [];
-            comments.push({ author: currentUser, text: text });
-            localStorage.setItem(`comments_theory_${theoryId}`, JSON.stringify(comments));
-            input.value = '';
-            loadTheoryComments(theoryId);
+        function likeTheory(theoryId) {
+            fetch(`http://127.0.0.1:5000/api/v1/theories/${theoryId}/like`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        document.getElementById(`like-count-${theoryId}`).textContent = data.likes;
+                    }
+                }).catch(() => alert("Le serveur API n'est pas lancé pour enregistrer le like."));
         }
 
         theoryForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            const titleInput = document.getElementById('theory-title');
             const textInput = document.getElementById('theory-text');
-            const newTheory = {
-                id: "t_" + Date.now(),
-                author: currentUser,
-                text: textInput.value.trim()
-            };
-            if(!mockTheories[caseSelector.value]) mockTheories[caseSelector.value] = [];
-            mockTheories[caseSelector.value].push(newTheory);
-            textInput.value = '';
-            loadTheories(caseSelector.value);
+            const caseId = caseSelector.value;
+
+            fetch(`http://127.0.0.1:5000/api/v1/stories/${caseId}/theories`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser, title: titleInput.value.trim(), content: textInput.value.trim(), likes: 0 })
+            })
+            .then(res => res.json())
+            .then(() => {
+                titleInput.value = '';
+                textInput.value = '';
+                loadTheories(caseId);
+            }).catch(() => alert("Impossible de poster : API déconnectée."));
         });
 
         caseSelector.addEventListener('change', (e) => loadTheories(e.target.value));
         loadTheories(caseSelector.value);
-
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser !== 'Anonyme' && authContainer) {
-            authContainer.innerHTML = `
-                <a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
-            `;
-        }
     </script>
 </body>
 </html>

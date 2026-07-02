@@ -43,42 +43,99 @@
         const container = document.getElementById('stories-container');
         const navContext = document.getElementById('navigation-context');
         const currentUser = localStorage.getItem('username') || 'Anonyme';
+        
         const storiesData = [
             {
                 id: "h1",
-                title: "L'Affaire du Golden State Killer (2018)",
-                summary: "40 ans de traque brisés en quelques jours : comment la généalogie génétique par l'ADN a confondu Joseph James DeAngelo.",
+                title: "L'Affaire du Golden State Killer (1976 - 2018)",
+                summary: "40 ans de traque brisés en quelques jours : comment la généalogie génétique par l'ADN a confondu Joseph James DeAngelo[cite: 3].",
                 image: "https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=600",
-                content: "Entre 1976 et 1986, la Californie vit sous la terreur d'un prédateur insaisissable surnommé le Golden State Killer, responsable de 13 meurtres, plus de 50 viols et 120 cambriolages. L'affaire piétine pendant 4 décennies, les enquêteurs disposant d'un profil ADN complet prélevé sur les scènes de crime, mais sans aucune correspondance dans le fichier national du CODIS.\n\nEn 2018, la procureure Anne Marie Schubert et l'inspecteur Paul Holes décident d'utiliser une méthode inédite : la généalogie génétique. Ils téléversent l'ADN du tueur sur GEDmatch, un site public d'histoire familiale. Les algorithmes découvrent une correspondance avec un cousin au troisième degré du criminel. \n\nPendant des semaines, les généalogistes reconstruisent de gigantesques arbres généalogiques remontant jusqu'aux années 1800 avant de redescendre vers les suspects vivants correspondants aux critères de l'époque. Deux suspects émergent, mais les tests d'exclusion éliminent le premier. Il ne reste qu'un homme : Joseph James DeAngelo, un ancien officier de police de 72 ans, renvoyé de la police en 1979 pour vol. Mis sous surveillance, son ADN est discrètement prélevé sur la poignée de la portière de sa voiture et sur une poubelle. La correspondance est absolue.",
+                content: `### 👥 PROFIL DES PROTAGONISTES
+• **Joseph James DeAngelo (Le Criminel) :** Ancien officier de police d'Auburn, vétéran de la Navy. Un homme colérique, minutieux, qui utilisait ses connaissances en tactique policière pour cartographier les maisons de ses victimes et s'assurer des voies de fuite indétectables.
+• **Paul Holes (L'Enquêteur Clé) :** Inspecteur en chef de Contra Costa[cite: 3]. Il a dédié 24 ans de sa vie à traquer ce fantôme, analysant chaque indice biologique jusqu'à la découverte finale.
+• **Michelle McNamara (L'Autrice) :** Journaliste d'investigation qui a baptisé le tueur "The Golden State Killer" et a relancé l'intérêt du public avec son livre avant son décès tragique.
+
+---
+
+### 🕒 CHRONOLOGIE ET RITUEL CRIMINEL
+1. **La Terreur de Sacramento (1976-1979) :** Le tueur s'introduit de nuit chez des couples. Son rituel est sadique : il ligote l'homme avec des cordons, place des assiettes en équilibre sur son dos et menace de massacrer toute la famille si les assiettes bougent pendant qu'il viole la femme.
+2. **L'Escalade Meurtrière (1979-1986) :** En se déplaçant vers le sud de la Californie, il change de mode opératoire et commence à assassiner systématiquement ses victimes par balle ou par matraquage pour éliminer tout témoin oculaire.
+3. **Le Grand Silence (1986-2018) :** Pendant des décennies, l'affaire piétine malgré un profil ADN complet disponible, car le tueur n'est inscrit dans aucun fichier criminel centralisé (CODIS)[cite: 3].
+
+---
+
+### 🔬 LA CHUTE ET LE PROCÈS
+En 2018, l'inspecteur Paul Holes utilise une technique révolutionnaire : la généalogie génétique[cite: 3]. En téléversant l'ADN du tueur sur le site public d'histoire familiale **GEDmatch**, il identifie un cousin au troisième degré[cite: 3]. Les généalogistes reconstruisent l'arbre jusqu'à isoler DeAngelo[cite: 3]. Mis sous surveillance, son ADN est discrètement prélevé sur la poignée de sa voiture[cite: 3]. La correspondance est absolue[cite: 3].
+
+Lors de son procès en août 2020, DeAngelo plaide coupable pour éviter la peine de mort et est condamné à **11 peines de prison à perpétuité consécutives, sans possibilité de libération conditionnelle**[cite: 3].`,
+                sources: [
+                    { label: "Documentaire YouTube - La traque du Golden State Killer", url: "https://www.youtube.com/watch?v=Xh0m29BEnOI" },
+                    { label: "Rapport officiel du FBI sur l'arrestation de DeAngelo", url: "https://www.fbi.gov/history/famous-cases/golden-state-killer" }
+                ],
                 testimonies: [
-                    { role: "Inspecteur Paul Holes (Dossier Criminel)", text: "« Lorsque nous avons découvert qu'un de nos suspects finaux était un ancien flic de l'époque des premiers viols à Auburn, mes cheveux se sont hérissés. Nous avions sa signature comportementale sous les yeux, cachée dans les archives policières depuis quarante ans. »" },
-                    { role: "Procureure Anne Marie Schubert (Conférence de presse - Sacramento)", text: "« La réponse a toujours été dans l'ADN. Ce n'était pas chercher une aiguille dans une botte de foin, c'était construire la botte de foin. La science génétique vient de rendre la dignité aux vivants et la paix aux morts. »" },
-                    { role: "Avocat de la défense, Diane Howard", text: "« Mon client est un homme brisé. En acceptant de plaider coupable lors de l'audience d'août 2020 pour la totalité des chefs d'inculpation, il évite la peine de mort mais s'assure surtout que les victimes n'aient pas à endurer des années de procédures d'appels douloureuses. »" },
-                    { role: "Gay Hardwick (Survivante de l'attaque de 1978)", text: "« Pendant 40 ans, j'ai vérifié les verrous de mes fenêtres chaque soir, terrifiée à l'idée qu'il revienne. Le voir menotté, vieux et impuissant dans ce tribunal, a instantanément brisé ma cage invisible. »" }
+                    { role: "Inspecteur Paul Holes (Dossier Criminel)", text: "« Lorsque nous avons découvert qu'un de nos suspects finaux était un ancien flic de l'époque des premiers viols à Auburn, mes cheveux se sont hérissés[cite: 3]. »" },
+                    { role: "Gay Hardwick (Survivante de l'attaque de 1978)", text: "« Pendant 40 ans, j'ai vérifié les verrous de mes fenêtres chaque soir, terrifiée à l'idée qu'il revienne[cite: 3]. Le voir menotté a brisé ma cage invisible. »" }
                 ]
             },
             {
                 id: "h2",
                 title: "Les Meurtres de la Famille Watts (2018)",
-                summary: "La chute du masque d'un père de famille modèle : autopsie d'un triple infanticide minutieusement analysé par le FBI.",
+                summary: "La chute du masque d'un père de famille modèle : autopsie d'un triple infanticide minutieusement analysé par le FBI[cite: 3].",
                 image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600",
-                content: "Le 13 août 2018, à Frederick dans le Colorado, Nickole Atkinson s'inquiète de ne plus avoir de nouvelles de son amie Shanann Watts, enceinte de 15 semaines, de retour d'un voyage d'affaires. Elle prévient la police et son mari, Christopher 'Chris' Watts.\n\nArrivé sur les lieux, Chris Watts feint la surprise et autorise les policiers à fouiller la maison. Les caméras de surveillance du voisin montrent que Chris est le seul à avoir sorti sa camionnette du garage à 5h27 du matin. Dès le lendemain, il supplie face aux caméras de télévision pour le retour de sa famille. Mais les enquêteurs du CBI (Colorado Bureau of Investigation) et du FBI découvrent rapidement qu'il entretenait une liaison passionnée avec une collègue de travail, Nichol Kessinger, à qui il affirmait être en instance de divorce.\n\nSoumis au détecteur de mensonges (polygraphe) le 15 août, ses graphiques d'anxiété explosent. Confronté à son échec complet au test par l'agent Tammy Lee, sa façade s'effondre. Il avoue avoir étranglé sa femme à la suite d'une dispute, mais accuse initialement Shanann d'avoir étouffé leurs filles Celeste (3 ans) et Bella (4 ans). Les expertises médico-légales détruisent sa version : les deux petites filles ont été étouffées par leur père avant d'être dissimulées dans des cuves de pétrole brut de l'entreprise qui l'employait, tandis que le corps de Shanann était retrouvé dans une fosse peu profonde à proximité.",
+                content: `### 👥 PROFIL DES PROTAGONISTES
+• **Chris Watts (Le Criminel) :** Décrit à l'unanimité comme un époux calme, serviable et sans histoire. En secret, il entretenait une liaison passionnée avec une collègue et cherchait à se débarrasser des responsabilités familiales.
+• **Shanann Watts (La Victime) :** Mère dynamique de 34 ans, enceinte de 15 semaines d'un petit garçon prénommé Nico[cite: 3]. Elle documentait sa vie heureuse sur les réseaux sociaux.
+• **Bella (4 ans) et Celeste (3 ans) (Les Victimes) :** Les deux petites filles du couple[cite: 3].
+• **Agent Tammy Lee (L'Enquêtrice) :** Profiler et experte en interrogatoire pour le Bureau d'Investigation du Colorado (CBI)[cite: 3].
+
+---
+
+### 🕒 CHRONOLOGIE MACABRE DU 13 AOÛT 2018
+1. **L'Explication de trop (03h00) :** Shanann rentre d'un voyage d'affaires[cite: 3]. Une dispute éclate dans la chambre conjugale concernant la demande de divorce de Chris. Au cours de l'altercation, Chris étrangle froidement Shanann dans le lit conjugal[cite: 3].
+2. **Le Transport des Corps (05h15) :** Les filles se réveillent. Chris charge le corps de Shanann à l'arrière de son pick-up professionnel et y fait monter ses deux enfants vivants[cite: 3]. Il roule pendant 45 minutes vers un site pétrolier de son entreprise[cite: 3].
+3. **L'Exécution des Enfants :** Sur place, il étouffe en premier la petite Celeste avec sa propre couverture sous les yeux de sa sœur aînée[cite: 3]. Il jette son corps dans une cuve de pétrole brut[cite: 3]. Il revient ensuite vers Bella qui le supplie (« Papa, non ! ») avant de lui infliger le même sort et d'enterrer sa femme à proximité[cite: 3].
+
+---
+
+### 🔬 LES AVEUX ET LA CONDAMNATION
+Après avoir simulé l'inquiétude devant les caméras de télévision locales, Chris Watts est convoqué par le FBI[cite: 3]. Le 15 août, l'agent Tammy Lee lui fait passer le test du polygraphe[cite: 3]. Ses graphiques indiciels de stress s'affolent[cite: 3]. Confronté à son échec total, il s'effondre et avoue l'irréparable[cite: 3].
+
+Il plaide coupable pour éviter la peine de mort et est condamné à **trois peines de prison à perpétuité consécutives, sans possibilité de libération conditionnelle**[cite: 3].`,
+                sources: [
+                    { label: "Analyse YouTube - L'Interrogatoire complet de Chris Watts", url: "https://www.youtube.com/watch?v=bL8b6mO9Aks" },
+                    { label: "Chroniques Criminelles - Le monstre du Colorado", url: "https://www.youtube.com/results?search_query=chroniques+criminelles+chris+watts" }
+                ],
                 testimonies: [
-                    { role: "Agent spécial Tammy Lee (Interrogatoire FBI)", text: "« Sa tentative de manipulation psychologique lors du polygraphe manquait totalement de structure. Quand je lui ai proposé le scénario alternatif où sa femme s'en prenait aux enfants, il a sauté sur l'occasion. C'était l'aveu masqué de sa propre culpabilité. »" },
-                    { role: "Le Juge Michael Kopcow (Sentence de la Cour)", text: "« C'est sans conteste l'affaire la plus cruelle, vicieuse et inhumaine qu'il m'ait été donné de juger au cours de ma carrière. Condamner cet homme à trois peines consécutives de prison à perpétuité sans possibilité de libération conditionnelle est le strict minimum requis par la justice humaine. »" },
-                    { role: "Frank Rzucek (Père de la victime Shanann)", text: "« Je lui ai fait confiance comme à un fils. Il a pris ma fille, mon futur petit-fils Nico et mes deux petites princesses, et les a jetés comme des déchets industriels. Aucun pardon n'existe sur cette Terre pour un tel monstre. »" }
+                    { role: "Agent spécial Tammy Lee (Interrogatoire FBI)", text: "« Sa tentative de manipulation psychologique lors du polygraphe manquait totalement de structure[cite: 3]. C'était l'aveu masqué de sa propre culpabilité. »" },
+                    { role: "Frank Rzucek (Père de la victime Shanann)", text: "« Il a pris ma fille, mon futur petit-fils Nico et mes deux petites princesses, et les a jetés comme des déchets industriels[cite: 3]. Aucun pardon n'existe. »" }
                 ]
             },
             {
                 id: "h3",
-                title: "L'Affaire Michelle Carter (2017)",
-                summary: "Condamnée pour homicide involontaire par SMS : l'analyse juridique de la manipulation psychologique textuelle.",
+                title: "L'Affaire Michelle Carter (2014 - 2017)",
+                summary: "Condamnée pour homicide involontaire par SMS : l'analyse juridique de la manipulation psychologique textuelle[cite: 3].",
                 image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600",
-                content: "Le 13 juillet 2014, le corps de Conrad Roy III, un jeune homme de 18 ans souffrant de dépression sévère, est retrouvé sans vie dans sa camionnette garée sur le parking d'un supermarché de Fairhaven, intoxiqué au monoxyde de carbone.\n\nL'examen technique de son téléphone portable par les analystes de la police de l'État met en lumière une correspondance macabre avec sa petite amie à distance, Michelle Carter, alors âgée de 17 ans. Les procureurs découvrent des milliers de messages où la jeune fille encourage activement, jour après jour, Conrad à mettre fin à ses jours. Alors que Conrad exprime des doutes répétés et de la peur, Michelle Carter lui envoie : 'Tu es enfin prêt. Tout ce que tu as à faire, c'est allumer le générateur et tu seras libre.'\n\nLe point de rupture juridique de l'affaire réside dans un appel téléphonique survenu pendant l'asphyxie. Conrad, pris de panique, est sorti de son camion pour respirer. Michelle Carter lui a alors ordonné par SMS et de vive voix de 'remonter dans le foutu camion' ('get back in'). Elle n'a prévenu ni les secours, ni la famille, attendant la confirmation de sa mort pour jouer le rôle de la 'petite amie en deuil' sur les réseaux sociaux. En 2017, le juge Lawrence Moniz la déclare coupable d'homicide involontaire, statuant que ses mots ont constitué une contrainte physique et causé directement la mort.",
+                content: `### 👥 PROFIL DES PROTAGONISTES
+• **Conrad Roy III (La Victime) :** Jeune homme de 18 ans, intelligent mais souffrant d'une dépression clinique sévère et d'anxiété sociale[cite: 3].
+• **Michelle Carter (La Criminelle) :** Adolescente de 17 ans en quête obsessionnelle d'attention, de popularité et de sympathie auprès de ses camarades[cite: 3].
+
+---
+
+### 🕒 CHRONOLOGIE DES TEXTOS ET MANIPULATION
+1. **L'Encouragement au Suicide :** Pendant plusieurs semaines, alors que Conrad Roy confie ses idées noires, Michelle Carter l'incite activement à passer à l'acte au lieu de le dissuader, lui envoyant des conseils logistiques sur la méthode à utiliser[cite: 3].
+2. **Le Passage à l'Acte (12 Juillet 2014) :** Conrad gare sa camionnette sur le parking d'un supermarché et active un générateur de monoxyde de carbone[cite: 3]. Pris de panique et de regrets à mesure que le gaz se propage, il sort du véhicule pour respirer[cite: 3].
+3. **L'Ordre Fatal :** Au téléphone avec lui, Michelle Carter lui ordonne textuellement de « remonter dans le foutu camion » ("get back in")[cite: 3]. Elle écoute Conrad étouffer et mourir sans jamais prévenir les secours ni sa famille qui le cherchait[cite: 3].
+
+---
+
+### 🔬 UN PROCÈS JURIDIQUE HISTORIQUE
+L'extraction complète des données téléphoniques par les analystes techniques de la police met au jour plus de 4 000 messages explicites[cite: 3]. En 2017, le juge Lawrence Moniz rend un verdict historique : il déclare Michelle Carter coupable d'homicide involontaire, statuant que ses injonctions verbales directes ont provoqué l'asphyxie mortelle de la victime[cite: 3]. Elle est condamnée à **15 mois de prison ferme**.`,
+                sources: [
+                    { label: "Documentaire HBO / YouTube - I Love You, Now Die", url: "https://www.youtube.com/results?search_query=I+Love+You+Now+Die+Michelle+Carter" }
+                ],
                 testimonies: [
-                    { role: "Procureur Katie Rayburn (Réquisitoire final)", text: "« Elle a utilisé Conrad comme un pion pour obtenir l'attention et la sympathie de ses camarades de classe. Ses messages n'étaient pas des conseils maladroits, c'était une exécution pas-à-pas dirigée par écran interposé. »" },
-                    { role: "Avocat de la défense, Joseph Cataldo", text: "« C'est un jour sombre pour la justice américaine. Ma cliente suivait un traitement lourd d'antidépresseurs qui altérait son jugement. Condamner quelqu'un pour homicide involontaire uniquement sur la base de mots envoyés par SMS est un glissement dangereux de la loi. »" },
-                    { role: "Lynn Roy (Mère de Conrad Roy)", text: "« Je savais que mon fils était fragile, mais il se battait pour aller mieux. Elle a exploité ses faiblesses les plus intimes pour le pousser dans la tombe. Aucun SMS ne me rendra mon fils, mais ce verdict montre que la manipulation a un prix. »" }
+                    { role: "Procureur Katie Rayburn (Réquisitoire final)", text: "« Elle a utilisé Conrad comme un pion pour obtenir l'attention et la sympathie de ses camarades de classe[cite: 3]. Ses messages étaient une exécution dirigée par écran interposé. »" },
+                    { role: "Lynn Roy (Mère de Conrad Roy)", text: "« Je savais que mon fils était fragile, mais il se battait pour aller mieux[cite: 3]. Elle a exploité ses faiblesses les plus intimes pour le pousser dans la tombe[cite: 3]. »" }
                 ]
             }
         ];
@@ -106,7 +163,7 @@
                             <p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${story.summary}</p>
                             
                             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:15px;">
-                                <button onclick="renderDetailView('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Voir l'analyse complète & témoignages</button>
+                                <button onclick="renderDetailView('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Voir l'analyse complète & sources</button>
                                 <button onclick="toggleLike('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; background-color: ${hasLiked ? '#c0392b' : '#333'};">
                                     ❤️ ${caseLikes.length} ${hasLiked ? 'Aimé' : 'Like'}
                                 </button>
@@ -137,29 +194,31 @@
                 `;
             });
 
+            let sourcesHTML = "";
+            story.sources.forEach(src => {
+                sourcesHTML += `
+                    <li><a href="${src.url}" target="_blank" style="color:#f39c12; text-decoration:underline; font-size:1.1rem; display:block; margin-bottom:8px;">🎥 ${src.label}</a></li>
+                `;
+            });
+
             container.innerHTML = `
                 <article class="story-card" style="padding:30px; text-align: left; width: 100%; box-sizing: border-box;">
                     <img src="${story.image}" alt="Photo de l'archive judiciaire" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
                     <h3 style="font-size:2.2rem; margin-bottom:15px; color:#f39c12;">${story.title}</h3>
                     
-                    <p style="font-weight:bold; color:#aaa; font-size:1.2rem; margin-bottom:25px; border-left:4px solid #e67e22; padding-left:15px;">${story.summary}</p>
+                    <div style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${story.content}</div>
                     
-                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:10px;">Compte-rendu d'Instruction Technique</h4>
-                    <p style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${story.content}</p>
-                    
-                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions Judiciaires & Auditions Officielles</h4>
-                    <div style="margin-bottom: 40px;">
-                        ${testimoniesHTML}
-                    </div>
+                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">📁 Sources Judiciaires & Vidéos</h4>
+                    <ul style="list-style:none; padding-left:0; margin-bottom:35px;">${sourcesHTML}</ul>
 
-                    <!-- ESPACE COMMENTAIRES UNIVERSEL -->
+                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions Judiciaires & Auditions Officielles</h4>
+                    <div style="margin-bottom: 40px;">${testimoniesHTML}</div>
+
                     <div style="border-top: 1px solid #333; padding-top: 30px; margin-top: 40px;">
-                        <h4 style="color:#fff; font-size:1.4rem; margin-bottom:20px;">Espace de Discussion de la Communauté</h4>
-                        
+                        <h4 style="color:#fff; font-size:1.4rem; margin-bottom:20px;">Espace de Discussion (API Endpoint)</h4>
                         <div id="comments-list-${story.id}" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 6px;"></div>
-                        
                         <div style="display: flex; gap: 10px;">
-                            <input type="text" id="comment-input-${story.id}" placeholder="Ajouter une analyse ou un avis public..." style="flex: 1; padding: 12px; background: #151518; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                            <input type="text" id="comment-input-${story.id}" placeholder="Ajouter une analyse via API..." style="flex: 1; padding: 12px; background: #151518; border: 1px solid #444; color: #fff; border-radius: 4px;">
                             <button onclick="postComment('${story.id}')" class="submit-form-button" style="width: auto; margin: 0; padding: 0 25px;">Envoyer</button>
                         </div>
                     </div>
@@ -183,27 +242,25 @@
 
         function loadComments(storyId) {
             const commentsBox = document.getElementById(`comments-list-${storyId}`);
-            const comments = JSON.parse(localStorage.getItem(`comments_resolved_${storyId}`)) || [];
-            commentsBox.innerHTML = '';
-            
-            if (comments.length === 0) {
-                commentsBox.innerHTML = '<p style="color:#666; font-style:italic;">Aucun avis enregistré. Initiez la discussion !</p>';
-                return;
-            }
-
-            comments.forEach(c => {
-                const div = document.createElement('div');
-                div.style.marginBottom = '12px';
-                div.style.borderBottom = '1px solid #222';
-                div.style.paddingBottom = '8px';
-                div.innerHTML = `
-                    <strong style="color:#f39c12;">${c.author}</strong> 
-                    <span style="font-size:0.8rem; color:#666; margin-left:10px;">${c.date}</span>
-                    <p style="margin:5px 0 0 0; color:#bbb;">${c.text}</p>
-                `;
-                commentsBox.appendChild(div);
-            });
-            commentsBox.scrollTop = commentsBox.scrollHeight;
+            fetch(`http://127.0.0.1:5000/api/v1/stories/${storyId}/comments`)
+                .then(res => res.json())
+                .then(comments => {
+                    commentsBox.innerHTML = '';
+                    if (!comments || comments.length === 0) {
+                        commentsBox.innerHTML = '<p style="color:#666; font-style:italic;">Aucun avis enregistré sur le serveur. Initiez la discussion !</p>';
+                        return;
+                    }
+                    comments.forEach(c => {
+                        commentsBox.innerHTML += `
+                            <div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:8px;">
+                                <strong style="color:#f39c12;">${c.username}</strong>
+                                <p style="margin:5px 0 0 0; color:#bbb;">${c.text}</p>
+                            </div>`;
+                    });
+                })
+                .catch(() => {
+                    commentsBox.innerHTML = '<p style="color:#c0392b; font-style:italic;">Mode hors-ligne : Serveur API non connecté.</p>';
+                });
         }
 
         function postComment(storyId) {
@@ -211,26 +268,19 @@
             const text = input.value.trim();
             if (!text) return;
 
-            const comments = JSON.parse(localStorage.getItem(`comments_resolved_${storyId}`)) || [];
-            comments.push({
-                author: currentUser,
-                text: text,
-                date: new Date().toLocaleString('fr-FR')
+            fetch(`http://127.0.0.1:5000/api/v1/stories/${storyId}/comments`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser, text: text })
+            })
+            .then(res => res.json())
+            .then(() => {
+                input.value = '';
+                loadComments(storyId);
             });
-            
-            localStorage.setItem(`comments_resolved_${storyId}`, JSON.stringify(comments));
-            input.value = '';
-            loadComments(storyId);
         }
 
         renderListView();
-
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser !== 'Anonyme' && authContainer) {
-            authContainer.innerHTML = `
-                <a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>
-            `;
-        }
     </script>
 </body>
 </html>
