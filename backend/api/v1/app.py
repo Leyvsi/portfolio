@@ -1,7 +1,10 @@
 import os
 import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+base_dir = os.path.dirname(os.path.abspath(__file__))
+backend_dir = os.path.abspath(os.path.join(base_dir, "../../"))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
 from flask import Flask, jsonify
 from api.v1.views import app_views
