@@ -1,9 +1,9 @@
 import os
 import sys
-from flask import Flask, jsonify
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
 
+from flask import Flask, jsonify
 from api.v1.views import app_views
 
 app = Flask(__name__)
