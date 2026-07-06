@@ -52,18 +52,26 @@ body {
 }
 .admin-access {
     text-align: center;
-    padding: 20px;
+    padding: 30px;
     z-index: 1;
 }
 .btn-admin {
-    color: var(--text-muted);
-    text-decoration: none;
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid var(--accent-color);
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-weight: bold;
     font-size: 0.9rem;
-    transition: color 0.2s;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 0 10px rgba(192, 57, 43, 0.2);
 }
 .btn-admin:hover {
-    color: #ffffff;
-    text-decoration: underline;
+    background: var(--gradient-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(214, 48, 49, 0.4);
 }
 .toggle-text {
     text-align: center;
@@ -100,11 +108,11 @@ body {
         <form class="submission-form" id="login-form">
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" placeholder="Votre email" required>
+                <input type="email" id="login-email" placeholder="Votre email" required>
             </div>
             <div class="form-group">
                 <label>Mot de passe</label>
-                <input type="password" placeholder="••••••••" required>
+                <input type="password" id="login-password" placeholder="••••••••" required>
             </div>
             <button type="submit" class="submit-form-button">Se connecter</button>
         </form>
@@ -116,11 +124,11 @@ body {
         <form class="submission-form" id="register-form">
             <div class="form-group">
                 <label>Nom d'utilisateur</label>
-                <input type="text" placeholder="Identifiant" required>
+                <input type="text" id="reg-username" placeholder="Identifiant" required>
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" placeholder="Votre email" required>
+                <input type="email" id="reg-email" placeholder="Votre email" required>
             </div>
             <div class="form-group">
                 <label>Mot de passe</label>
@@ -142,3 +150,54 @@ body {
         document.getElementById('login-box').style.display = 'none';
         document.getElementById('register-box').style.display = 'block';
     });
+
+    document.getElementById('show-login').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('register-box').style.display = 'none';
+        document.getElementById('login-box').style.display = 'block';
+    });
+
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('reg-username').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+        
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasDigit = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>_\-+=\[\]~/\\\';`~]/.test(password); 
+        const isValidLength = password.length >= 8 && password.length <= 50;
+
+        if (!hasUpper || !hasLower || !hasDigit || !hasSpecial || !isValidLength) {
+            alert("Le mot de passe doit contenir entre 8 et 50 caractères, incluant au moins une majuscule, une minuscule, un chiffre et un caractère spécial.");
+            return;
+        }
+
+        fetch('http://127.0.0.1:5000/api/v1/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username, email: email, password: password })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.error || "Erreur lors de l'inscription"); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
+            document.getElementById('register-box').style.display = 'none';
+            document.getElementById('login-box').style.display = 'block';
+            document.getElementById('login-email').value = email;
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert(error.message || "Impossible de joindre le serveur.");
+        });
+    });
+</script>
+
+</body>
+</html>
