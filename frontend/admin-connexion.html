@@ -48,7 +48,7 @@ body: JSON.stringify({ username: username, password: password })
 })
 .then(response => {
 if (!response.ok) {
-return response.json().then(err => { throw new Error(err.message); });
+return response.json().then(err => { throw new Error(err.error || err.message || "Erreur de connexion"); });
 }
 return response.json();
 })
