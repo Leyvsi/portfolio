@@ -44,7 +44,7 @@
 
         <hr style="border-color:#333; margin-bottom:40px;">
 
-        <h3>Proposer votre propre théorie (Poste sur l'API backend v1)</h3>
+        <h3>Proposer votre propre théorie</h3>
         <form id="theory-form" class="submission-form">
             <div class="form-group">
                 <label for="theory-title">Titre de votre hypothèse</label>
@@ -52,7 +52,7 @@
                 <label for="theory-text">Votre piste d'analyse</label>
                 <textarea id="theory-text" rows="5" placeholder="Décrivez votre piste d'analyse, vos indices clés..." required style="width:100%; background:#151518; color:#fff; border:1px solid #444; padding:10px;"></textarea>
             </div>
-            <button type="submit" class="submit-form-button">Soumettre la Théorie sur l'API</button>
+            <button type="submit" class="submit-form-button">Soumettre la Théorie</button>
         </form>
     </main>
 
@@ -63,9 +63,9 @@
         const currentUser = localStorage.getItem('username') || 'Anonyme';
 
         const mockTheories = {
-            cc1: [{ id: "t1", username: "Lupin99", title: "Véhicule en marche arrière", content: "Je pense que les traces s'arrêtent net parce qu'elle est montée à bord d'un véhicule qui reculait[cite: 5].", likes: 12 }],
-            cc2: [{ id: "t2", username: "SherlockParis", title: "Mise en scène vestimentaire", content: "Le vêtement d'époque montre une mise en scène volontaire pour brouiller l'origine géographique[cite: 5].", likes: 8 }],
-            cc3: [{ id: "t3", username: "LeChasseur", title: "Signal musical codé", content: "La mélodie au piano était peut-être un signal codé pour indiquer que la voie était libre[cite: 5].", likes: 21 }]
+            cc1: [{ id: "t1", username: "Lupin99", title: "Véhicule en marche arrière", content: "Je pense que les traces s'arrêtent net parce qu'elle est montée à bord d'un véhicule qui reculait.", likes: 12 }],
+            cc2: [{ id: "t2", username: "SherlockParis", title: "Mise en scène vestimentaire", content: "Le vêtement d'époque montre une mise en scène volontaire pour brouiller l'origine géographique.", likes: 8 }],
+            cc3: [{ id: "t3", username: "LeChasseur", title: "Signal musical codé", content: "La mélodie au piano était peut-être un signal codé pour indiquer que la voie était libre.", likes: 21 }]
         };
 
         function loadTheories(caseId) {
