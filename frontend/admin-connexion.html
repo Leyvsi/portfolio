@@ -5,6 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Les Petits Enquêteurs - Administration</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+.auth-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    padding: 20px;
+}
+.auth-wrapper .content-section {
+    margin: 0;
+    width: 100%;
+    max-width: 450px;
+}
+.bottom-navigation {
+    text-align: center;
+    padding: 30px;
+    z-index: 1;
+}
+.btn-secondary {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid var(--accent-color);
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 0 10px rgba(192, 57, 43, 0.2);
+}
+.btn-secondary:hover {
+    background: var(--gradient-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(214, 48, 49, 0.4);
+}
+</style>
 </head>
 <body>
 
@@ -15,25 +59,31 @@
 <div class="video-overlay"></div>
 </div>
 
-<header>
+<header style="z-index: 1;">
 <h1>Les Petits Enquêteurs</h1>
 </header>
 
-<main class="content-section">
-<h2>Connexion Administration</h2>
+<div class="auth-wrapper">
+    <main class="content-section">
+    <h2>Connexion Administration</h2>
 
-<form class="submission-form" id="admin-login-form">
-<div class="form-group">
-<label for="admin-username">Identifiant Privé</label>
-<input type="text" id="admin-username" name="username" placeholder="Identifiant" required>
+    <form class="submission-form" id="admin-login-form">
+    <div class="form-group">
+    <label for="admin-username">Identifiant Privé</label>
+    <input type="text" id="admin-username" name="username" placeholder="Identifiant" required>
+    </div>
+    <div class="form-group">
+    <label for="admin-password">Mot de passe</label>
+    <input type="password" id="admin-password" name="password" placeholder="••••••••" required>
+    </div>
+    <button type="submit" class="submit-form-button">Accéder au Panel</button>
+    </form>
+    </main>
 </div>
-<div class="form-group">
-<label for="admin-password">Mot de passe</label>
-<input type="password" id="admin-password" name="password" placeholder="••••••••" required>
+
+<div class="bottom-navigation">
+    <a href="index.html" class="btn-secondary">Retour à l'accueil</a>
 </div>
-<button type="submit" class="submit-form-button">Accéder au Panel</button>
-</form>
-</main>
 
 <script>
 document.getElementById('admin-login-form').addEventListener('submit', function(event) {

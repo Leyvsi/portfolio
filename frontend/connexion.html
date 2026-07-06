@@ -50,12 +50,15 @@ body {
     width: 100%;
     max-width: 450px;
 }
-.admin-access {
+.bottom-navigation {
     text-align: center;
     padding: 30px;
     z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
-.btn-admin {
+.btn-secondary {
     background: transparent;
     color: #ffffff;
     border: 2px solid var(--accent-color);
@@ -68,7 +71,7 @@ body {
     transition: background 0.2s, transform 0.2s;
     box-shadow: 0 0 10px rgba(192, 57, 43, 0.2);
 }
-.btn-admin:hover {
+.btn-secondary:hover {
     background: var(--gradient-accent);
     transform: translateY(-1px);
     box-shadow: 0 0 15px rgba(214, 48, 49, 0.4);
@@ -140,8 +143,9 @@ body {
     </main>
 </div>
 
-<div class="admin-access">
-    <a href="admin-connexion.html" class="btn-admin">Pour les admins</a>
+<div class="bottom-navigation">
+    <a href="index.html" class="btn-secondary">Retour à l'accueil</a>
+    <a href="admin-connexion.html" class="btn-secondary">Pour les admins</a>
 </div>
 
 <script>
