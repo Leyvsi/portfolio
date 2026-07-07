@@ -1,162 +1,303 @@
+/* --- POLICE & VARIABLES GLOBALES --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-    --bg-color: #0b0b0d;
-    --card-bg: #151518;
-    --accent-color: #c0392b;
-    --gradient-accent: linear-gradient(135deg, #d63031, #8b0000);
-    --text-main: #dddbd3;
-    --text-muted: #aaaaaa;
+    --bg-color: #000000;
+    --card-bg: #0c0c0e;
+    --accent-orange: #d15d2a;
+    --accent-brique: #ba3a1a;
+    --gradient-accent: linear-gradient(135deg, #b03416, #e66e28);
+    --gradient-btn-1: linear-gradient(135deg, #992f14, #cc591d);
+    --gradient-btn-2: linear-gradient(135deg, #ba3a1a, #e66d27);
+    --text-main: #ffffff;
+    --text-muted: #929499;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
+/* --- CONTEXTE VIDÉO D'ARRIÈRE-PLAN --- */
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    overflow: hidden;
+}
+
+#bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: -1;
+}
+
+/* --- EN-TÊTE SUPÉRIEURE (TITRE AU CENTRE PARFAIT) --- */
 .main-header {
-    display: flex;
-    justify-content: space-between;
+    background-color: #000000;
+    width: 100%;
+    display: grid;
+    /* Découpage en 3 colonnes égales pour assurer un centrage parfait du milieu */
+    grid-template-columns: 1fr auto 1fr; 
     align-items: center;
-    padding: 20px 40px;
-    background-color: #111113;
-    border-bottom: 1px solid #252528;
-    box-sizing: border-box;
+    padding: 30px 40px 15px 40px;
+    position: relative;
+    z-index: 10;
+}
+
+/* Colonne gauche vide pour faire contrepoids au bouton de droite */
+.header-spacer {
     width: 100%;
 }
 
-h1, h2, h3, h4 {
+.main-header h1 {
+    grid-column: 2; /* Positionne le titre obligatoirement sur la colonne centrale */
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent-orange);
+    letter-spacing: -0.5px;
+    text-align: center;
+}
+
+#auth-buttons-container {
+    grid-column: 3; /* Positionne les boutons sur la colonne de droite */
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/* --- BOUTONS D'AUTHENTIFICATION COMPTE --- */
+.submit-form-button, .account-button {
+    background: var(--gradient-accent);
     color: #ffffff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 30px;
     font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(230, 110, 40, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.submit-form-button:hover, .account-button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(230, 110, 40, 0.4);
+    filter: brightness(1.1);
+}
+
+/* --- BARRE DE NAVIGATION (STYLE ONGLETS SUBLIMÉ) --- */
+nav {
+    background-color: var(--card-bg);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 14px 20px;
+    border-top: 1px solid #161619;
+    border-bottom: 1px solid #161619;
+    position: relative;
+    z-index: 10;
 }
 
 .navbar {
     display: flex;
     justify-content: center;
-    background: #111113;
+    align-items: center;
     list-style: none;
-    padding: 12px 0;
-    margin: 0;
-    border-bottom: 1px solid #222;
-}
-
-.navbar li {
-    margin: 0 15px;
+    gap: 12px; /* Espace équilibré entre les onglets */
 }
 
 .navbar a {
-    color: var(--text-muted);
+    color: #888a8f; /* Gris mat texturé moderne */
     text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: color 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 20px;
+    transition: all 0.25s ease;
+    display: inline-block;
+    letter-spacing: 0.2px;
 }
 
-.navbar a:hover, .navbar a.active {
-    color: #d63031;
+/* Effet au survol des onglets */
+.navbar a:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05); /* Léger fond translucide au survol */
 }
 
+/* Onglet actif (Ex: Accueil ou Updates selon la page) */
+.navbar a.active {
+    color: #ffffff !important;
+    background: var(--gradient-accent) !important;
+    box-shadow: 0 4px 12px rgba(230, 110, 40, 0.25);
+}
+
+/* --- SECTION DE CONTENU (CARTE CENTRALE) --- */
 .content-section {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 20px;
-    box-sizing: border-box;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    z-index: 5;
+}
+
+.content-card-wrapper {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 820px;
+    padding: 50px 45px;
     text-align: center;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+    border: 1px solid #141416;
+}
+
+.content-section h2 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--accent-brique);
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+}
+
+.divider {
+    height: 1px;
+    background: var(--accent-brique);
+    width: 100%;
+    margin-bottom: 35px;
+    opacity: 0.4;
+}
+
+.intro-heading {
+    color: #ffffff;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 15px;
 }
 
 .intro-text {
     color: var(--text-muted);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 30px;
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 45px;
 }
 
-.story-card {
-    background: var(--card-bg);
-    border: 1px solid #252528;
-    border-radius: 8px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    transition: transform 0.2s ease, border-color 0.2s ease;
+/* --- CONTENEUR DES BOUTONS D'ACTION CENTRAUX --- */
+.cta-container {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
 }
 
-.story-card:hover {
-    border-color: #353538;
+.cta-button {
+    display: inline-block;
+    text-decoration: none;
+    padding: 14px 34px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.2px;
+    color: #ffffff;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.submit-form-button, .cta-button, .account-button {
+.cta-container a:nth-child(1) {
+    background: var(--gradient-btn-1);
+    box-shadow: 0 4px 15px rgba(153, 47, 20, 0.3);
+}
+
+.cta-container a:nth-child(2) {
+    background: var(--gradient-btn-2);
+    box-shadow: 0 4px 15px rgba(230, 109, 39, 0.3);
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.15);
+}
+
+.cta-container a:nth-child(1):hover {
+    box-shadow: 0 8px 25px rgba(153, 47, 20, 0.5);
+}
+
+.cta-container a:nth-child(2):hover {
+    box-shadow: 0 8px 25px rgba(230, 109, 39, 0.5);
+}
+
+/* --- BOUTON FLOTTANT ROUGE/ORANGE (+) --- */
+.floating-add-button {
+    position: fixed;
+    bottom: 35px;
+    right: 35px;
+    width: 54px;
+    height: 54px;
     background: var(--gradient-accent);
     color: #ffffff;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 0.95rem;
-    cursor: pointer;
-    display: inline-block;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-    box-shadow: 0 2px 8px rgba(214, 48, 49, 0.3);
-}
-
-.submit-form-button:hover, .cta-button:hover, .account-button:hover {
-    opacity: 0.95;
-    transform: translateY(-1px);
-}
-
-.submission-form {
-    background: var(--card-bg);
-    padding: 25px;
-    border-radius: 6px;
-    border: 1px solid #222;
-    text-align: left;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: #fff;
-}
-
-.form-group textarea, .form-group input {
-    width: 100%;
-    padding: 12px;
-    background: #0b0b0d;
-    border: 1px solid #444;
-    color: #fff;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.floating-add-button {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 55px;
-    height: 55px;
-    background: var(--gradient-accent);
-    color: #fff;
-    border: none;
     border-radius: 50%;
-    font-size: 1.8rem;
-    font-weight: bold;
+    font-size: 1.9rem;
+    font-weight: 400;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(230, 110, 40, 0.4);
     z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.floating-add-button:hover {
+    transform: translateY(-2px) rotate(90deg);
+    box-shadow: 0 6px 25px rgba(230, 110, 40, 0.6);
+    filter: brightness(1.1);
+}
+
+/* --- PIED DE PAGE --- */
 footer {
     text-align: center;
-    padding: 30px 0;
-    color: #555;
-    font-size: 0.85rem;
-    border-top: 1px solid #151518;
-    margin-top: 60px;
+    padding: 25px;
+    font-size: 0.8rem;
+    color: #4a4b4e;
+    background-color: #000000;
+    margin-top: auto;
+    z-index: 10;
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 800px) {
+    .main-header { display: flex; flex-direction: column; gap: 15px; }
+    .submit-form-button, .account-button { width: 100%; text-align: center; }
+    .navbar { flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .content-card-wrapper { padding: 30px 20px; }
+    .cta-container { flex-direction: column; gap: 15px; }
+    .cta-button { width: 100%; text-align: center; }
 }

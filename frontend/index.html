@@ -16,9 +16,9 @@
     </div>
 
     <header class="main-header">
-        <h1>Les Petits Enquêteurs</h1>
+        <div class="header-spacer"></div> <h1>Les Petits Enquêteurs</h1>
         <div id="auth-buttons-container">
-            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
+            <a href="connexion.html" class="submit-form-button">Connexion / Inscription</a>
         </div>
     </header>
 
@@ -34,17 +34,22 @@
     </nav>
 
     <main class="content-section">
-        <h2>Bienvenue sur la plateforme des Enquêteurs</h2>
+        <div class="content-card-wrapper">
+            <h2>Bienvenue sur la plateforme des Enquêteurs</h2>
+            <div class="divider"></div>
+            
+            <p class="intro-heading"><strong>Plongez au cœur des affaires criminelles les plus mystérieuses. Décryptez les indices, analysez les rapports et traquez la vérité.</strong></p>
+            
+            <p class="intro-text">Rejoignez la communauté, analysez les indices, découvrez de nouvelles histoires et soumettez vos propres théories criminelles.</p>
         
-        <!-- Description d'accroche -->
-        <p class="intro-heading"><strong>Plongez au cœur des affaires criminelles les plus mystérieuses. Décryptez les indices, analysez les rapports et traquez la vérité.</strong></p>
-        
-        <p class="intro-text">Rejoignez la communauté, analysez les indices, découvrez de nouvelles histoires et soumettez vos propres théories criminelles.</p>
-    
-        <!-- Boutons de redirection vers les histoires et cold cases -->
-        <div class="cta-container">
-            <a href="histoires.html" class="cta-button">Histoires Résolues</a>
-            <a href="coldscases.html" class="cta-button">Les Cold Cases</a>
+            <div class="cta-container">
+                <a href="histoires.html" class="cta-button">Histoires Résolues</a>
+                <a href="coldscases.html" class="cta-button">Les Cold Cases</a>
+            </div>
+
+            <p class="visit-counter-text" style="margin-top: 30px; opacity: 0.5; font-size: 0.85rem;">
+                Visiteurs de la plateforme : <span id="visit-count">...</span>
+            </p>
         </div>
     </main>
 
@@ -62,6 +67,17 @@
                 <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
             `;
         }
+
+        // Increments and displays the global visit counter
+        fetch('http://127.0.0.1:5000/api/visit', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('visit-count').textContent = data.visits;
+            })
+            .catch(err => {
+                console.error("Erreur compteur de visites :", err);
+                document.getElementById('visit-count').textContent = "indisponible";
+            });
     </script>
 </body>
 </html>
