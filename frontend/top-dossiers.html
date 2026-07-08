@@ -48,14 +48,14 @@
                         card.innerHTML = `
                             <h3>${story.title}</h3>
                             <p>${story.summary}</p>
-                            <p style="color: #e67e22; font-weight: bold; margin-top: 15px;">Votes actuels (Serveur API) : ${story.votes || 0}</p>
+                            <p style="color: #e67e22; font-weight: bold; margin-top: 15px;">Votes actuels : ${story.votes || 0}</p>
                             <button onclick="vote('${story.id}')" class="submit-form-button" style="width: auto; padding: 10px 20px; margin-top: 10px;">Voter pour ce récit</button>
                         `;
                         grid.appendChild(card);
                     });
                 })
                 .catch(() => {
-                    grid.innerHTML = '<p style="color:#e74c3c; font-style:italic;">Lancer l\'API v1 backend pour charger les dossiers de vote.</p>';
+                    grid.innerHTML = '<p style="color:#e74c3c; font-style:italic;">Lancer l\'charger les dossiers de vote.</p>';
                 });
         }
 
@@ -63,7 +63,7 @@
             fetch(`http://127.0.0.1:5000/api/v1/stories/${storyId}/vote`, { method: 'POST' })
                 .then(res => res.json())
                 .then(() => {
-                    alert("Votre vote a bien été pris en compte par l'API backend !");
+                    alert("Votre vote a bien été pris en compte !");
                     loadVotingStories();
                 }).catch(() => alert("Erreur : Le serveur n'a pas pu comptabiliser le vote."));
         }

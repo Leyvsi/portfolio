@@ -131,7 +131,7 @@
                 titleInput.value = '';
                 textInput.value = '';
                 loadTheories(caseId);
-            }).catch(() => alert("Impossible de poster : API déconnectée."));
+            }).catch(() => alert("Impossible de poster la théorie."));
         });
 
         caseSelector.addEventListener('change', (e) => loadTheories(e.target.value));
