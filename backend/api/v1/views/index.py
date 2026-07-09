@@ -1,5 +1,5 @@
 import os
-from flask import jsonify, render_template_string
+from flask import jsonify, request, render_template_string
 from api.v1.views import app_views
 
 data_store = {
@@ -13,12 +13,36 @@ data_store = {
     "theories": {"cc1": [], "cc2": [], "cc3": []},
     "commentaires_theories": {},
     "updates": {"cc1": [], "cc2": [], "cc3": []},
-    "utilisateurs": ["Lupin99", "SherlockParis"]
+    "utilisateurs": ["Lupin99", "SherlockParis"],
+    "signalements": []
 }
 
 @app_views.route('/stats', methods=['GET'])
 def get_stats():
     return jsonify({"visits": data_store["visites"]}), 200
+
+@app_views.route('/reports', methods=['POST'])
+def post_report():
+    req_data = request.get_json() or {}
+    nouveau_signalement = {
+        "type": req_data.get("type", "autre"),
+        "target_id": req_data.get("target_id", ""),
+        "reason": req_data.get("reason", "").strip()
+    }
+    data_store["signalements"].append(nouveau_signalement)
+    return jsonify({"status": "success", "report": nouveau_signalement}), 201
+
+@app_views.route('/admin/reports', methods=['GET'])
+def get_admin_reports():
+    return jsonify(data_store["signalements"]), 200
+
+@app_views.route('/admin/users/<string:username>/ban', methods=['DELETE'])
+def ban_user(username):
+    if username in data_store["utilisateurs"]:
+        data_store["utilisateurs"].remove(username)
+        data_store["signalements"] = [s for s in data_store["signalements"] if s["target_id"] != username]
+        return jsonify({"status": "success", "message": f"L'utilisateur {username} a ete banni"}), 200
+    return jsonify({"error": "User not found"}), 404
 
 @app_views.route('/swagger.json', methods=['GET'])
 def get_swagger_json():
