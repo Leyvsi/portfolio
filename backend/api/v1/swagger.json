@@ -1,0 +1,226 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Les Petits Enquêteurs API",
+    "version": "1.0.0",
+    "description": "Interface interactive complète pour tester et gérer le backend du projet portfolio."
+  },
+  "basePath": "/api/v1",
+  "paths": {
+    "/stats": {
+      "get": {
+        "summary": "Récupérer le nombre de visites sur le site",
+        "responses": {
+          "200": { "description": "Succès" }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Récupérer la liste des utilisateurs",
+        "responses": {
+          "200": { "description": "Succès" }
+        }
+      },
+      "post": {
+        "summary": "Inscrire un nouvel utilisateur",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string", "example": "DetectiveSylvie" },
+                "email": { "type": "string", "example": "sylvie@example.com" },
+                "password": { "type": "string", "example": "CyberSec2026!" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Utilisateur créé avec succès" },
+          "400": { "description": "Champs manquants ou mot de passe invalide" }
+        }
+      }
+    },
+    "/stories": {
+      "get": {
+        "summary": "Récupérer la liste des histoires disponibles pour le vote",
+        "responses": {
+          "200": { "description": "Succès" }
+        }
+      }
+    },
+    "/votes/{story_id}": {
+      "post": {
+        "summary": "Ajouter un vote à une histoire spécifique",
+        "parameters": [
+          {
+            "name": "story_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Vote pris en compte" },
+          "404": { "description": "Histoire non trouvée" }
+        }
+      }
+    },
+    "/coldcases/{case_id}/updates": {
+      "get": {
+        "summary": "Récupérer les dernières mises à jour d'un cold case",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "cc1"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Succès" }
+        }
+      }
+    },
+    "/coldcases/{case_id}/theories": {
+      "get": {
+        "summary": "Récupérer les théories partagées sur un cold case",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "cc1"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Succès" }
+        }
+      },
+      "post": {
+        "summary": "Ajouter une nouvelle théorie sur un cold case",
+        "parameters": [
+          {
+            "name": "case_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "cc1"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "author": { "type": "string", "example": "Leyvsi" },
+                "text": { "type": "string", "example": "Je pense que l'indice trouvé en 1994 change tout..." }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Théorie ajoutée avec succès" }
+        }
+      }
+    },
+    "/histoires/{story_id}/commentaires": {
+      "get": {
+        "summary": "Récupérer les commentaires d'une histoire résolue",
+        "parameters": [
+          {
+            "name": "story_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Succès" }
+        }
+      },
+      "post": {
+        "summary": "Ajouter un commentaire sur une histoire résolue",
+        "parameters": [
+          {
+            "name": "story_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "1"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "author": { "type": "string", "example": "Anonyme" },
+                "text": { "type": "string", "example": "Cette histoire me fascine depuis des années." },
+                "date": { "type": "string", "example": "09/07/2026" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Commentaire ajouté avec succès" }
+        }
+      }
+    },
+    "/theories/{theory_id}/commentaires": {
+      "get": {
+        "summary": "Récupérer les commentaires liés à une théorie spécifique",
+        "parameters": [
+          {
+            "name": "theory_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "t_a1b2c3d4"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Succès" }
+        }
+      },
+      "post": {
+        "summary": "Ajouter un commentaire (débat) sur une théorie",
+        "parameters": [
+          {
+            "name": "theory_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "t_a1b2c3d4"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "author": { "type": "string", "example": "Lupin99" },
+                "text": { "type": "string", "example": "Ton hypothèse tient la route, mais tu oublies un détail important." }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Commentaire ajouté sur la théorie" }
+        }
+      }
+    }
+  }
+}
+
