@@ -70,7 +70,7 @@
 
         function loadTheories(caseId) {
             theoriesList.innerHTML = '';
-            let currentList = [...(mockTheories[caseId] || [])];[cite: 5]
+            let currentList = [...(mockTheories[caseId] || [])];
 
             fetch(`http://127.0.0.1:5000/api/v1/stories/${caseId}/theories`)
                 .then(res => res.json())
@@ -79,7 +79,7 @@
                     displayTheories(currentList);
                 })
                 .catch(() => {
-                    displayTheories(currentList);[cite: 5]
+                    displayTheories(currentList);
                 });
         }
 
