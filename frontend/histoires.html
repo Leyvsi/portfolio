@@ -44,30 +44,36 @@
         const navContext = document.getElementById('navigation-context');
         const currentUser = localStorage.getItem('username') || 'Anonyme';
         
+        // Simple English comment: Cleaned database representing solved cases without markdown symbols
         const storiesData = [
             {
                 id: "h1",
                 title: "L'Affaire du Golden State Killer (1976 - 2018)",
                 summary: "40 ans de traque brisés en quelques jours : comment la généalogie génétique par l'ADN a confondu Joseph James DeAngelo.",
                 image: "https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=600",
-                content: `### 👥 PROFIL DES PROTAGONISTES
-• **Joseph James DeAngelo (Le Criminel) :** Ancien officier de police d'Auburn, vétéran de la Navy. Un homme colérique, minutieux, qui utilisait ses connaissances en tactique policière pour cartographier les maisons de ses victimes et s'assurer des voies de fuite indétectables.
-• **Paul Holes (L'Enquêteur Clé) :** Inspecteur en chef de Contra Costa. Il a dédié 24 ans de sa vie à traquer ce fantôme, analysant chaque indice biologique jusqu'à la découverte finale.
-• **Michelle McNamara (L'Autrice) :** Journaliste d'investigation qui a baptisé le tueur "The Golden State Killer" et a relancé l'intérêt du public avec son livre avant son décès tragique.
+                content: `
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.3rem;">👥 PROFIL DES PROTAGONISTES</h4>
+                    <ul style="list-style-type:none; padding-left:0; line-height:1.6;">
+                        <li style="margin-bottom:10px;"><strong>Joseph James DeAngelo (Le Criminel) :</strong> Ancien officier de police d'Auburn, vétéran de la Navy. Un homme colérique, minutieux, qui utilisait ses connaissances en tactique policière pour cartographier les maisons de ses victimes et s'assurer des voies de fuite indétectables.</li>
+                        <li style="margin-bottom:10px;"><strong>Paul Holes (L'Enquêteur Clé) :</strong> Inspecteur en chef de Contra Costa. Il a dédié 24 ans de sa vie à traquer ce fantôme, analysant chaque indice biologique jusqu'à la découverte finale.</li>
+                        <li style="margin-bottom:10px;"><strong>Michelle McNamara (L'Autrice) :</strong> Journaliste d'investigation qui a baptisé le tueur "The Golden State Killer" et a relancé l'intérêt du public avec son livre avant son décès tragique.</li>
+                    </ul>
 
----
+                    <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-### 🕒 CHRONOLOGIE ET RITUEL CRIMINEL
-1. **La Terreur de Sacramento (1976-1979) :** Le tueur s'introduit de nuit chez des couples. Son rituel est sadique : il ligote l'homme avec des cordons, place des assiettes en équilibre sur son dos et menace de massacrer toute la famille si les assiettes bougent pendant qu'il viole la femme.
-2. **L'Escalade Meurtrière (1979-1986) :** En se déplaçant vers le sud de la Californie, il change de mode opératoire et commence à assassiner systématiquement ses victimes par balle ou par matraquage pour éliminer tout témoin oculaire.
-3. **Le Grand Silence (1986-2018) :** Pendant des décennies, l'affaire piétine malgré un profil ADN complet disponible, car le tueur n'est inscrit dans aucun fichier criminel centralisé (CODIS).
+                    <h4 style="color:#e67e22; font-size:1.3rem;">🕒 CHRONOLOGIE ET RITUEL CRIMINEL</h4>
+                    <ol style="padding-left:20px; line-height:1.6;">
+                        <li style="margin-bottom:12px;"><strong>La Terreur de Sacramento (1976-1979) :</strong> Le tueur s'introduit de nuit chez des couples. Son rituel est sadique : il ligote l'homme avec des cordons, place des assiettes en équilibre sur son dos et menace de massacrer toute la famille si les assiettes bougent pendant qu'il viole la femme.</li>
+                        <li style="margin-bottom:12px;"><strong>L'Escalade Meurtrière (1979-1986) :</strong> En se déplaçant vers le sud de la Californie, il change de mode opératoire et commence à assassiner systématiquement ses victimes par balle ou par matraquage pour éliminer tout témoin oculaire.</li>
+                        <li style="margin-bottom:12px;"><strong>Le Grand Silence (1986-2018) :</strong> Pendant des décennies, l'affaire piétine malgré un profil ADN complet disponible, car le tueur n'est inscrit dans aucun fichier criminel centralisé (CODIS).</li>
+                    </ol>
 
----
+                    <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-### 🔬 LA CHUTE ET LE PROCÈS
-En 2018, l'inspecteur Paul Holes utilise une technique révolutionnaire : la généalogie génétique. En téléversant l'ADN du tueur sur le site public d'histoire familiale **GEDmatch**, il identifie un cousin au troisième degré. Les généalogistes reconstruisent l'arbre jusqu'à isoler DeAngelo. Mis sous surveillance, son ADN est discrètement prélevé sur la poignée de sa voiture. La correspondance est absolue.
-
-Lors de son procès en août 2020, DeAngelo plaide coupable pour éviter la peine de mort et est condamné à **11 peines de prison à perpétuité consécutives, sans possibilité de libération conditionnelle**.`,
+                    <h4 style="color:#e67e22; font-size:1.3rem;">🔬 LA CHUTE ET LE PROCÈS</h4>
+                    <p style="line-height:1.6; color:#bbb;">En 2018, l'inspecteur Paul Holes utilise une technique révolutionnaire : la généalogie génétique. En téléversant l'ADN du tueur sur le site public d'histoire familiale <strong>GEDmatch</strong>, il identifie un cousin au troisième degré. Les généalogistes reconstruisent l'arbre jusqu'à isoler DeAngelo. Mis sous surveillance, son ADN est discrètement prélevé sur la poignée de sa voiture. La correspondance est absolue.</p>
+                    <p style="line-height:1.6; color:#bbb;">Lors de son procès en août 2020, DeAngelo plaide coupable pour éviter la peine de mort et est condamné à <strong>11 peines de prison à perpétuité consécutives, sans possibilité de libération conditionnelle</strong>.</p>
+                `,
                 sources: [
                     { label: "Documentaire YouTube - La traque du Golden State Killer", url: "https://www.youtube.com/watch?v=Xh0m29BEnOI" },
                     { label: "Rapport officiel du FBI sur l'arrestation de DeAngelo", url: "https://www.fbi.gov/history/famous-cases/golden-state-killer" }
@@ -82,25 +88,30 @@ Lors de son procès en août 2020, DeAngelo plaide coupable pour éviter la pein
                 title: "Les Meurtres de la Famille Watts (2018)",
                 summary: "La chute du masque d'un père de famille modèle : autopsie d'un triple infanticide minutieusement analysé par le FBI.",
                 image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600",
-                content: `### 👥 PROFIL DES PROTAGONISTES
-• **Chris Watts (Le Criminel) :** Décrit à l'unanimité comme un époux calme, serviable et sans histoire. En secret, il entretenait une liaison passionnée avec une collègue et cherchait à se débarrasser des responsabilités familiales.
-• **Shanann Watts (La Victime) :** Mère dynamique de 34 ans, enceinte de 15 semaines d'un petit garçon prénommé Nico. Elle documentait sa vie heureuse sur les réseaux sociaux.
-• **Bella (4 ans) et Celeste (3 ans) (Les Victimes) :** Les deux petites filles du couple.
-• **Agent Tammy Lee (L'Enquêtrice) :** Profiler et experte en interrogatoire pour le Bureau d'Investigation du Colorado (CBI).
+                content: `
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.3rem;">👥 PROFIL DES PROTAGONISTES</h4>
+                    <ul style="list-style-type:none; padding-left:0; line-height:1.6;">
+                        <li style="margin-bottom:10px;"><strong>Chris Watts (Le Criminel) :</strong> Décrit à l'unanimité comme un époux calme, serviable et sans histoire. En secret, il entretenait une liaison passionnée avec une collègue et cherchait à se débarrasser des responsabilités familiales.</li>
+                        <li style="margin-bottom:10px;"><strong>Shanann Watts (La Victime) :</strong> Mère dynamique de 34 ans, enceinte de 15 semaines d'un petit garçon prénommé Nico. Elle documentait sa vie heureuse sur les réseaux sociaux.</li>
+                        <li style="margin-bottom:10px;"><strong>Bella (4 ans) et Celeste (3 ans) (Les Victimes) :</strong> Les deux petites filles du couple.</li>
+                        <li style="margin-bottom:10px;"><strong>Agent Tammy Lee (L'Enquêtrice) :</strong> Profiler et experte en interrogatoire pour le Bureau d'Investigation du Colorado (CBI).</li>
+                    </ul>
 
----
+                    <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-### 🕒 CHRONOLOGIE MACABRE DU 13 AOÛT 2018
-1. **L'Explication de trop (03h00) :** Shanann rentre d'un voyage d'affaires. Une dispute éclate dans la chambre conjugale concernant la demande de divorce de Chris. Au cours de l'altercation, Chris étrangle froidement Shanann dans le lit conjugal .
-2. **Le Transport des Corps (05h15) :** Les filles se réveillent. Chris charge le corps de Shanann à l'arrière de son pick-up professionnel et y fait monter ses deux enfants vivants . Il roule pendant 45 minutes vers un site pétrolier de son entreprise .
-3. **L'Exécution des Enfants :** Sur place, il étouffe en premier la petite Celeste avec sa propre couverture sous les yeux de sa sœur aînée . Il jette son corps dans une cuve de pétrole brut . Il revient ensuite vers Bella qui le supplie (« Papa, non ! ») avant de lui infliger le même sort et d'enterrer sa femme à proximité .
+                    <h4 style="color:#e67e22; font-size:1.3rem;">🕒 CHRONOLOGIE MACABRE DU 13 AOÛT 2018</h4>
+                    <ol style="padding-left:20px; line-height:1.6;">
+                        <li style="margin-bottom:12px;"><strong>L'Explication de trop (03h00) :</strong> Shanann rentre d'un voyage d'affaires. Une dispute éclate dans la chambre conjugale concernant la demande de divorce de Chris. Au cours de l'altercation, Chris étrangle froidement Shanann dans le lit conjugal.</li>
+                        <li style="margin-bottom:12px;"><strong>Le Transport des Corps (05h15) :</strong> Les filles se réveillent. Chris charge le corps de Shanann à l'arrière de son pick-up professionnel et y fait monter ses deux enfants vivants. Il roule pendant 45 minutes vers un site pétrolier de son entreprise.</li>
+                        <li style="margin-bottom:12px;"><strong>L'Exécution des Enfants :</strong> Sur place, il étouffe en premier la petite Celeste avec sa propre couverture sous les yeux de sa sœur aînée. Il jette son corps dans une cuve de pétrole brut. Il revient ensuite vers Bella qui le supplie (« Papa, non ! ») avant de lui infliger le même sort et d'enterrer sa femme à proximité.</li>
+                    </ol>
 
----
+                    <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-### 🔬 LES AVEUX ET LA CONDAMNATION
-Après avoir simulé l'inquiétude devant les caméras de télévision locales, Chris Watts est convoqué par le FBI . Le 15 août, l'agent Tammy Lee lui fait passer le test du polygraphe . Ses graphiques indiciels de stress s'affolent . Confronté à son échec total, il s'effondre et avoue l'irréparable .
-
-Il plaide coupable pour éviter la peine de mort et est condamné à **trois peines de prison à perpétuité consécutives, sans possibilité de libération conditionnelle** .`,
+                    <h4 style="color:#e67e22; font-size:1.3rem;">🔬 LES AVEUX ET LA CONDAMNATION</h4>
+                    <p style="line-height:1.6; color:#bbb;">Après avoir simulé l'inquiétude devant les caméras de télévision locales, Chris Watts est convoqué par le FBI. Le 15 août, l'agent Tammy Lee lui fait passer le test du polygraphe. Ses graphiques indiciels de stress s'affolent. Confronté à son échec total, il s'effondre et avoue l'irréparable.</p>
+                    <p style="line-height:1.6; color:#bbb;">Il plaide coupable pour éviter la peine de mort et est condamné à <strong>trois peines de prison à perpétuité consécutives, sans possibilité de libération conditionnelle</strong>.</p>
+                `,
                 sources: [
                     { label: "Analyse YouTube - L'Interrogatoire complet de Chris Watts", url: "https://www.youtube.com/watch?v=bL8b6mO9Aks" },
                     { label: "Chroniques Criminelles - Le monstre du Colorado", url: "https://www.youtube.com/results?search_query=chroniques+criminelles+chris+watts" }
@@ -113,23 +124,29 @@ Il plaide coupable pour éviter la peine de mort et est condamné à **trois pei
             {
                 id: "h3",
                 title: "L'Affaire Michelle Carter (2014 - 2017)",
-                summary: "Condamnée pour homicide involontaire par SMS : l'analyse juridique de la manipulation psychologique textuelle .",
+                summary: "Condamnée pour homicide involontaire par SMS : l'analyse juridique de la manipulation psychologique textuelle.",
                 image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600",
-                content: `### 👥 PROFIL DES PROTAGONISTES
-• **Conrad Roy III (La Victime) :** Jeune homme de 18 ans, intelligent mais souffrant d'une dépression clinique sévère et d'anxiété sociale.
-• **Michelle Carter (La Criminelle) :** Adolescente de 17 ans en quête obsessionnelle d'attention, de popularité et de sympathie auprès de ses camarades.
+                content: `
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.3rem;">👥 PROFIL DES PROTAGONISTES</h4>
+                    <ul style="list-style-type:none; padding-left:0; line-height:1.6;">
+                        <li style="margin-bottom:10px;"><strong>Conrad Roy III (La Victime) :</strong> Jeune homme de 18 ans, intelligent mais souffrant d'une dépression clinique sévère et d'anxiété sociale.</li>
+                        <li style="margin-bottom:10px;"><strong>Michelle Carter (La Criminelle) :</strong> Adolescente de 17 ans en quête obsessionnelle d'attention, de popularité et de sympathie auprès de ses camarades.</li>
+                    </ul>
 
----
+                    <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-### 🕒 CHRONOLOGIE DES TEXTOS ET MANIPULATION
-1. **L'Encouragement au Suicide :** Pendant plusieurs semaines, alors que Conrad Roy confie ses idées noires, Michelle Carter l'incite activement à passer à l'acte au lieu de le dissuader, lui envoyant des conseils logistiques sur la méthode à utiliser.
-2. **Le Passage à l'Acte (12 Juillet 2014) :** Conrad gare sa camionnette sur le parking d'un supermarché et active un générateur de monoxyde de carbone . Pris de panique et de regrets à mesure que le gaz se propage, il sort du véhicule pour respirer.
-3. **L'Ordre Fatal :** Au téléphone avec lui, Michelle Carter lui ordonne textuellement de « remonter dans le foutu camion » ("get back in") . Elle écoute Conrad étouffer et mourir sans jamais prévenir les secours ni sa famille qui le cherchait.
+                    <h4 style="color:#e67e22; font-size:1.3rem;">🕒 CHRONOLOGIE DES TEXTOS ET MANIPULATION</h4>
+                    <ol style="padding-left:20px; line-height:1.6;">
+                        <li style="margin-bottom:12px;"><strong>L'Encouragement au Suicide :</strong> Pendant plusieurs semaines, alors que Conrad Roy confie ses idées noires, Michelle Carter l'incite activement à passer à l'acte au lieu de le dissuader, lui envoyant des conseils logistiques sur la méthode à utiliser.</li>
+                        <li style="margin-bottom:12px;"><strong>Le Passage à l'Acte (12 Juillet 2014) :</strong> Conrad gare sa camionnette sur le parking d'un supermarché et active un générateur de monoxyde de carbone. Pris de panique et de regrets à mesure que le gaz se propage, il sort du véhicule pour respirer.</li>
+                        <li style="margin-bottom:12px;"><strong>L'Ordre Fatal :</strong> Au téléphone avec lui, Michelle Carter lui ordonne textuellement de « remonter dans le foutu camion » ("get back in"). Elle écoute Conrad étouffer et mourir sans jamais prévenir les secours ni sa famille qui le cherchait.</li>
+                    </ol>
 
----
+                    <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-### 🔬 UN PROCÈS JURIDIQUE HISTORIQUE
-L'extraction complète des données téléphoniques par les analystes techniques de la police met au jour plus de 4 000 messages explicites. En 2017, le juge Lawrence Moniz rend un verdict historique : il déclare Michelle Carter coupable d'homicide involontaire, statuant que ses injonctions verbales directes ont provoqué l'asphyxie mortelle de la victime. Elle est condamnée à **15 mois de prison ferme**.`,
+                    <h4 style="color:#e67e22; font-size:1.3rem;">🔬 UN PROCÈS JURIDIQUE HISTORIQUE</h4>
+                    <p style="line-height:1.6; color:#bbb;">L'extraction complète des données téléphoniques par les analystes techniques de la police met au jour plus de 4 000 messages explicites. En 2017, le juge Lawrence Moniz rend un verdict historique : il déclare Michelle Carter coupable d'homicide involontaire, statuant que ses injonctions verbales directes ont provoqué l'asphyxie mortelle de la victime. Elle est condamnée à <strong>15 mois de prison ferme</strong>.</p>
+                `,
                 sources: [
                     { label: "Documentaire HBO / YouTube - I Love You, Now Die", url: "https://www.youtube.com/results?search_query=I+Love+You+Now+Die+Michelle+Carter" }
                 ],
@@ -206,7 +223,8 @@ L'extraction complète des données téléphoniques par les analystes techniques
                     <img src="${story.image}" alt="Photo de l'archive judiciaire" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
                     <h3 style="font-size:2.2rem; margin-bottom:15px; color:#f39c12;">${story.title}</h3>
                     
-                    <div style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${story.content}</div>
+                    <!-- Simple English comment: HTML tags are now directly rendered inside this container -->
+                    <div style="line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${story.content}</div>
                     
                     <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">📁 Sources Judiciaires & Vidéos</h4>
                     <ul style="list-style:none; padding-left:0; margin-bottom:35px;">${sourcesHTML}</ul>
@@ -252,9 +270,19 @@ L'extraction complète des données téléphoniques par les analystes techniques
                     }
                     comments.forEach(c => {
                         commentsBox.innerHTML += `
-                            <div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:8px;">
-                                <strong style="color:#f39c12;">${c.username}</strong>
-                                <p style="margin:5px 0 0 0; color:#bbb;">${c.text}</p>
+                            <div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:8px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong style="color:#f39c12;">${c.username}</strong>
+                                    <p style="margin:5px 0 0 0; color:#bbb;">${c.text}</p>
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <button onclick="likeComment(${c.id}, '${storyId}')" style="background: none; border: none; color: #3498db; cursor: pointer; font-size: 0.9rem; padding: 5px;">
+                                        👍 ${c.likes || 0}
+                                    </button>
+                                    <button onclick="reportComment(${c.id}, '${storyId}')" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 0.9rem; padding: 5px;" title="Signaler ce commentaire">
+                                        ⚠️ ${c.reports > 0 ? c.reports : ''}
+                                    </button>
+                                </div>
                             </div>`;
                     });
                 })
@@ -278,6 +306,25 @@ L'extraction complète des données téléphoniques par les analystes techniques
                 input.value = '';
                 loadComments(storyId);
             });
+        }
+
+        function likeComment(commentId, storyId) {
+            fetch(`http://127.0.0.1:5000/api/v1/comments/${commentId}/like`, { method: 'POST' })
+                .then(res => res.json())
+                .then(() => loadComments(storyId))
+                .catch(() => alert("Erreur lors de l'enregistrement du like."));
+        }
+
+        function reportComment(commentId, storyId) {
+            if (confirm("Voulez-vous vraiment signaler ce commentaire ?")) {
+                fetch(`http://127.0.0.1:5000/api/v1/comments/${commentId}/report`, { method: 'POST' })
+                    .then(res => res.json())
+                    .then(() => {
+                        alert("Le commentaire a été signalé.");
+                        loadComments(storyId);
+                    })
+                    .catch(() => alert("Erreur lors du signalement."));
+            }
         }
 
         renderListView();
