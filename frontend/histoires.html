@@ -44,21 +44,21 @@
         const navContext = document.getElementById('navigation-context');
         const currentUser = localStorage.getItem('username') || 'Anonyme';
         
-        // Simple English comment: Database updated with real, authentic case photographs
+        // Simple English comment: Database updated with stable, local image file paths
         const storiesData = [
             {
                 id: "h1",
                 title: "Chapitre I : L'Ombre du Golden State Killer (1976 - 2018)",
                 summary: "L'analyse complète de la traque de Joseph James DeAngelo : de ses traumatismes d'enfance à sa chute finale par la généalogie génétique.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Joseph_James_DeAngelo_mugshot.jpg",
+                image: "images/deangelo_main.jpg",
                 gallery: [
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Joseph_James_DeAngelo_mugshot.jpg", label: "Cliché officiel d'identité judiciaire de DeAngelo" },
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/d/da/Fbi-gsk-composite2.jpg", label: "Portrait-robot officiel de recherche du FBI" },
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/2/23/Golden_State_Killer_FBI_wanted_poster_Sacramento_county.jpg", label: "Affiche de recherche officielle publiée en Californie" }
+                    { url: "images/deangelo_mugshot.jpg", label: "Cliché officiel d'identité judiciaire de DeAngelo" },
+                    { url: "images/deangelo_composite.jpg", label: "Portrait-robot officiel de recherche du FBI" },
+                    { url: "images/deangelo_wanted.jpg", label: "Affiche de recherche officielle publiée en Californie" }
                 ],
                 content: `
                     <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 L'ENFANCE ET LA JEUNESSE DE JOSEPH DEANGELO</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Né en 1945 dans l'État de New York, Joseph James DeAngelo Jr. grandit dans une famille marquée par l'instabilité et la violence. Son père, un militaire sévère et violent, abuse régulièrement de son autorité. À l'adolescence, suite au divorce de ses parents, il s'installe en Californie avec sa maman. Sa scolarité à la Folsom High School se déroule sans éclat majeur ; il y est décrit comme un garçon solitaire, renfermé, accumulant une rancœur silencieuse. En 1964, il s'engage dans la Navy et sert durant la guerre du Vietnam à bord du destroyer USS Canberra, un milieu où il perfectionne son sang-froid et sa maîtrise des situations de stress intense. À son retour, il s'inscrit en criminologie à l'université d'État de Sacramento et obtient son diplomate, avant de décrocher un poste d'officier de police à Exeter en 1973.</p>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Né en 1945 dans l'État de New York, Joseph James DeAngelo Jr. grandit dans une famille marquée par l'instabilité et la violence. Son père, un militaire sévère et violent, abuse régulièrement de son autorité. À l'adolescence, suite au divorce de ses parents, il s'installe en Californie avec sa maman. Sa scolarité à la Folsom High School se déroule sans éclat majeur ; il y est décrit comme un garçon solitaire, renfermé, accumulant une rancœur silencieuse. En 1964, il s'engage dans la Navy et sert durant la guerre du Vietnam à bord du destroyer USS Canberra, un milieu où il perfectionne son sang-froid et sa maîtrise des situations de stress intense. À son retour, il s'inscrit en criminologie à l'université d'État de Sacramento et obtient son diplôme, avant de décrocher un poste d'officier de police à Exeter en 1973.</p>
 
                     <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🕒 AVANT LE DRAME : LA DOUBLE VIE ET LES REpÉRAGES</h4>
                     <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">DeAngelo se marie en 1973 avec Sharon Huddle, une avocate. Ses proches le décrivent alors comme un voisin exigeant, sujet à de violents accès de colère pour des futilités, mais personne ne soupçonne son obsession nocturne. Utilisant son badge de policier comme couverture idéale, il arpente les nouveaux lotissements de Sacramento. Il s'introduit en secret dans les maisons pendant la journée, déverrouille des loquets de fenêtres, cache des cordes ou des armes sous les lits, et étudie les habitudes quotidiennes des résidents grâce aux lignes téléphoniques qu'il coupe parfois au préalable.</p>
@@ -70,7 +70,7 @@
                     <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Pendant des décennies, le dossier piétine. C'est en 2018 que l'inspecteur Paul Holes utilise pour la première fois la généalogie génétique en comparant l'ADN inconnu des scènes de crime avec les profils d'utilisateurs sur le site public GEDmatch. La découverte d'un cousin éloigné permet de reconstituer l'arbre généalogique jusqu'à Joseph DeAngelo. Arrêté à son domicile de Citrus Heights alors qu'il s'apprêtait à faire cuire un rôti, il est placé en salle d'interrogatoire. Face aux preuves ADN irréfutables prélevées discrètement sur sa voiture, il feint la confusion mentale, murmurant qu'une force interne nommée 'Jerry' l'a poussé à agir durant sa jeunesse. Les enquêteurs ne croient pas à cette défense de dissociation psychologique.</p>
 
                     <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">⚖️ LE PROCÈS ET LE VERDICT HISTORIQUE</h4>
-                    <p style="line-height:1.6; color:#bbb;">En août 2020, pour s'éviter une condamnation à la peine de mort, DeAngelo plaide coupable de 13 meurtres et admet des dizaines d'agressions prescrites. Le procès offre une tribune bouleversante aux survivants et aux familles des victimes qui défilent à la barre pour exprimer leur douleur face à ce vieillard affalé dans un fauteuil roulant. Il est condamné à <strong>11 peines consécutives de prison à perpétuité, sans aucune possibilité de libération conditionnelle</strong>.</p>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">En août 2020, pour s'éviter une condamnation à la peine de mort, DeAngelo plaide coupable de 13 meurtres et admet des dizaines d'agressions prescrites. Le procès offre une tribune bouleversante aux survivants et aux familles des victimes qui défilent à la barre pour exprimer leur douleur face à ce vieillard affalé dans un fauteuil roulant. Il est condamné à <strong>11 peines consécutives de prison à perpétuité, sans aucune possibilité de libération conditionnelle</strong>.</p>
                 `,
                 sources: [
                     { label: "Squeezie — Ce tueur a nargué la police pendant 40 ans (Golden State Killer)", url: "https://www.youtube.com/watch?v=yYfG79q7t_0" },
@@ -86,11 +86,11 @@
                 id: "h2",
                 title: "Chapitre II : Le Masque de Chris Watts (L'Infanticide du Colorado)",
                 summary: "L'analyse chirurgicale du triple meurtre commis par Chris Watts sur sa femme Shanann et ses enfants Bella et Celeste en août 2018.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Chris_Watts_mugshot.jpg",
+                image: "images/watts_main.jpg",
                 gallery: [
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Chris_Watts_mugshot.jpg", label: "Cliché d'identité judiciaire officiel de Chris Watts" },
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/5/53/Shanann_Watts_and_daughters.jpg", label: "Shanann, Bella et Celeste Watts (Photo de famille)" },
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Anadarko_Petroleum_well_site_Frederick.jpg", label: "Le site pétrolier Anadarko où les corps ont été retrouvés" }
+                    { url: "images/watts_mugshot.jpg", label: "Cliché d'identité judiciaire officiel de Chris Watts" },
+                    { url: "images/watts_family.jpg", label: "Shanann, Bella et Celeste Watts (Photo de famille)" },
+                    { url: "images/watts_site.jpg", label: "Le site pétrolier Anadarko où les corps ont été retrouvés" }
                 ],
                 content: `
                     <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 RENCONTRE ET APPARENCE DE BONHEUR</h4>
@@ -122,11 +122,11 @@
                 id: "h3",
                 title: "Chapitre III : Les Mots Mortels de Michelle Carter",
                 summary: "L'analyse juridique de l'affaire Conrad Roy : comment de simples SMS ont conduit à la mort d'un adolescent et à un procès historique.",
-                image: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Michelle_Carter_mugshot.jpg",
+                image: "images/carter_main.jpg",
                 gallery: [
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Michelle_Carter_mugshot.jpg", label: "Cliché d'identité judiciaire de Michelle Carter" },
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/0/05/Conrad_Roy_III.jpg", label: "Portrait officiel de la victime Conrad Roy III" },
-                    { url: "https://upload.wikimedia.org/wikipedia/commons/8/87/Kmart_parking_lot_Fairhaven.jpg", label: "Le parking Kmart de Fairhaven où le véhicule a été stationné" }
+                    { url: "images/carter_mugshot.jpg", label: "Cliché d'identité judiciaire de Michelle Carter" },
+                    { url: "images/conrad_roy.jpg", label: "Portrait officiel de la victime Conrad Roy III" },
+                    { url: "images/carter_parking.jpg", label: "Le parking Kmart de Fairhaven où le véhicule a été stationné" }
                 ],
                 content: `
                     <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 LA RENCONTRE ET LES FRAGILITÉS COMMUNES</h4>
@@ -147,7 +147,7 @@
                     { label: "Rapport d'audience et attendu de jugement - Cour du Massachusetts", url: "https://www.youtube.com/results?search_query=Commonwealth+v+Michelle+Carter+Full+Trial" }
                 ],
                 testimonies: [
-                    { role: "Lynn Roy (Mère de Conrad, lors du procès)", text: "« Mon fils avait des projets, il venait de décrocher son brevet de capitaine. Elle a exploité sa vulnérabilité psychologique la plus intime pour s'offrir un rôle de veuve éplorée. »" },
+                    { role: "Lynn Roy (Mère de Conrad, lors du procès)", text: "« Mon fils avait des projets, il venait de décrocher son brevet de capitaine. Elle a exploité sa vulnérabilité psychologique la plus intime pour s'offrir un rôle de deuil éploré. »" },
                     { role: "Juge Lawrence Moniz (Lors de l'énoncé du verdict)", text: "« Ses directives ont scellé le destin de cet adolescent. En lui ordonnant de remonter dans ce véhicule mortel alors qu'il manifestait la volonté d'en sortir, elle a causé sa perte de manière active. »" }
                 ]
             }
