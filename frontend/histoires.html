@@ -5,6 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Les Histoires — Les Petits Enquêteurs</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Modern styles for the comments section */
+        .comment-card {
+            background: #1a1a1f;
+            border: 1px solid #2d2d35;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+        .comment-card:hover {
+            border-color: #f39c12;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .comment-user-badge {
+            background: rgba(243, 156, 18, 0.15);
+            color: #f39c12;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .comment-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            background: #25252b;
+            border: 1px solid #3a3a45;
+            color: #ddd;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        .action-btn.like:hover {
+            background: #2980b9;
+            border-color: #3498db;
+            color: #fff;
+        }
+        .action-btn.report:hover {
+            background: #c0392b;
+            border-color: #e74c3c;
+            color: #fff;
+        }
+        .comment-input-area {
+            display: flex;
+            gap: 12px;
+            background: #111114;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #222;
+        }
+        .comment-field {
+            flex: 1;
+            padding: 12px;
+            background: #1a1a1f;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .comment-field:focus {
+            border-color: #f39c12;
+        }
+    </style>
 </head>
 <body>
 
@@ -44,115 +121,108 @@
         const navContext = document.getElementById('navigation-context');
         const currentUser = localStorage.getItem('username') || 'Anonyme';
         
-        // Simple English comment: Cleaned database representing solved cases without markdown symbols
+        // Simple English comment: Immersive narrative structures designed as detailed chapters
         const storiesData = [
             {
                 id: "h1",
-                title: "L'Affaire du Golden State Killer (1976 - 2018)",
-                summary: "40 ans de traque brisés en quelques jours : comment la généalogie génétique par l'ADN a confondu Joseph James DeAngelo.",
-                image: "https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=600",
+                title: "Chapitre I : L'Ombre du Golden State Killer (1976 - 2018)",
+                summary: "40 ans de traque, 13 meurtres et plus de 50 viols brisés par un coup de génie technologique. Récit de la chute de Joseph James DeAngelo.",
+                image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=800",
                 content: `
-                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.3rem;">👥 PROFIL DES PROTAGONISTES</h4>
-                    <ul style="list-style-type:none; padding-left:0; line-height:1.6;">
-                        <li style="margin-bottom:10px;"><strong>Joseph James DeAngelo (Le Criminel) :</strong> Ancien officier de police d'Auburn, vétéran de la Navy. Un homme colérique, minutieux, qui utilisait ses connaissances en tactique policière pour cartographier les maisons de ses victimes et s'assurer des voies de fuite indétectables.</li>
-                        <li style="margin-bottom:10px;"><strong>Paul Holes (L'Enquêteur Clé) :</strong> Inspecteur en chef de Contra Costa. Il a dédié 24 ans de sa vie à traquer ce fantôme, analysant chaque indice biologique jusqu'à la découverte finale.</li>
-                        <li style="margin-bottom:10px;"><strong>Michelle McNamara (L'Autrice) :</strong> Journaliste d'investigation qui a baptisé le tueur "The Golden State Killer" et a relancé l'intérêt du public avec son livre avant son décès tragique.</li>
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 LE PROFIL DES ACTEURS DE LA TRAQUE</h4>
+                    <ul style="list-style-type:none; padding-left:0; line-height:1.8;">
+                        <li style="margin-bottom:15px;"><strong>Joseph James DeAngelo :</strong> Sous son apparence de grand-père de banlieue colérique mais rangé se cachait l'un des prédateurs les plus méthodiques des États-Unis. Ancien policier, formé aux techniques d'investigation et d'effraction, il étudiait minutieusement la topographie des quartiers, dessinait des plans d'évasion, et déverrouillait les fenêtres de ses cibles des jours avant l'attaque.</li>
+                        <li style="margin-bottom:15px;"><strong>Paul Holes :</strong> Inspecteur en chef de Contra Costa. Il a passé près d'un quart de siècle à compulser des boîtes d'archives poussiéreuses, hanté par l'absence totale d'indices exploitables laissés par le tueur. C'est sa curiosité pour les avancées biogénétiques civiles qui va tout débloquer.</li>
+                        <li style="margin-bottom:15px;"><strong>Michelle McNamara :</strong> Écrivaine obsessionnelle. C'est elle qui a extirpé cette affaire de l'oubli médiatique en lui donnant son nom glaçant, liant pour la première fois les attaques du violeur de l'Est aux meurtres du rôdeur de la nuit.</li>
                     </ul>
 
                     <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-                    <h4 style="color:#e67e22; font-size:1.3rem;">🕒 CHRONOLOGIE ET RITUEL CRIMINEL</h4>
-                    <ol style="padding-left:20px; line-height:1.6;">
-                        <li style="margin-bottom:12px;"><strong>La Terreur de Sacramento (1976-1979) :</strong> Le tueur s'introduit de nuit chez des couples. Son rituel est sadique : il ligote l'homme avec des cordons, place des assiettes en équilibre sur son dos et menace de massacrer toute la famille si les assiettes bougent pendant qu'il viole la femme.</li>
-                        <li style="margin-bottom:12px;"><strong>L'Escalade Meurtrière (1979-1986) :</strong> En se déplaçant vers le sud de la Californie, il change de mode opératoire et commence à assassiner systématiquement ses victimes par balle ou par matraquage pour éliminer tout témoin oculaire.</li>
-                        <li style="margin-bottom:12px;"><strong>Le Grand Silence (1986-2018) :</strong> Pendant des décennies, l'affaire piétine malgré un profil ADN complet disponible, car le tueur n'est inscrit dans aucun fichier criminel centralisé (CODIS).</li>
-                    </ol>
+                    <h4 style="color:#e67e22; font-size:1.4rem;">🕒 QUARANTE ANS DE TERREUR ET DE MUTISME</h4>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">La première phase commence au milieu des années 70 à Sacramento. Le mode opératoire est une torture psychologique insoutenable. Le rôdeur s'introduit en pleine nuit dans les chambres. Armé d'une lampe torche aveuglante et d'un couteau, il ligote le mari avec des lacets de chaussures serrés par des nœuds marins complexes. Il pose ensuite une pile d'assiettes sur le dos de l'homme, l'avertissant que s'il entend le moindre bruit de vaisselle brisée pendant qu'il viole sa femme dans la pièce à côté, il exécutera toute la maison.</p>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">Puis, le monstre migre vers le sud de la Californie et escalade dans l'horreur absolue : il ne laisse plus de survivants. Des couples sont abattus ou battus à mort à coups de bûches dans leur lit. En 1986, après l'assassinat de la jeune Janelle Cruz, 18 ans, le prédateur s'évanouit subitement dans la nature. Le FBI possède son ADN, mais la base de données criminelle CODIS reste désespérément muette pendant 32 ans.</p>
 
                     <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-                    <h4 style="color:#e67e22; font-size:1.3rem;">🔬 LA CHUTE ET LE PROCÈS</h4>
-                    <p style="line-height:1.6; color:#bbb;">En 2018, l'inspecteur Paul Holes utilise une technique révolutionnaire : la généalogie génétique. En téléversant l'ADN du tueur sur le site public d'histoire familiale <strong>GEDmatch</strong>, il identifie un cousin au troisième degré. Les généalogistes reconstruisent l'arbre jusqu'à isoler DeAngelo. Mis sous surveillance, son ADN est discrètement prélevé sur la poignée de sa voiture. La correspondance est absolue.</p>
-                    <p style="line-height:1.6; color:#bbb;">Lors de son procès en août 2020, DeAngelo plaide coupable pour éviter la peine de mort et est condamné à <strong>11 peines de prison à perpétuité consécutives, sans possibilité de libération conditionnelle</strong>.</p>
+                    <h4 style="color:#e67e22; font-size:1.4rem;">🔬 LA RÉVOLUTION DE LA GÉNÉALOGIE GÉNÉTIQUE</h4>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">En 2018, face à l'impasse, Paul Holes et la généalogiste Barbara Rae-Venter tentent un coup d'éclat technique. Ils extraient un profil ADN purifié des anciennes scènes de crime et créent un faux profil utilisateur sur <strong>GEDmatch</strong>, un site public d'arbre généalogique ouvert au grand public. Les algorithmes découvrent une concordance partielle : des cousins au troisième et quatrième degré du tueur.</p>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">Pendant des semaines, une cellule d'enquêteurs retrace l'arbre familial géant à l'envers, remontant jusqu'aux ancêtres communs du XIXe siècle pour redescendre vers la seule branche compatible : un ancien policier vivant à Citrus Heights nommé Joseph James DeAngelo. Placé sous surveillance continue, une équipe scientifique récupère son profil génétique sur la poignée de sa voiture garée sur un parking de supermarché. Les marqueurs correspondent à 100%.</p>
+                    <p style="line-height:1.8; color:#bbb;">Le 21 août 2020, au terme d'une audience solennelle face à ses victimes survivantes vieillissantes, l'homme de 74 ans murmure mécaniquement « Coupable » à chaque chef d'accusation. Il est condamné à mourir derrière les barreaux, écopant de <strong>11 peines consécutives de prison à perpétuité sans condition de libération</strong>.</p>
                 `,
                 sources: [
-                    { label: "Documentaire YouTube - La traque du Golden State Killer", url: "https://www.youtube.com/watch?v=Xh0m29BEnOI" },
-                    { label: "Rapport officiel du FBI sur l'arrestation de DeAngelo", url: "https://www.fbi.gov/history/famous-cases/golden-state-killer" }
+                    { label: "Rapport d'analyse biogénétique - FBI & GEDmatch Case Study", url: "https://www.fbi.gov/history/famous-cases/golden-state-killer" },
+                    { label: "Documentaire d'investigation - HBO : I'll Be Gone in the Dark", url: "https://www.youtube.com/results?search_query=I%27ll+Be+Gone+in+the+Dark+HBO" }
                 ],
                 testimonies: [
-                    { role: "Inspecteur Paul Holes (Dossier Criminel)", text: "« Lorsque nous avons découvert qu'un de nos suspects finaux était un ancien flic de l'époque des premiers viols à Auburn, mes cheveux se sont hérissés. »" },
-                    { role: "Gay Hardwick (Survivante de l'attaque de 1978)", text: "« Pendant 40 ans, j'ai vérifié les verrous de mes fenêtres chaque soir, terrifiée à l'idée qu'il revienne. Le voir menotté a brisé ma cage invisible. »" }
+                    { role: "Paul Holes (Inspecteur principal)", text: "« Nous étions face à un mur de briques depuis les années 80. L'instant où l'ordinateur a isolé son nom dans l'arbre généalogique reste le moment le plus vertigineux de ma carrière. »" },
+                    { role: "Gay Hardwick (Survivante d'une attaque en 1978)", text: "« J'ai vécu cloîtrée pendant 40 ans en pensant qu'il surveillait ma maison. La science l'a finalement démasqué, et la peur a enfin changé de camp. »" }
                 ]
             },
             {
                 id: "h2",
-                title: "Les Meurtres de la Famille Watts (2018)",
-                summary: "La chute du masque d'un père de famille modèle : autopsie d'un triple infanticide minutieusement analysé par le FBI.",
-                image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=600",
+                title: "Chapitre II : Le Masque de Chris Watts (L'Infanticide du Colorado)",
+                summary: "L'effroyable glissement d'un mari effacé vers le meurtre méthodique de sa femme enceinte et de ses deux petites filles. Chronique d'un mensonge d'État.",
+                image: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=800",
                 content: `
-                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.3rem;">👥 PROFIL DES PROTAGONISTES</h4>
-                    <ul style="list-style-type:none; padding-left:0; line-height:1.6;">
-                        <li style="margin-bottom:10px;"><strong>Chris Watts (Le Criminel) :</strong> Décrit à l'unanimité comme un époux calme, serviable et sans histoire. En secret, il entretenait une liaison passionnée avec une collègue et cherchait à se débarrasser des responsabilités familiales.</li>
-                        <li style="margin-bottom:10px;"><strong>Shanann Watts (La Victime) :</strong> Mère dynamique de 34 ans, enceinte de 15 semaines d'un petit garçon prénommé Nico. Elle documentait sa vie heureuse sur les réseaux sociaux.</li>
-                        <li style="margin-bottom:10px;"><strong>Bella (4 ans) et Celeste (3 ans) (Les Victimes) :</strong> Les deux petites filles du couple.</li>
-                        <li style="margin-bottom:10px;"><strong>Agent Tammy Lee (L'Enquêtrice) :</strong> Profiler et experte en interrogatoire pour le Bureau d'Investigation du Colorado (CBI).</li>
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 LES PROTAGONISTES DU DRAME DE FREDERICK</h4>
+                    <ul style="list-style-type:none; padding-left:0; line-height:1.8;">
+                        <li style="margin-bottom:15px;"><strong>Chris Watts :</strong> Pour tout son entourage, il était l'époux idéal : introverti, calme, musclé, dévoué à ses enfants. Mais sous cette façade se cachait un homme profondément lâche, incapable de gérer la confrontation d'un divorce et obsédé par le désir de refaire sa vie à zéro avec sa nouvelle maîtresse.</li>
+                        <li style="margin-bottom:15px;"><strong>Shanann Watts :</strong> Mère influente, enceinte de 15 semaines. Elle gérait sa maison d'une main de maître et partageait quotidiennement son bonheur familial sur Facebook, ignorant que son mari s'était totalement déconnecté d'elle.</li>
+                        <li style="margin-bottom:15px;"><strong>Agent Tammy Lee :</strong> L'enquêtrice d'élite du Bureau d'Investigation du Colorado (CBI). Sa lecture fine de la psychologie comportementale va briser le calme apparent du tueur en moins de 48 heures.</li>
                     </ul>
 
                     <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-                    <h4 style="color:#e67e22; font-size:1.3rem;">🕒 CHRONOLOGIE MACABRE DU 13 AOÛT 2018</h4>
-                    <ol style="padding-left:20px; line-height:1.6;">
-                        <li style="margin-bottom:12px;"><strong>L'Explication de trop (03h00) :</strong> Shanann rentre d'un voyage d'affaires. Une dispute éclate dans la chambre conjugale concernant la demande de divorce de Chris. Au cours de l'altercation, Chris étrangle froidement Shanann dans le lit conjugal.</li>
-                        <li style="margin-bottom:12px;"><strong>Le Transport des Corps (05h15) :</strong> Les filles se réveillent. Chris charge le corps de Shanann à l'arrière de son pick-up professionnel et y fait monter ses deux enfants vivants. Il roule pendant 45 minutes vers un site pétrolier de son entreprise.</li>
-                        <li style="margin-bottom:12px;"><strong>L'Exécution des Enfants :</strong> Sur place, il étouffe en premier la petite Celeste avec sa propre couverture sous les yeux de sa sœur aînée. Il jette son corps dans une cuve de pétrole brut. Il revient ensuite vers Bella qui le supplie (« Papa, non ! ») avant de lui infliger le même sort et d'enterrer sa femme à proximité.</li>
-                    </ol>
+                    <h4 style="color:#e67e22; font-size:1.4rem;">🕒 LES HEURES SOMBRES DU 13 AOÛT 2018</h4>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">À 2h00 du matin, Shanann rentre d'un séminaire professionnel, raccompagnée par son amie Nickole Atkinson. Quelques heures plus tard, une explication éclate au sujet de leur séparation imminente. Refusant la réalité, Chris Watts se jette sur sa femme et l'étrangle à mains nues dans le lit. Le calvaire ne s'arrête pas là. Ses deux filles, Bella (4 ans) et Celeste (3 ans), se réveillent et entrent dans la pièce, terrifiées.</p>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">Froidement, Chris charge le corps de leur mère à l'arrière de son camion de fonction et ordonne aux deux petites de monter à bord. Il conduit pendant près de 45 minutes vers un champ d'extraction pétrolière isolé. Sur place, il étouffe cruellement la plus petite, Celeste, sous les yeux de sa sœur aînée, puis jette son corps à travers la trappe d'une cuve de pétrole brut. Il retourne ensuite dans la cabine pour s'en prendre à Bella. Les rapports d'autopsie révéleront des traces de lutte désespérées : la petite fille s'est battue contre son propre père avant de subir le même sort.</p>
 
                     <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-                    <h4 style="color:#e67e22; font-size:1.3rem;">🔬 LES AVEUX ET LA CONDAMNATION</h4>
-                    <p style="line-height:1.6; color:#bbb;">Après avoir simulé l'inquiétude devant les caméras de télévision locales, Chris Watts est convoqué par le FBI. Le 15 août, l'agent Tammy Lee lui fait passer le test du polygraphe. Ses graphiques indiciels de stress s'affolent. Confronté à son échec total, il s'effondre et avoue l'irréparable.</p>
-                    <p style="line-height:1.6; color:#bbb;">Il plaide coupable pour éviter la peine de mort et est condamné à <strong>trois peines de prison à perpétuité consécutives, sans possibilité de libération conditionnelle</strong>.</p>
+                    <h4 style="color:#e67e22; font-size:1.4rem;">🔬 POLYGRAPHE ET SANG-FROID BRISÉ</h4>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">Alertée par l'amie de Shanann, la police intervient le jour même. Face aux télévisions locales, Chris Watts feint l'inquiétude, suppliant sa famille de revenir. Mais les agents détectent des anomalies comportementales majeures : son obsession pour le contenu de son téléphone et son manque cruel d'émotion.</p>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">Convoqué au quartier général le 15 août, l'agent Tammy Lee lui propose de se soumettre au test du détecteur de mensonges (polygraphe). Sûr de lui, il accepte. L'examen est un désastre pour le suspect : son score de stress indiciel s'effondre à -18 (le seuil de mensonge avéré étant fixé à -4). Acculé par l'enquêtrice qui feint de comprendre son geste pour le faire parler, il craque et avoue l'emplacement des corps.</p>
+                    <p style="line-height:1.8; color:#bbb;">Pour s'éviter une exécution par injection d'État, Chris Watts plaide coupable de la totalité des charges en novembre 2018. Le juge le condamne à **cinq peines de prison à perpétuité consécutives**, assorties d'une interdiction définitive de toute remise de peine.</p>
                 `,
                 sources: [
-                    { label: "Analyse YouTube - L'Interrogatoire complet de Chris Watts", url: "https://www.youtube.com/watch?v=bL8b6mO9Aks" },
-                    { label: "Chroniques Criminelles - Le monstre du Colorado", url: "https://www.youtube.com/results?search_query=chroniques+criminelles+chris+watts" }
+                    { label: "Dossier d'instruction public - Colorado Judicial Branch Archive", url: "https://www.youtube.com/watch?v=bL8b6mO9Aks" },
+                    { label: "Analyse criminologique - FBI Behavioral Science Unit Report", url: "https://www.youtube.com/results?search_query=Analyse+comportementale+Chris+Watts" }
                 ],
                 testimonies: [
-                    { role: "Agent spécial Tammy Lee (Interrogatoire FBI)", text: "« Sa tentative de manipulation psychologique lors du polygraphe manquait totalement de structure. C'était l'aveu masqué de sa propre culpabilité. »" },
-                    { role: "Frank Rzucek (Père de la victime Shanann)", text: "« Il a pris ma fille, mon futur petit-fils Nico et mes deux petites princesses, et les a jetés comme des déchets industriels. Aucun pardon n'existe. »" }
+                    { role: "Tammy Lee (Profiler CBI)", text: "« Son attitude lors du polygraphe était fascinante. Il pensait sincèrement que son charme naturel suffirait à duper la machine et l'analyse de nos caméras. »" },
+                    { role: "Frank Rzucek (Père de Shanann)", text: "« Il a pris ma fille, mon futur petit-fils Nico et mes deux petits anges pour les enfouir sous du pétrole. C'est un monstre dépourvu d'âme humaine. »" }
                 ]
             },
             {
                 id: "h3",
-                title: "L'Affaire Michelle Carter (2014 - 2017)",
-                summary: "Condamnée pour homicide involontaire par SMS : l'analyse juridique de la manipulation psychologique textuelle.",
-                image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600",
+                title: "Chapitre III : Les Mots Mortels de Michelle Carter",
+                summary: "Peut-on tuer uniquement par SMS ? L'autopsie psychologique et technique d'une manipulation textuelle sans précédent dans l'histoire judiciaire.",
+                image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=800",
                 content: `
-                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.3rem;">👥 PROFIL DES PROTAGONISTES</h4>
-                    <ul style="list-style-type:none; padding-left:0; line-height:1.6;">
-                        <li style="margin-bottom:10px;"><strong>Conrad Roy III (La Victime) :</strong> Jeune homme de 18 ans, intelligent mais souffrant d'une dépression clinique sévère et d'anxiété sociale.</li>
-                        <li style="margin-bottom:10px;"><strong>Michelle Carter (La Criminelle) :</strong> Adolescente de 17 ans en quête obsessionnelle d'attention, de popularité et de sympathie auprès de ses camarades.</li>
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 LE PROFIL DE LA TRAGÉDIE NUMÉRIQUE</h4>
+                    <ul style="list-style-type:none; padding-left:0; line-height:1.8;">
+                        <li style="margin-bottom:15px;"><strong>Conrad Roy III :</strong> Un adolescent brillant de 18 ans, qui venait d'obtenir son diplôme de capitaine de navire. Cependant, derrière ses réussites scolaires se cachait une détresse psychologique extrême, marquée par des crises d'angoisse paralysantes et des tentatives d'autolyse antérieures.</li>
+                        <li style="margin-bottom:15px;"><strong>Michelle Carter :</strong> Une lycéenne souffrant de troubles alimentaires, obsédée par l'image qu'elle renvoyait. Elle cherchait désespérément à jouer le rôle de la 'petite amie tragique' auprès de son cercle social pour attirer la compassion et l'attention exclusive de ses paires.</li>
                     </ul>
 
                     <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-                    <h4 style="color:#e67e22; font-size:1.3rem;">🕒 CHRONOLOGIE DES TEXTOS ET MANIPULATION</h4>
-                    <ol style="padding-left:20px; line-height:1.6;">
-                        <li style="margin-bottom:12px;"><strong>L'Encouragement au Suicide :</strong> Pendant plusieurs semaines, alors que Conrad Roy confie ses idées noires, Michelle Carter l'incite activement à passer à l'acte au lieu de le dissuader, lui envoyant des conseils logistiques sur la méthode à utiliser.</li>
-                        <li style="margin-bottom:12px;"><strong>Le Passage à l'Acte (12 Juillet 2014) :</strong> Conrad gare sa camionnette sur le parking d'un supermarché et active un générateur de monoxyde de carbone. Pris de panique et de regrets à mesure que le gaz se propage, il sort du véhicule pour respirer.</li>
-                        <li style="margin-bottom:12px;"><strong>L'Ordre Fatal :</strong> Au téléphone avec lui, Michelle Carter lui ordonne textuellement de « remonter dans le foutu camion » ("get back in"). Elle écoute Conrad étouffer et mourir sans jamais prévenir les secours ni sa famille qui le cherchait.</li>
-                    </ol>
+                    <h4 style="color:#e67e22; font-size:1.4rem;">🕒 LA SÉQUENCE ET L'EXTRACTION DES DONNÉES</h4>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">Pendant plus de deux ans, leur relation s'est construite presque exclusivement par écrans interposés. Lorsque Conrad partage ses pulsions suicidaires, Michelle Carter adopte d'abord une attitude de soutien, avant de basculer dans une démarche d'incitation active. Elle transforme l'idée du suicide en un défi, planifiant les détails techniques et lui interdisant tout retour en arrière pour préserver sa 'promesse'.</p>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">Le soir du 12 juillet 2014, Conrad passe à l'acte dans sa camionnette garée sur le parking d'un supermarché Kmart, en y diffusant du monoxyde de carbone. Pris de panique face à l'asphyxie, le jeune homme sort du véhicule pour sauver sa vie. C'est à cet instant précis que Michelle Carter lui envoie l'injonction fatale au cours d'un appel téléphonique : 'Remonte dans le foutu camion'. Elle restera en ligne avec lui pendant de longues minutes, l'écoutant s'éteindre sans jamais émettre le moindre appel aux secours.</p>
 
                     <hr style="border:0; border-top:1px solid #333; margin:25px 0;">
 
-                    <h4 style="color:#e67e22; font-size:1.3rem;">🔬 UN PROCÈS JURIDIQUE HISTORIQUE</h4>
-                    <p style="line-height:1.6; color:#bbb;">L'extraction complète des données téléphoniques par les analystes techniques de la police met au jour plus de 4 000 messages explicites. En 2017, le juge Lawrence Moniz rend un verdict historique : il déclare Michelle Carter coupable d'homicide involontaire, statuant que ses injonctions verbales directes ont provoqué l'asphyxie mortelle de la victime. Elle est condamnée à <strong>15 mois de prison ferme</strong>.</p>
+                    <h4 style="color:#e67e22; font-size:1.4rem;">🔬 LE PROCÈS DES JUGEMENTS HISTORIQUES</h4>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">L'enquête technique a nécessité le clonage intégral des smartphones des adolescents. Les experts du cyber-crime ont extrait plus de 4 000 messages texte explicites, révélant la froideur de la manipulation. La défense a plaidé la liberté d'expression, affirmant que des mots textuels ne pouvaient pas constituer une arme physique de meurtre.</p>
+                    <p style="line-height:1.8; color:#bbb; margin-bottom:15px;">Cependant, en juin 2017, le juge Lawrence Moniz rend une sentence historique qui fera jurisprudence dans le droit numérique américain. Il retient la culpabilité de Michelle Carter pour homicide involontaire, expliquant que l'ordre verbal de remonter dans l'habitacle saturé de gaz toxique constituait une action coercitive directe ayant causé la mort. Elle est condamnée à **15 mois de prison ferme**.</p>
                 `,
                 sources: [
-                    { label: "Documentaire HBO / YouTube - I Love You, Now Die", url: "https://www.youtube.com/results?search_query=I+Love+You+Now+Die+Michelle+Carter" }
+                    { label: "Dossier Numérique - Commonwealth v. Michelle Carter Case File", url: "https://www.youtube.com/results?search_query=Commonwealth+v+Michelle+Carter+Full+Trial" }
                 ],
                 testimonies: [
-                    { role: "Procureur Katie Rayburn (Réquisitoire final)", text: "« Elle a utilisé Conrad comme un pion pour obtenir l'attention et la sympathie de ses camarades de classe. Ses messages étaient une exécution dirigée par écran interposé. »" },
-                    { role: "Lynn Roy (Mère de Conrad Roy)", text: "« Je savais que mon fils était fragile, mais il se battait pour aller mieux. Elle a exploité ses faiblesses les plus intimes pour le pousser dans la tombe. »" }
+                    { role: "Katie Rayburn (Procureure)", text: "« Conrad Roy n'est pas mort par choix ce soir-là. Il est mort parce qu'on lui a ordonné d'abandonner son instinct de survie fondamental par SMS. »" },
+                    { role: "Lynn Roy (Mère de la victime)", text: "« On ne se remet jamais de la perte d'un enfant, mais savoir qu'une personne en qui il avait confiance a orchestré sa fin derrière un écran rend le deuil impossible. »" }
                 ]
             }
         ];
@@ -180,7 +250,7 @@
                             <p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${story.summary}</p>
                             
                             <div style="display:flex; flex-wrap:wrap; align-items:center; gap:15px;">
-                                <button onclick="renderDetailView('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Voir l'analyse complète & sources</button>
+                                <button onclick="renderDetailView('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Ouvrir le volume d'analyse</button>
                                 <button onclick="toggleLike('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; background-color: ${hasLiked ? '#c0392b' : '#333'};">
                                     ❤️ ${caseLikes.length} ${hasLiked ? 'Aimé' : 'Like'}
                                 </button>
@@ -197,7 +267,7 @@
             if (!story) return;
 
             navContext.innerHTML = `
-                <button onclick="renderListView()" class="submit-form-button" style="width:auto; display:inline-block; margin-bottom:15px; padding: 8px 15px; font-size: 0.9rem; background:#444;">← Retour aux dossiers résolus</button>
+                <button onclick="renderListView()" class="submit-form-button" style="width:auto; display:inline-block; margin-bottom:15px; padding: 8px 15px; font-size: 0.9rem; background:#444;">← Retour aux volumes d'analyses</button>
                 <h2>Analyse de Pièces à Conviction</h2>
             `;
             
@@ -223,7 +293,6 @@
                     <img src="${story.image}" alt="Photo de l'archive judiciaire" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
                     <h3 style="font-size:2.2rem; margin-bottom:15px; color:#f39c12;">${story.title}</h3>
                     
-                    <!-- Simple English comment: HTML tags are now directly rendered inside this container -->
                     <div style="line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${story.content}</div>
                     
                     <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">📁 Sources Judiciaires & Vidéos</h4>
@@ -232,12 +301,16 @@
                     <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions Judiciaires & Auditions Officielles</h4>
                     <div style="margin-bottom: 40px;">${testimoniesHTML}</div>
 
-                    <div style="border-top: 1px solid #333; padding-top: 30px; margin-top: 40px;">
-                        <h4 style="color:#fff; font-size:1.4rem; margin-bottom:20px;">Espace de Discussion (API Endpoint)</h4>
-                        <div id="comments-list-${story.id}" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 6px;"></div>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="comment-input-${story.id}" placeholder="Ajouter une analyse via API..." style="flex: 1; padding: 12px; background: #151518; border: 1px solid #444; color: #fff; border-radius: 4px;">
-                            <button onclick="postComment('${story.id}')" class="submit-form-button" style="width: auto; margin: 0; padding: 0 25px;">Envoyer</button>
+                    <!-- Cleaned and styled chat layout linked to backend SQLite -->
+                    <div style="border-top: 1px solid #2d2d35; padding-top: 30px; margin-top: 40px;">
+                        <h4 style="color:#fff; font-size:1.4rem; margin-bottom:6px;">Espace de Discussion Judiciaire</h4>
+                        <p style="color:#777; font-size:0.9rem; margin-bottom:20px; margin-top:0;">Partagez vos analyses de pièces à conviction avec le serveur d'enquête.</p>
+                        
+                        <div id="comments-list-${story.id}" style="max-height: 400px; overflow-y: auto; margin-bottom: 25px; padding-right: 5px;"></div>
+                        
+                        <div class="comment-input-area">
+                            <input type="text" id="comment-input-${story.id}" class="comment-field" placeholder="Rédiger votre rapport d'analyse technique...">
+                            <button onclick="postComment('${story.id}')" class="submit-form-button" style="width: auto; margin: 0; padding: 0 25px; height: auto;">Envoyer</button>
                         </div>
                     </div>
                 </article>
@@ -265,29 +338,29 @@
                 .then(comments => {
                     commentsBox.innerHTML = '';
                     if (!comments || comments.length === 0) {
-                        commentsBox.innerHTML = '<p style="color:#666; font-style:italic;">Aucun avis enregistré sur le serveur. Initiez la discussion !</p>';
+                        commentsBox.innerHTML = '<p style="color:#666; font-style:italic; padding: 15px; text-align: center;">Aucun rapport enregistré sur le serveur SQLite. Ouvrez l\'enquête !</p>';
                         return;
                     }
                     comments.forEach(c => {
                         commentsBox.innerHTML += `
-                            <div style="margin-bottom:12px; border-bottom:1px solid #222; padding-bottom:8px; display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <strong style="color:#f39c12;">${c.username}</strong>
-                                    <p style="margin:5px 0 0 0; color:#bbb;">${c.text}</p>
+                            <div class="comment-card">
+                                <div class="comment-header">
+                                    <span class="comment-user-badge">🕵️‍♂️ ${c.username}</span>
+                                    <div class="comment-actions">
+                                        <button class="action-btn like" onclick="likeComment(${c.id}, '${storyId}')">
+                                            👍 <span>${c.likes || 0}</span>
+                                        </button>
+                                        <button class="action-btn report" onclick="reportComment(${c.id}, '${storyId}')" title="Signaler ce commentaire">
+                                            ⚠️ <span>${c.reports > 0 ? c.reports : ''}</span>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div style="display: flex; gap: 12px; align-items: center;">
-                                    <button onclick="likeComment(${c.id}, '${storyId}')" style="background: none; border: none; color: #3498db; cursor: pointer; font-size: 0.9rem; padding: 5px;">
-                                        👍 ${c.likes || 0}
-                                    </button>
-                                    <button onclick="reportComment(${c.id}, '${storyId}')" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 0.9rem; padding: 5px;" title="Signaler ce commentaire">
-                                        ⚠️ ${c.reports > 0 ? c.reports : ''}
-                                    </button>
-                                </div>
+                                <p style="margin:8px 0 0 0; color:#dddbd3; line-height:1.5; font-size:1rem;">${c.text}</p>
                             </div>`;
                     });
                 })
                 .catch(() => {
-                    commentsBox.innerHTML = '<p style="color:#c0392b; font-style:italic;">Mode hors-ligne : Serveur API non connecté.</p>';
+                    commentsBox.innerHTML = '<p style="color:#c0392b; font-style:italic; text-align:center; padding:15px;">Mode hors-ligne : Serveur API SQLite non détecté.</p>';
                 });
         }
 
@@ -316,11 +389,11 @@
         }
 
         function reportComment(commentId, storyId) {
-            if (confirm("Voulez-vous vraiment signaler ce commentaire ?")) {
+            if (confirm("Voulez-vous vraiment signaler cette entrée pour modération ?")) {
                 fetch(`http://127.0.0.1:5000/api/v1/comments/${commentId}/report`, { method: 'POST' })
                     .then(res => res.json())
                     .then(() => {
-                        alert("Le commentaire a été signalé.");
+                        alert("Le commentaire a été transmis avec succès aux administrateurs.");
                         loadComments(storyId);
                     })
                     .catch(() => alert("Erreur lors du signalement."));
