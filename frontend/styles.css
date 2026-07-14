@@ -402,3 +402,160 @@ footer {
     border-radius: 6px;
     border: 1px solid #333;
 }
+
+/* --- CONNECTION & AUTHENTICATION STYLES --- */
+/* Simple English comment: Styling for the interactive login, register and reset card */
+.login-card {
+    background-color: #0c0c0e;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 30px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+    border: 1px solid #161619;
+    margin: auto;
+}
+
+.login-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-group label {
+    color: #8c8e93;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding-left: 4px;
+}
+
+.input-group input {
+    background-color: #ffffff;
+    border: none;
+    color: #000000;
+    padding: 14px 20px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    outline: none;
+    width: 100%;
+    transition: box-shadow 0.2s ease;
+}
+
+.input-group input::placeholder {
+    color: #b0b2b8;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #8c8e93;
+    font-size: 0.85rem;
+    margin-top: -5px;
+    padding-left: 4px;
+}
+
+.btn-submit-pill {
+    background: linear-gradient(135deg, #ba3a1a, #e66d27);
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    width: 100%;
+    text-transform: uppercase;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(230, 110, 40, 0.25);
+    transition: all 0.2s ease;
+}
+
+.btn-submit-pill:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.bottom-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    padding: 0 4px;
+    font-size: 0.85rem;
+    border-top: 1px solid #161619;
+    padding-top: 20px;
+}
+
+.bottom-links a {
+    color: #e66e28;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bottom-links a:hover {
+    color: #ffffff;
+}
+
+.back-home-container {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.back-home-link {
+    color: #4a4b4e;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+}
+
+.back-home-link:hover {
+    color: #8c8e93;
+}
+
+.alert-box {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    display: none;
+    text-align: center;
+}
+
+.alert-error {
+    background-color: rgba(192, 57, 43, 0.2);
+    color: #e74c3c;
+    border: 1px solid #c0392b;
+}
+
+.alert-success {
+    background-color: rgba(39, 174, 96, 0.2);
+    color: #2ecc71;
+    border: 1px solid #27ae60;
+}
+
+.admin-banner {
+    display: none;
+    background: rgba(243, 156, 18, 0.15);
+    border: 1px solid #f39c12;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    color: #f39c12;
+    text-align: center;
+}

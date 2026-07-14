@@ -3,152 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Connexion</title>
+    <title>Les Petits Enquêteurs - Espace Connexion</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* --- DESIGN INSPIRÉ DE L'IMAGE EXEMPLE --- */
-        .login-card {
-            background-color: #0c0c0e;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 420px;
-            padding: 40px 30px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
-            border: 1px solid #161619;
-            margin: auto;
-        }
-
-        .login-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        /* Label petit et propre placé au-dessus */
-        .input-group label {
-            color: #8c8e93;
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding-left: 4px;
-        }
-
-        /* Grands champs de saisie blancs et arrondis (style "pilule") comme sur la photo */
-        .input-group input {
-            background-color: #ffffff;
-            border: none;
-            color: #000000;
-            padding: 14px 20px;
-            border-radius: 30px; /* Arrondi maximal identique à l'image */
-            font-size: 0.95rem;
-            outline: none;
-            width: 100%;
-            transition: box-shadow 0.2s ease;
-        }
-
-        /* Changement de couleur du texte indicatif (placeholder) */
-        .input-group input::placeholder {
-            color: #b0b2b8;
-        }
-
-        /* Case à cocher "Se souvenir de moi" */
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #8c8e93;
-            font-size: 0.85rem;
-            margin-top: -5px;
-            padding-left: 4px;
-        }
-
-        .remember-me input {
-            cursor: pointer;
-        }
-
-        /* Gros bouton de soumission étiré style Pilule */
-        .btn-submit-pill {
-            background: linear-gradient(135deg, #ba3a1a, #e66d27);
-            color: #ffffff;
-            border: none;
-            padding: 14px;
-            border-radius: 30px; /* Rond comme sur l'image */
-            font-weight: 700;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            width: 100%;
-            text-transform: uppercase; /* Écrit en MAJUSCULES comme sur l'image */
-            margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(230, 110, 40, 0.25);
-            transition: all 0.2s ease;
-        }
-
-        .btn-submit-pill:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.1);
-        }
-
-        /* Liens du bas */
-        .bottom-links {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-            padding: 0 4px;
-            font-size: 0.85rem;
-            border-top: 1px solid #161619;
-            padding-top: 20px;
-        }
-
-        .bottom-links a {
-            color: #e66e28;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .bottom-links a:hover {
-            color: #ffffff;
-        }
-
-        /* Bouton Retour à l'accueil discret tout en bas */
-        .back-home-container {
-            margin-top: 25px;
-            text-align: center;
-        }
-        
-        .back-home-link {
-            color: #4a4b4e;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: color 0.2s ease;
-        }
-        
-        .back-home-link:hover {
-            color: #8c8e93;
-        }
-    </style>
 </head>
 <body>
-
-    <div class="video-container">
-        <video autoplay loop muted playsinline id="bg-video">
-            <source src="background.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
 
     <header class="main-header">
         <div class="header-spacer"></div>
@@ -156,34 +14,83 @@
         <div></div>
     </header>
 
-    <main class="content-section">
+    <main class="content-section" style="padding-top: 50px;">
         <div class="login-card">
-            <h2 class="login-title">Formulaire de connexion</h2>
-            
-            <form class="form-container">
-                <div class="input-group">
-                    <label for="username">Username *</label>
-                    <input type="text" id="username" placeholder="Enter your Username" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="password">Password *</label>
-                    <input type="password" id="password" placeholder="Enter your Password" required>
-                </div>
+            <div id="feedback-alert" class="alert-box"></div>
 
-                <div class="remember-me">
-                    <input type="checkbox" id="remember">
-                    <label style="display:inline; color:inherit; font-weight:normal;" for="remember">Remember me</label>
-                </div>
+            <div id="section-login">
+                <h2 class="login-title">Connexion</h2>
+                <form id="form-login" class="form-container" onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <label for="login-username">Identifiant *</label>
+                        <input type="text" id="login-username" placeholder="Entrez votre identifiant" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="login-password">Mot de passe *</label>
+                        <input type="password" id="login-password" placeholder="Entrez votre mot de passe" required>
+                    </div>
 
-                <button type="submit" class="btn-submit-pill">
-                    Connexion
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <label style="display:inline; color:inherit; font-weight:normal;" for="remember">Se souvenir de moi</label>
+                    </div>
+
+                    <button type="submit" class="btn-submit-pill">S'identifier</button>
+                </form>
+                <div class="bottom-links">
+                    <a onclick="switchSection('register')">Créer un compte</a>
+                    <a onclick="switchSection('forgot')">Mot de passe oublié ?</a>
+                </div>
+            </div>
+
+            <div id="section-register" style="display:none;">
+                <h2 class="login-title">Inscription</h2>
+                <form id="form-register" class="form-container" onsubmit="handleRegister(event)">
+                    <div class="input-group">
+                        <label for="reg-username">Choisissez un Identifiant *</label>
+                        <input type="text" id="reg-username" placeholder="Identifiant" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="reg-password">Choisissez un Mot de passe *</label>
+                        <input type="password" id="reg-password" placeholder="Mot de passe sécurisé" required>
+                    </div>
+
+                    <button type="submit" class="btn-submit-pill">Créer mon compte</button>
+                </form>
+                <div class="bottom-links" style="justify-content: center;">
+                    <a onclick="switchSection('login')">Retourner à la connexion</a>
+                </div>
+            </div>
+
+            <div id="section-forgot" style="display:none;">
+                <h2 class="login-title">Récupération</h2>
+                <form id="form-forgot" class="form-container" onsubmit="handleReset(event)">
+                    <p style="color:#8c8e93; font-size:0.85rem; text-align:center; margin-bottom:10px;">
+                        Entrez votre identifiant pour réinitialiser de manière sécurisée votre clé d'accès.
+                    </p>
+                    <div class="input-group">
+                        <label for="forgot-username">Identifiant *</label>
+                        <input type="text" id="forgot-username" placeholder="Votre identifiant d'enquêteur" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="forgot-password">Nouveau mot de passe *</label>
+                        <input type="password" id="forgot-password" placeholder="Nouveau mot de passe" required>
+                    </div>
+
+                    <button type="submit" class="btn-submit-pill">Mettre à jour</button>
+                </form>
+                <div class="bottom-links" style="justify-content: center;">
+                    <a onclick="switchSection('login')">Retourner à la connexion</a>
+                </div>
+            </div>
+
+            <div id="admin-banner" class="admin-banner">
+                <p>⚡ Statut Administrateur Détecté !</p>
+                <button onclick="window.location.href='admin-dashboard.html'" class="btn-submit-pill" style="background:#f39c12; box-shadow:none; font-size:0.85rem; padding:8px; margin-top:10px;">
+                    Accéder au Panneau d'Administration
                 </button>
-            </form>
-
-            <div class="bottom-links">
-                <a href="inscription.html">Vous n'avez pas de compte ?</a>
-                <a href="mot-de-passe-oublie.html">Mot de passe oublié ?</a>
             </div>
         </div>
 
@@ -196,5 +103,100 @@
         <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
     </footer>
 
+    <script>
+        const alertBox = document.getElementById('feedback-alert');
+        const adminBanner = document.getElementById('admin-banner');
+
+        function showAlert(message, type) {
+            alertBox.style.display = 'block';
+            alertBox.innerText = message;
+            alertBox.className = `alert-box alert-${type}`;
+            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+        }
+
+        // Simple English comment: dynamic view switching between login tabs
+        function switchSection(section) {
+            document.getElementById('section-login').style.display = (section === 'login') ? 'block' : 'none';
+            document.getElementById('section-register').style.display = (section === 'register') ? 'block' : 'none';
+            document.getElementById('section-forgot').style.display = (section === 'forgot') ? 'block' : 'none';
+            alertBox.style.display = 'none';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            fetch('http://127.0.0.1:5000/api/v1/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('is_admin', data.is_admin);
+                    showAlert(data.message, 'success');
+
+                    // If user is admin, show the special routing action button
+                    if (data.is_admin) {
+                        adminBanner.style.display = 'block';
+                    } else {
+                        adminBanner.style.display = 'none';
+                        // Normal users redirected to home
+                        setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+                    }
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(() => showAlert("Erreur de communication avec le serveur d'authentification.", "error"));
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+
+            fetch('http://127.0.0.1:5000/api/v1/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => { switchSection('login'); }, 2000);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(() => showAlert("Erreur lors de la tentative d'enregistrement.", "error"));
+        }
+
+        function handleReset(e) {
+            e.preventDefault();
+            const username = document.getElementById('forgot-username').value.trim();
+            const password = document.getElementById('forgot-password').value;
+
+            fetch('http://127.0.0.1:5000/api/v1/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => { switchSection('login'); }, 2000);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(() => showAlert("Impossible de modifier les informations d'accès.", "error"));
+        }
+    </script>
 </body>
 </html>

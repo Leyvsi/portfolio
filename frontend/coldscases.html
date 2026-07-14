@@ -42,65 +42,113 @@
     <script>
         const container = document.getElementById('coldcases-container');
         const navContext = document.getElementById('navigation-context');
+        const currentUser = localStorage.getItem('username') || 'Anonyme';
 
+        // Simple English comment: Immersive narrative structures designed for cold cases with local image paths
         const coldCasesData = [
             {
                 id: "cc1",
-                title: "Le Mystère d'Anthonioz : Les Empreintes de la Nuit",
+                title: "Dossier I : Le Mystère d'Anthonioz (Les Empreintes de la Nuit)",
                 summary: "Une disparition inexpliquée lors d'une nuit de tempête, ne laissant que des traces de pas interrompues au milieu de nulle part.",
-                image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=600",
-                content: `### 👥 PROFIL DES PROTAGONISTES
-• **Léa d'Anthonioz (La Disparue) :** Étudiante sans antécédents, disparue subitement.
-• **Marc d'Anthonioz (Le Frère) :** Destinataire du dernier appel de détresse de la victime.
+                image: "images/cc1_main.jpg",
+                gallery: [
+                    { url: "images/cc1_victim.jpg", label: "Léa d'Anthonioz (Photo de classe - 2024)" },
+                    { url: "images/cc1_clues.jpg", label: "Cliché gendarmerie : Dernières empreintes dans la neige" },
+                    { url: "images/cc1_scene.jpg", label: "Le véhicule retrouvé abandonné sur la départementale D912" }
+                ],
+                content: `
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 L'ENFANCE DE LÉA ET SA RENCONTRE AVEC LA MONTAGNE</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Élevée dans les vallées alpines de Chambéry, Léa d'Anthonioz est une étudiante en lettres modernes de 21 ans, décrite par ses professeurs comme brillante mais d'un tempérament extrêmement anxieux. Depuis son enfance, elle partage avec son frère Marc une passion pour la randonnée et la solitude des hauteurs, trouvant dans les paysages enneigés un refuge à son stress quotidien. Sans aucun antécédent de fugue ni de détresse psychologique majeure, elle s'apprêtait à passer ses examens de fin d'année. Le week-end du 14 novembre, elle décide de séjourner seule dans le chalet familial isolé afin de réviser ses cours au calme.</p>
 
----
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🕒 AVANT LE DRAME : UNE ROUTE DE TOURMENTE</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">La nuit du drame, une tempête de neige historique s'abat sur la région. Malgré les avertissements météorologiques, Léa décide de reprendre la route vers Chambéry à bord de sa petite citadine. Sur la départementale D912, une route sinueuse bordée par des ravins et d'épaisses forêts de sapins, la visibilité est presque nulle. Marc, inquiet de ne pas la voir arriver, tente de l'appeler à plusieurs reprises. C'est à 23h04 que son téléphone sonne enfin.</p>
 
-### 🕒 RAPPORT CHRONOLOGIQUE DES FAITS (14 NOVEMBRE)
-1. **L'Appel Paniqué (23h04) :** Léa signale à son frère qu'elle est en panne et qu'une voiture suspecte roule derrière elle phares éteints.
-2. **Le Véhicule Vide (01h30) :** La police retrouve sa citadine abandonnée, clés sur le contact, feux de détresse allumés.
-3. **L'Énigme Topographique :** Ses pas s'éloignent sur 20 mètres dans la boue puis s'arrêtent net sans aucune trace de lutte ni d'autres empreintes aux alentours.`,
-                sources: [{ label: "Dossier Vidéo - Les Disparitions les plus mystérieuses de France", url: "https://www.youtube.com/results?search_query=disparitions+mysterieuses+reportage" }],
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">💀 LE DÉROULEMENT DE LA DISPARITION</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Au bout du fil, la voix de Léa est tremblante, coupée par les interférences de la tempête. Elle explique que sa voiture vient de tomber en panne au milieu de nulle part. Paniquée, elle chuchote qu'une berline sombre s'est garée à une cinquantaine de mètres derrière elle, phares éteints, et qu'un homme semble l'observer à travers le pare-brise. Soudain, un bruit sourd et métallique retentit à l'appareil, suivi d'un cri étouffé, puis le signal se coupe définitivement. Marc contacte immédiatement la gendarmerie et prend la route malgré la tempête.</p>
+
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🔬 L'ÉNIGME DES EMPREINTES DANS LA NEIGE</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">À 01h30, la patrouille de gendarmerie découvre le véhicule de Léa. La portière conducteur est grande ouverte, les clés sont restées sur le contact et les feux de détresse clignotent faiblement, projetant des ombres saccadées sur la neige fraîche. Les techniciens en identification criminelle relèvent les traces de pas de Léa. Ses empreintes s'éloignent de la portière, marchant de manière régulière sur environ 20 mètres avant de s'arrêter net au beau milieu de la chaussée. Autour de cette dernière trace, la neige est parfaitement vierge : aucune marque de lutte, aucun piétinement, et surtout, aucune trace d'autres pas humains ni de pneus appartenant à un second véhicule. Les chiens de piste amènent les gendarmes jusqu'à cette ultime empreinte, puis tournent en rond, totalement désorientés par l'absence d'odeur résiduelle.</p>
+
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🎙️ LES INTERROGATOIRES ET LES COMPTES RENDUS</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">L'enquête se concentre rapidement sur Marc d'Anthonioz, le premier arrivé sur les lieux, et sur les rares automobilistes ayant emprunté la route ce soir-là. Marc est interrogé durant 14 heures consécutives. Son alibi technique (bornage de son téléphone et témoignages de voisins) confirme qu'il se trouvait bien chez lui au moment de l'appel de détresse de sa sœur. La gendarmerie étudie la piste d'un enlèvement par hélicoptère ou d'un engin spécialisé, mais les conditions de vent violentes et l'absence totale de bruit de moteur rapporté par les garde-forestiers locaux condamnent cette hypothèse. Douze ans après les faits, le dossier reste classé parmi les plus grands mystères criminels de la région.</p>
+                `,
+                sources: [
+                    { label: "Mcskyz — Le Mystère d'Anthonioz (Disparue sans laisser de traces)", url: "https://www.youtube.com/results?search_query=Mcskyz+disparitions+mysterieuses" },
+                    { label: "L'Heure du Crime — L'énigme de la route départementale D912", url: "https://www.youtube.com/results?search_query=Heure+du+crime+disparition+montagne" }
+                ],
                 testimonies: [
-                    { role: "Gendarme divisionnaire", text: "« Les chiens de piste ont perdu l'odeur exactement là où les traces s'arrêtent. C'est une impasse technique complète. »" },
-                    { role: "Marc d'Anthonioz", text: "« Elle m'a dit au téléphone que quelqu'un coupait ses phares derrière elle. Puis plus rien. »" }
+                    { role: "Marc d'Anthonioz (Frère de la disparue)", text: "« Elle hurlait que les phares de la voiture s'étaient éteints derrière elle. J'ai entendu le vent s'engouffrer dans son téléphone, puis un bruit d'acier. Depuis ce jour, ma vie s'est arrêtée sur cette route. »" },
+                    { role: "Lieutenant de Gendarmerie Jean-Luc Roy", text: "« Scientifiquement, c'est impossible. Une personne de 60 kg ne s'envole pas sans laisser d'impact au sol ou de traces de pas de ravisseur autour d'elle. Nous avons passé la zone au peigne fin sur 5 kilomètres, en vain. »" }
                 ]
             },
             {
                 id: "cc2",
-                title: "L'Inconnue de la Plage de Noirval",
+                title: "Dossier II : L'Inconnue de la Plage de Noirval",
                 summary: "Retrouvée sur le sable sans aucune pièce d'identité, personne ne sait qui elle est ni comment elle est arrivée là.",
-                image: "https://images.unsplash.com/photo-1475113548554-5a36f1f523d6?q=80&w=600",
-                content: `### 👥 PROFIL DE L'INCONNUE
-• **L'Inconnue de Noirval :** Femme d'une trentaine d'années, aux traits européens, vêtue d'habits raffinés dont toutes les étiquettes de marque et de provenance ont été soigneusement découpées aux ciseaux.
+                image: "images/cc2_main.jpg",
+                gallery: [
+                    { url: "images/cc2_victim.jpg", label: "Portrait robot officiel diffusé par Interpol" },
+                    { url: "images/cc2_lighthouse.jpg", label: "Le phare de Noirval dominant la scène de crime" },
+                    { url: "images/cc2_beach.jpg", label: "Cliché judiciaire : Zone de la découverte du corps" }
+                ],
+                content: `
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 UNE APPARITION DE NULLE PART</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Le 4 octobre, le petit village côtier de Noirval se réveille sous un épais brouillard marin. Aucun habitant ne se souvient avoir aperçu cette femme élégante arriver par le train de la veille ou descendre dans l'unique hôtel de la côte. D'une trentaine d'années, aux traits fins et de type européen, elle semblait appartenir à une classe sociale aisée. Pourtant, aucun sac à main, aucun téléphone portable et aucune clé n'ont été retrouvés à proximité de sa dépouille.</p>
 
----
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🕒 AVANT LE DRAME : LE MYSTÈRE DES SIGNAUX LUMINEUX</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">La nuit de la découverte, aux alentours de 3h00 du matin, le gardien du vieux phare de Noirval, habitué à observer les eaux sombres de la Manche, remarque une activité inhabituelle sur la plage de galets. À travers ses jumelles de surveillance, il distingue des signaux lumineux verts intermittents émis depuis la grève en direction du large. Quelques minutes plus tard, il aperçoit la silhouette d'une vedette rapide circulant tous feux éteints, qui s'éloigne à vive allure vers les eaux internationales.</p>
 
-### 🕒 CONTEXTE ET DÉCOUVERTRE INDICIELLE
-1. **La Découverte (06h15) :** Le corps est retrouvé allongé sur les galets. L'autopsie révèle que son cœur s'est simplement arrêté sans aucune substance toxique ni traumatisme physique.
-2. **Le Mystère des Signaux :** Le gardien du phare affirme avoir aperçu des signaux lumineux étranges provenant de la plage vers 3 heures du matin. L'ADN et les empreintes ne correspondent à aucun fichier mondial de personnes disparues.`,
-                sources: [{ label: "Reportage - Enquêtes sur les corps non identifiés", url: "https://www.youtube.com/results?search_query=mystere+corps+sans+identite" }],
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">💀 LA DÉCOUVERTE ET L'AUTOPSIE SANS RÉPONSES</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">À 06h15, un promeneur local découvre le corps sans vie de l'Inconnue, allongé sur le dos, les mains croisées sur la poitrine, comme endormie paisiblement sur les galets humides. L'examen du médecin légiste jette un froid glacial sur l'enquête : le corps ne présente aucun hématome, aucune trace d'asphyxie, d'eau dans les poumons, ni de lutte. Plus troublant encore, les analyses toxicologiques complètes n'indiquent aucune trace de poison, de drogue ou d'alcool. Son cœur s'est arrêté de battre subitement, sans aucune explication médicale rationnelle.</p>
+
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🔬 DES INDICES SOIGNEUSEMENT EFFACÉS</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">L'analyse minutieuse de sa garde-robe révèle une organisation méthodique. Elle portait un manteau de haute couture italienne et une robe de soie, mais toutes les étiquettes de marque, de provenance et d'entretien ont été méticuleusement découpées à l'aide de petits ciseaux fins. Les enquêteurs prélèvent ses empreintes digitales et établissent son profil ADN, qu'ils soumettent aux fichiers d'Interpol et des services secrets alliés. Le verdict tombe : elle n'apparaît dans aucun fichier mondial et aucune disparition correspondant à son profil n'a jamais été signalée.</p>
+
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">⚖️ LES PISTES DE L'ESPIONNAGE ET LA CONCLUSION</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Les dépositions du gardien du phare et des marins-pêcheurs orientent l'enquête policière vers une opération clandestine d'espionnage liée aux bases militaires navales voisines. L'hypothèse principale suggère que l'Inconnue était un agent de renseignement étranger "déposé" ou "éliminé" par une puissance rivale à l'aide d'une arme indétectable provoquant un arrêt cardiaque instantané. Enterrée sous une plaque anonyme portant la simple mention "L'Inconnue de Noirval", son identité demeure l'un des plus grands secrets de la côte.</p>
+                `,
+                sources: [
+                    { label: "Squeezie — Le mystère de la femme sans identité (Noirval Case)", url: "https://www.youtube.com/results?search_query=Squeezie+corps+sans+identite" },
+                    { label: "Chasseur de Mystères — Qui était l'Inconnue de Noirval ?", url: "https://www.youtube.com/results?search_query=L%27inconnue+de+la+plage+mystere" }
+                ],
                 testimonies: [
-                    { role: "Médecin légiste", text: "« Aucune trace de violence. C'est comme si elle s'était endormie volontairement. »" },
-                    { role: "Gardien du phare", text: "« J'ai vu une lueur étrange près des rochers aux alentours de 3 heures du matin. »" }
+                    { role: "Dr. Marianne Costa (Médecin Légiste principal)", text: "« En trente ans de carrière, je n'ai jamais vu ça. Organes parfaits, aucune trace de toxiques. C'est comme si quelqu'un avait appuyé sur l'interrupteur de sa vie à distance. »" },
+                    { role: "Joseph Le Gall (Gardien du Phare de Noirval)", text: "« Ces lueurs vertes sur la plage répondaient au bateau au large. Ce n'était pas des touristes égarés, c'était un code militaire de rendez-vous. »" }
                 ]
             },
             {
                 id: "cc3",
-                title: "Le Secret du Manoir de l'Ombre",
+                title: "Dossier III : Le Secret du Manoir de l'Ombre",
                 summary: "Quatre membres d'une même famille se sont volatilisés pendant un dîner, laissant leurs assiettes encore pleines.",
-                image: "https://images.unsplash.com/photo-1513438205128-16af16280739?q=80&w=600",
-                content: `### 👥 LES PROTAGONISTES
-• **La Famille Belmont :** Un couple et leurs deux enfants adolescents, sans dettes, sans ennemis et parfaitement intégrés dans leur communauté rurale.
+                image: "images/cc3_main.jpg",
+                gallery: [
+                    { url: "images/cc3_manor.jpg", label: "La façade fortifiée du Manoir de l'Ombre" },
+                    { url: "images/cc3_piano.jpg", label: "Le piano à queue de Claire Belmont" },
+                    { url: "images/cc3_table.jpg", label: "Cliché judiciaire : La table dressée et intacte" }
+                ],
+                content: `
+                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 LA FAMILLE BELMONT ET LA VIE AU DOMAINE</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Propriétaires du Manoir de l'Ombre depuis les années 90, la famille Belmont est estimée de toute la communauté rurale locale. Jean Belmont (45 ans) est un notaire réputé pour son intégrité, tandis que son épouse Claire (42 ans) est une pianiste passionnée qui donne bénévolement des cours aux enfants du village. Leurs deux adolescents, Thomas (16 ans) et Emma (14 ans), mènent une scolarité exemplaire au collège régional. Sans aucune dette financière, conflit familial ou comportement suspect, rien ne laissait présager leur effroyable disparition.</p>
 
----
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🕒 LA DERNIÈRE MÉLODIE DU 12 SEPTEMBRE</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Le soir du drame, vers 20h30, la voisine directe promène son chien le long des grilles du domaine. Elle aperçoit les fenêtres du grand salon éclairées d'une lueur chaleureuse et entend Claire interpréter au piano une sonate de Chopin particulièrement mélancolique. Tout semble paisible. À 21h00 précises, la musique s'arrête brusquement au milieu d'une mesure, laissant place à un silence pesant et inhabituel qui s'installe sur toute la propriété.</p>
 
-### 🕒 CHRONOLOGIE DES CONSTATS SCIENTIFIQUES
-1. **Le Dîner Suspendu :** La table est dressée, la nourriture servie est restée intacte. Les téléphones portables, les papiers d'identité et les véhicules sont tous restés sur la propriété.
-2. **L'Absence d'Effraction :** Les portes étaient verrouillées de l'intérieur, les systèmes de sécurité armés. Une voisine affirme avoir entendu une mélodie mélancolique jouée au piano vers 21 heures juste avant la disparition.`,
-                sources: [{ label: "Documentaire YouTube - Disparitions de familles entières", url: "https://www.youtube.com/results?search_query=famille+disparue+manoir+mystere" }],
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">💀 LE CONSTAT DE L'IMPOSSIBLE ÉVAPORATION</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Inquiet de ne pas voir Jean Belmont se présenter à son étude le lendemain, son associé prévient les autorités. Accompagnés d'un serrurier, les policiers pénètrent dans le manoir. La scène qui les attend défie toute logique : sur la table de la salle à manger, quatre assiettes de soupe chaude sont servies, la nourriture est à moitié consommée, et les verres sont encore pleins. Les téléphones portables de toute la famille sont posés sur la console de l'entrée, leurs portefeuilles contenant papiers d'identité et cartes bancaires sont restés dans les vestes, et les deux véhicules familiaux sont garés dans le garage fermé à clé.</p>
+
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🔬 UN MANOIR FERMÉ DE L'INTÉRIEUR</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Les enquêteurs scientifiques analysent les accès du manoir fortifié. Toutes les portes massives sont verrouillées à double tour de l'intérieur, les verrous des fenêtres de sécurité sont enclenchés, et le système d'alarme volumétrique haut de gamme est armé et actif. Aucune coupure de courant n'a été enregistrée et aucune présence étrangère n'a déclenché les capteurs thermiques intérieurs. L'examen de la vaisselle et de la nourriture ne révèle aucune trace de somnifères ni de substances chimiques d'endormissement.</p>
+
+                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🎙️ LES RECHERCHES ET LES THÉORIES DE LA POLICE</h4>
+                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Les interrogatoires de l'entourage, des clients du cabinet de notaire et des camarades de classe de Thomas et Emma ne mènent à aucune piste. Les fouilles approfondies des parcs du domaine et des souterrains du manoir à l'aide de caméras thermiques et de chiens policiers ne révèlent rien. Vingt ans après les faits, la disparition de la famille Belmont demeure un dossier d'instruction ouvert, alimentant les théories les plus folles d'enlèvement organisé de l'intérieur ou de passage vers une autre dimension.</p>
+                `,
+                sources: [
+                    { label: "Sébastien d'Enquêtes Criminelles — Le secret du Manoir Belmont", url: "https://www.youtube.com/results?search_query=famille+disparue+manoir+mystere" },
+                    { label: "L'Heure du Crime — L'évaporation de la famille Belmont", url: "https://www.youtube.com/results?search_query=disparition+belmont+manoir+ombre" }
+                ],
                 testimonies: [
-                    { role: "Premier enquêteur", text: "« Il n'y a aucun signe d'effraction. Une évacuation volontaire précipitée n'a aucun sens au vu des affaires laissées. »" },
-                    { role: "Voisine directe", text: "« J'ai entendu le piano jouer une mélodie mélancolique vers 21h, puis un grand silence pesant s'est installé. »" }
+                    { role: "Hélène Mercoeur (Voisine de la propriété)", text: "« Claire jouait divinement bien au piano tous les soirs. Ce soir-là, la note s'est arrêtée net, comme si ses mains avaient été arrachées du clavier d'un seul coup. C'était terrifiant. »" },
+                    { role: "Capitaine de Police Arthur Costa", text: "« Tout était fermé de l'intérieur. Pas de lutte, pas d'empreintes, de l'argent et des téléphones restés sur la table. C'est comme si ces quatre personnes s'étaient volatilisées en une fraction de seconde au milieu de leur repas. »" }
                 ]
             }
         ];
@@ -114,7 +162,7 @@
             coldCasesData.forEach(caseData => {
                 const article = document.createElement('article');
                 article.className = 'story-card';
-                article.style.marginBottom = '40px';
+                article.style.style.marginBottom = '40px';
                 article.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:15px; width: 100%;">
                         <img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="renderDetailView('${caseData.id}')">
@@ -149,35 +197,131 @@
                     </div>`;
             });
 
+            let galleryHTML = "";
+            caseData.gallery.forEach(img => {
+                galleryHTML += `
+                    <div style="display:flex; flex-direction:column; gap:5px;">
+                        <img src="${img.url}" alt="${img.label}" class="evidence-img">
+                        <span style="font-size:0.8rem; color:#777; font-style:italic; text-align:center;">${img.label}</span>
+                    </div>
+                `;
+            });
+
             let sourcesHTML = "";
             caseData.sources.forEach(src => {
                 sourcesHTML += `
-                    <li><a href="${src.url}" target="_blank" style="color:#f39c12; text-decoration:underline; font-size:1.1rem; display:block; margin-bottom:8px;">🎥 ${src.label}</a></li>
+                    <li style="margin-bottom:10px;"><a href="${src.url}" target="_blank" style="color:#f39c12; text-decoration:underline; font-size:1.1rem; display:block;">🎥 ${src.label}</a></li>
                 `;
             });
 
             container.innerHTML = `
-                <article class="story-card" style="padding:30px; text-align: left; width: 100%;">
-                    <img src="${caseData.image}" alt="Photo d'indice" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
+                <article class="story-card" style="padding:30px; text-align: left; width: 100%; box-sizing: border-box;">
+                    <img src="${caseData.image}" alt="Photo de l'affaire" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
                     <h3 style="font-size:2.2rem; margin-bottom:15px; color:#e74c3c;">${caseData.title}</h3>
                     
-                    <div style="white-space: pre-wrap; line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${caseData.content}</div>
+                    <div style="line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${caseData.content}</div>
                     
+                    <h4 style="color:#f39c12; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">📁 Archives visuelles et Scènes de crime</h4>
+                    <div class="evidence-gallery">${galleryHTML}</div>
+
                     <h4 style="color:#f39c12; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">📁 Liens Externes & Vidéos d'investigation</h4>
                     <ul style="list-style:none; padding-left:0; margin-bottom:35px;">${sourcesHTML}</ul>
 
                     <h4 style="color:#f39c12; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions & Témoignages</h4>
                     <div style="margin-bottom: 40px;">${testimoniesHTML}</div>
+
+                    <div style="border-top: 1px solid #2d2d35; padding-top: 30px; margin-top: 40px;">
+                        <h4 style="color:#fff; font-size:1.4rem; margin-bottom:6px;">Espace de Discussion</h4>
+                        <p style="color:#777; font-size:0.9rem; margin-bottom:20px; margin-top:0;">Partagez vos analyses de pièces à conviction et vos indices avec les autres membres.</p>
+                        
+                        <div id="comments-list-${caseData.id}" style="max-height: 400px; overflow-y: auto; margin-bottom: 25px; padding-right: 5px;"></div>
+                        
+                        <div class="comment-input-area">
+                            <input type="text" id="comment-input-${caseData.id}" class="comment-field" placeholder="Rédiger votre analyse...">
+                            <button onclick="postComment('${caseData.id}')" class="submit-form-button" style="width: auto; margin: 0; padding: 0 25px; height: auto;">Envoyer</button>
+                        </div>
+                    </div>
                 </article>`;
+
+            loadComments(caseData.id);
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function loadComments(caseId) {
+            const commentsBox = document.getElementById(`comments-list-${caseId}`);
+            fetch(`http://127.0.0.1:5000/api/v1/theories/${caseId}/comments`)
+                .then(res => res.json())
+                .then(comments => {
+                    commentsBox.innerHTML = '';
+                    if (!comments || comments.length === 0) {
+                        commentsBox.innerHTML = '<p style="color:#666; font-style:italic; padding: 15px; text-align: center;">Aucune théorie enregistrée pour le moment. Ouvrez la discussion !</p>';
+                        return;
+                    }
+                    comments.forEach(c => {
+                        commentsBox.innerHTML += `
+                            <div class="comment-card">
+                                <div class="comment-header">
+                                    <span class="comment-user-badge">🕵️‍♂️ ${c.username}</span>
+                                    <div class="comment-actions">
+                                        <button class="action-btn like" onclick="likeComment(${c.id}, '${caseId}')">
+                                            👍 <span>${c.likes || 0}</span>
+                                        </button>
+                                        <button class="action-btn report" onclick="reportComment(${c.id}, '${caseId}')" title="Signaler ce commentaire">
+                                            ⚠️ <span>${c.reports > 0 ? c.reports : ''}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p style="margin:8px 0 0 0; color:#dddbd3; line-height:1.5; font-size:1rem;">${c.text}</p>
+                            </div>`;
+                    });
+                })
+                .catch(() => {
+                    commentsBox.innerHTML = '<p style="color:#666; font-style:italic; text-align:center; padding:15px;">Aucune théorie partagée pour le moment sur cette affaire. Initiez la discussion !</p>';
+                });
+        }
+
+        function postComment(caseId) {
+            const input = document.getElementById(`comment-input-${caseId}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            fetch(`http://127.0.0.1:5000/api/v1/theories/${caseId}/comments`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser, text: text })
+            })
+            .then(res => res.json())
+            .then(() => {
+                input.value = '';
+                loadComments(caseId);
+            });
+        }
+
+        function likeComment(commentId, caseId) {
+            fetch(`http://127.0.0.1:5000/api/v1/comments/${commentId}/like`, { method: 'POST' })
+                .then(res => res.json())
+                .then(() => loadComments(caseId))
+                .catch(() => alert("Erreur lors de l'enregistrement de votre mention J'aime."));
+        }
+
+        function reportComment(commentId, caseId) {
+            if (confirm("Voulez-vous vraiment signaler ce commentaire pour modération ?")) {
+                fetch(`http://127.0.0.1:5000/api/v1/comments/${commentId}/report`, { method: 'POST' })
+                    .then(res => res.json())
+                    .then(() => {
+                        alert("Le commentaire a été transmis aux modérateurs.");
+                        loadComments(caseId);
+                    })
+                    .catch(() => alert("Erreur lors du signalement."));
+            }
         }
 
         renderListView();
 
-        const currentUser = localStorage.getItem('username');
+        const currentUserCheck = localStorage.getItem('username');
         const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser && authContainer) {
-            authContainer.innerHTML = `<a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUser})</a>`;
+        if (currentUserCheck && authContainer) {
+            authContainer.innerHTML = `<a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUserCheck})</a>`;
         }
     </script>
 </body>
