@@ -38,9 +38,15 @@
 
                     <button type="submit" class="btn-submit-pill">S'identifier</button>
                 </form>
-                <div class="bottom-links">
-                    <a onclick="switchSection('register')">Créer un compte</a>
-                    <a onclick="switchSection('forgot')">Mot de passe oublié ?</a>
+                
+                <div class="bottom-links" style="flex-direction: column; gap: 12px; align-items: center;">
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <a onclick="switchSection('register')">Créer un compte</a>
+                        <a onclick="switchSection('forgot')">Mot de passe oublié ?</a>
+                    </div>
+                    <div style="border-top: 1px solid #161619; width: 100%; padding-top: 12px; text-align: center;">
+                        <a href="admin-connexion.html" style="color: #f39c12; font-weight: bold;">🔒 Accès Administration</a>
+                    </div>
                 </div>
             </div>
 
