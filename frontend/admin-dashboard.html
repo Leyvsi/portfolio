@@ -3,36 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Espace Admin</title>
+    <title>Les Petits Enquêteurs - Panel Administration</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        // Simple English comment: Secure route - redirect non-admins immediately
+        const isAdmin = localStorage.getItem('is_admin');
+        const username = localStorage.getItem('username');
+        
+        if (isAdmin !== 'true' || !username) {
+            alert("Accès refusé. Vous devez vous identifier en tant qu'administrateur.");
+            window.location.href = 'admin-connexion.html';
+        }
+    </script>
 </head>
 <body>
 
-    <header style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;">
-        <h1>Panel Administration</h1>
-        <a href="index.html" class="submit-form-button" style="text-decoration:none; width:auto; padding:8px 15px;">Retour au Site</a>
+    <header class="main-header" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;">
+        <h1 style="margin: 0; font-size: 1.8rem;">Panel Administration</h1>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <span style="color:#f39c12; font-weight:bold; font-size:0.9rem; padding-right:10px;">⚡ Admin : ${username}</span>
+            <a href="index.html" class="submit-form-button" style="text-decoration:none; width:auto; padding:8px 15px; margin:0; font-size:0.9rem;">Retour au Site</a>
+            <button onclick="handleLogout()" class="submit-form-button" style="width:auto; padding:8px 15px; margin:0; background-color:#c0392b; font-size:0.9rem;">Déconnexion</button>
+        </div>
     </header>
 
-    <main class="content-section">
-        <h2>Statistiques globales du Stockage</h2>
-        <div class="dashboard-stats" style="background: #0f0f10; padding: 20px; border-radius: 8px; border: 1px solid #444; margin-bottom: 30px; text-align:left;">
-            <p style="font-size:1.1rem; margin-bottom:10px;">Dossiers enregistrés en Base : <span id="stories-count" style="color: #f39c12; font-weight: bold;">0</span></p>
-            <p style="font-size:1.1rem; margin-bottom:10px;">Théories postées sur le serveur : <span id="theories-count" style="color: #f39c12; font-weight: bold;">0</span></p>
-            <p style="font-size:1.1rem;">Comptes utilisateurs actifs : <span id="users-count" style="color: #f39c12; font-weight: bold;">0</span></p>
+    <main class="content-section" style="padding-top: 30px;">
+        <div id="navigation-context" style="text-align: left; margin-bottom: 30px;">
+            <h2>Statistiques globales du Serveur SQLite</h2>
+            <p>Supervisez l'activité des utilisateurs, le volume des données enregistrées en base et gérez la modération de l'espace d'enquête.</p>
+        </div>
+
+        <div class="dashboard-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
+            
+            <div style="background: #0c0c0e; padding: 25px; border-radius: 12px; border: 1px solid #161619; text-align: left;">
+                <span style="display:block; color:#8c8e93; font-size:0.85rem; font-weight:600; text-transform:uppercase; margin-bottom:10px;">Profils Enquêteurs</span>
+                <p style="font-size:2.5rem; font-weight:700; color:#ffffff; margin:0;"><span id="users-count">0</span> <span style="font-size:1.1rem; color:#8c8e93; font-weight:normal;">actifs</span></p>
+            </div>
+
+            <div style="background: #0c0c0e; padding: 25px; border-radius: 12px; border: 1px solid #161619; text-align: left;">
+                <span style="display:block; color:#8c8e93; font-size:0.85rem; font-weight:600; text-transform:uppercase; margin-bottom:10px;">Commentaires & Analyses</span>
+                <p style="font-size:2.5rem; font-weight:700; color:#e66e28; margin:0;"><span id="comments-count">0</span> <span style="font-size:1.1rem; color:#8c8e93; font-weight:normal;">soumis</span></p>
+            </div>
+
+            <div id="report-card-alert" style="background: #0c0c0e; padding: 25px; border-radius: 12px; border: 1px solid #161619; text-align: left; transition: all 0.3s ease;">
+                <span style="display:block; color:#8c8e93; font-size:0.85rem; font-weight:600; text-transform:uppercase; margin-bottom:10px;">Contenus Signalés ⚠️</span>
+                <p style="font-size:2.5rem; font-weight:700; color:#ffffff; margin:0;"><span id="reports-count">0</span> <span style="font-size:1.1rem; color:#8c8e93; font-weight:normal;">à modérer</span></p>
+            </div>
+
+        </div>
+
+        <div style="background: #0c0c0e; padding: 30px; border-radius: 12px; border: 1px solid #161619; text-align: left;">
+            <h3 style="color:#ffffff; font-size:1.4rem; margin-top:0; margin-bottom:15px;">🔒 Console d'administration sécurisée</h3>
+            <p style="color:#8c8e93; font-size:0.95rem; line-height:1.6; margin-bottom:0;">
+                Les statistiques ci-dessus proviennent en temps réel de votre base de données locale SQLite via vos modèles SQLAlchemy. Les accès de modification directe, de purge des signalements et d'évaluation des indices criminels sont réservés aux comptes administrateurs authentifiés.
+            </p>
         </div>
     </main>
 
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+    </footer>
+
     <script>
-        fetch('http://127.0.0.1:5000/api/v1/stats')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('stories-count').textContent = data.stories;
-                document.getElementById('theories-count').textContent = data.theories;
-                document.getElementById('users-count').textContent = data.users;
-            })
-            .catch(() => {
-                console.log("API déconnectée : les statistiques réelles restent à zéro.");
-            });
+        // Simple English comment: Inject logged-in admin's name dynamically into header
+        document.addEventListener("DOMContentLoaded", () => {
+            const usernameSpan = document.querySelector('span[style*="Admin"]');
+            if (usernameSpan && username) {
+                usernameSpan.textContent = `⚡ Admin : ${username}`;
+            }
+            loadDashboardStats();
+        });
+
+        // Simple English comment: Fetch statistics from the unified database via Flask
+        function loadDashboardStats() {
+            fetch('http://127.0.0.1:5000/api/v1/stats')
+                .then(res => {
+                    if (!res.ok) throw new Error();
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById('users-count').textContent = data.users || 0;
+                    document.getElementById('comments-count').textContent = data.comments || 0;
+                    
+                    const reports = data.reports || 0;
+                    document.getElementById('reports-count').textContent = reports;
+
+                    // If there are active safety reports, change the card style to trigger attention
+                    if (reports > 0) {
+                        const reportCard = document.getElementById('report-card-alert');
+                        reportCard.style.borderColor = '#c0392b';
+                        reportCard.style.background = 'rgba(192, 57, 43, 0.05)';
+                        document.getElementById('reports-count').style.color = '#e74c3c';
+                    }
+                })
+                .catch(() => {
+                    console.log("Impossible de joindre l'API d'administration. Affichage des valeurs par défaut.");
+                });
+        }
+
+        // Simple English comment: Handle logout by clearing sessionStorage or localStorage
+        function handleLogout() {
+            if (confirm("Voulez-vous fermer votre session d'administration ?")) {
+                localStorage.removeItem('username');
+                localStorage.removeItem('is_admin');
+                window.location.href = 'index.html';
+            }
+        }
     </script>
 </body>
 </html>

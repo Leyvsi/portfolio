@@ -1,2 +1,10 @@
-venv/
-.venv*
+# Ignore python virtual environment
+backend/venv/
+
+# Ignore SQLite local database
+backend/instance/
+backend/*.db
+
+# Ignore Python cache files
+**/__pycache__/
+*.pyc
