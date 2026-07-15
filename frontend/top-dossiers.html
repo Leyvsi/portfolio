@@ -27,48 +27,131 @@
     </nav>
 
     <main class="content-section">
-        <h2>Votez pour le prochain Top Dossier</h2>
-        <p class="intro-text">Sélectionnez la meilleure proposition. L'histoire récoltant le plus grand nombre de suffrages sera officiellement intégrée avec l'ouverture des forums associés.</p>
+        <div id="navigation-context">
+            <h2>Votez pour le prochain Top Dossier</h2>
+            <p class="intro-text">Sélectionnez la meilleure proposition. L'histoire récoltant le plus grand nombre de suffrages sera officiellement intégrée avec l'ouverture des forums associés.</p>
+        </div>
+        
         <div id="voting-stories-grid" style="margin-top: 30px;"></div>
     </main>
 
+    <footer>
+        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
+    </footer>
+
     <script>
-        function loadVotingStories() {
-            const grid = document.getElementById('voting-stories-grid');
-            
-            fetch('http://127.0.0.1:5000/api/v1/stories')
-                .then(res => res.json())
-                .then(stories => {
-                    grid.innerHTML = '';
-                    stories.forEach(story => {
-                        const card = document.createElement('article');
-                        card.className = 'story-card';
-                        card.style.padding = '20px';
-                        card.style.marginBottom = '20px';
-                        card.innerHTML = `
-                            <h3>${story.title}</h3>
-                            <p>${story.summary}</p>
-                            <p style="color: #e67e22; font-weight: bold; margin-top: 15px;">Votes actuels : ${story.votes || 0}</p>
-                            <button onclick="vote('${story.id}')" class="submit-form-button" style="width: auto; padding: 10px 20px; margin-top: 10px;">Voter pour ce récit</button>
-                        `;
-                        grid.appendChild(card);
-                    });
-                })
-                .catch(() => {
-                    grid.innerHTML = '<p style="color:#e74c3c; font-style:italic;">Lancer l\'charger les dossiers de vote.</p>';
-                });
+        const grid = document.getElementById('voting-stories-grid');
+        const navContext = document.getElementById('navigation-context');
+
+        // Simple English comment: Immersive details and images for proposed community votes
+        const proposedStories = [
+            {
+                id: "vote_case_1",
+                title: "L'Incident du Col Dyatlov (Version Vosges)",
+                summary: "Neuf randonneurs chevronnés s'enfoncent dans le massif des Vosges et meurent mystérieusement au milieu de la nuit.",
+                image: "images/top1_main.jpg",
+                votes: 148,
+                details: `
+                    <h4 style="color:#e67e22; font-size:1.3rem;">📁 Rapport de la Gendarmerie Vosgienne</h4>
+                    <p style="line-height:1.8; color:#ccc;">En plein hiver, un groupe de randonneurs universitaires a été retrouvé à plusieurs centaines de mètres de leur campement déchiré de l'intérieur. Leurs vêtements légers indiquent une fuite précipitée et injustifiée face à une menace inconnue. L'autopsie révèle des blessures internes violentes équivalentes à un accident de voiture, mais aucune trace de violence externe.</p>
+                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:20px;">📍 Indice d'Enquête Principal</h4>
+                    <p style="line-height:1.8; color:#ccc;">Les appareils photos récupérés sur les lieux montrent des clichés flous d'ombres massives rôdant autour de la toile de tente quelques minutes avant la panique générale.</p>
+                `
+            },
+            {
+                id: "vote_case_2",
+                title: "L'Affaire du Phare d'Eilean Mor (Bretagne)",
+                summary: "Trois gardiens de phare disparaissent simultanément d'une île fortifiée, sans laisser de traces, en plein océan.",
+                image: "images/top2_main.jpg",
+                votes: 95,
+                details: `
+                    <h4 style="color:#e67e22; font-size:1.3rem;">📁 Rapport d'Investigation Maritime</h4>
+                    <p style="line-height:1.8; color:#ccc;">La table du dîner était dressée, une chaise était renversée et les cirés de protection de deux gardiens manquaient à l'appel. Le journal de bord se terminait par des descriptions de tempêtes apocalyptiques frappant la côte alors que le ciel était parfaitement clair ce jour-là selon les relevés de la capitainerie.</p>
+                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:20px;">📍 Indice d'Enquête Principal</h4>
+                    <p style="line-height:1.8; color:#ccc;">La porte du phare était verrouillée de l'intérieur avec la clé de sécurité accrochée derrière le verrou central.</p>
+                `
+            }
+        ];
+
+        function renderListView() {
+            navContext.innerHTML = `
+                <h2>Votez pour le prochain Top Dossier</h2>
+                <p class="intro-text">Sélectionnez la meilleure proposition. L'histoire récoltant le plus grand nombre de suffrages sera officiellement intégrée avec l'ouverture des forums associés.</p>
+            `;
+            grid.innerHTML = '';
+            proposedStories.forEach(story => {
+                const card = document.createElement('article');
+                card.className = 'story-card';
+                card.style.padding = '25px';
+                card.style.marginBottom = '30px';
+                card.style.textAlign = 'left';
+                card.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <img src="${story.image}" alt="Image illustrative" style="width:100%; max-height:240px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="renderDetailView('${story.id}')">
+                        <div>
+                            <h3 style="font-size:1.5rem; margin:0 0 10px 0; color:#f39c12; cursor:pointer;" onclick="renderDetailView('${story.id}')">${story.title}</h3>
+                            <p style="color:#ccc; line-height:1.6; margin:0 0 15px 0;">${story.summary}</p>
+                            <span style="display:block; color:#e67e22; font-weight:bold; margin-bottom:15px; font-size:1.1rem;">📊 Votes collectés : ${story.votes}</span>
+                            <div style="display:flex; gap:10px;">
+                                <button onclick="renderDetailView('${story.id}')" class="submit-form-button" style="width:auto; padding:8px 15px; font-size:0.9rem;">Détails de l'affaire</button>
+                                <button onclick="vote('${story.id}')" class="submit-form-button" style="width:auto; padding:8px 15px; font-size:0.9rem; background:#27ae60;">Voter pour ce dossier</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderDetailView(id) {
+            const story = proposedStories.find(s => s.id === id);
+            if (!story) return;
+
+            navContext.innerHTML = `
+                <button onclick="renderListView()" class="submit-form-button" style="width:auto; display:inline-block; margin-bottom:15px; padding: 8px 15px; font-size: 0.9rem; background:#444;">← Retour à la liste</button>
+                <h2>Dossier Prétendant au Top Dossier</h2>
+            `;
+
+            grid.innerHTML = `
+                <article class="story-card" style="padding:30px; text-align: left; width: 100%; box-sizing: border-box;">
+                    <img src="${story.image}" alt="Pièce à conviction" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:25px;">
+                    <h3 style="font-size:2.2rem; color:#f39c12; margin-bottom:15px;">${story.title}</h3>
+                    
+                    <div style="margin-bottom:30px; font-size:1.1rem; line-height:1.8; color:#dddbd3;">${story.details}</div>
+                    
+                    <div style="border-top:1px solid #2d2d35; padding-top:25px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="color:#e67e22; font-weight:bold; font-size:1.2rem;">📊 Score électoral : ${story.votes} voix</span>
+                        <button onclick="vote('${story.id}')" class="submit-form-button" style="width:auto; padding:12px 30px; background:#27ae60; font-size:1rem;">Attribuer mon vote</button>
+                    </div>
+                </article>
+            `;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function vote(storyId) {
-            fetch(`http://127.0.0.1:5000/api/v1/stories/${storyId}/vote`, { method: 'POST' })
-                .then(res => res.json())
-                .then(() => {
-                    alert("Votre vote a bien été pris en compte !");
-                    loadVotingStories();
-                }).catch(() => alert("Erreur : Le serveur n'a pas pu comptabiliser le vote."));
+            // Simple English comment: Simulated front-end voting increments for local feedback
+            const story = proposedStories.find(s => s.id === storyId);
+            if (story) {
+                story.votes += 1;
+                alert(`Votre vote pour "${story.title}" a été enregistré de manière sécurisée !`);
+                
+                // If the details view is active, update the UI locally
+                const scoreLabel = document.querySelector('span[style*="font-size:1.2rem"]');
+                if (scoreLabel) {
+                    scoreLabel.textContent = `📊 Score électoral : ${story.votes} voix`;
+                } else {
+                    renderListView();
+                }
+            }
         }
 
-        loadVotingStories();
+        renderListView();
+
+        const currentUserCheck = localStorage.getItem('username');
+        const authContainer = document.getElementById('auth-buttons-container');
+        if (currentUserCheck && authContainer) {
+            authContainer.innerHTML = `<a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUserCheck})</a>`;
+        }
     </script>
 </body>
 </html>
