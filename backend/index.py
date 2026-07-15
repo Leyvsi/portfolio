@@ -34,12 +34,11 @@ with app.app_context():
             db.session.commit()
             print(f"[*] Admin account {admin_data['username']} verified/created successfully.")
 
-# Register your API blueprint routes
-app.register_blueprint(app_views)
-
-@app_views.route('/api/v1/stats', methods=['GET'])
+# --- API STATS ROUTE ---
+# Simple English comment: Query active counters directly from SQLite tables
+# Note: Defined directly on the 'app' instance to avoid Blueprint setup conflicts
+@app.route('/api/v1/stats', methods=['GET'])
 def get_stats():
-    # Simple English comment: query active counters directly from SQLite tables
     try:
         user_count = User.query.count()
         comment_count = Comment.query.count()
@@ -52,6 +51,9 @@ def get_stats():
         }), 200
     except Exception:
         return jsonify({"users": 0, "comments": 0, "reports": 0}), 500
+
+# Register your API blueprint routes (Must be done after defining app-level settings)
+app.register_blueprint(app_views)
 
 if __name__ == "__main__":
     # Run the server on port 5000
