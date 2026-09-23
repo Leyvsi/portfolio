@@ -1,7 +1,7 @@
 from flask import jsonify, request
 
 from api.v1.views import app_views
-from models import db, Story, Vote
+from models import db, Story, Vote, User
 
 
 @app_views.route('/stories', methods=['GET'])
@@ -42,11 +42,18 @@ def post_story_vote(story_id):
             "error": "user_id est obligatoire pour voter"
         }), 400
 
-    story = Story.query.get(story_id)
+    story = db.session.get(Story, story_id)
 
     if not story:
         return jsonify({
             "error": "Story not found"
+        }), 404
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        return jsonify({
+            "error": "User not found"
         }), 404
 
     existing_vote = Vote.query.filter_by(
@@ -67,7 +74,9 @@ def post_story_vote(story_id):
     db.session.add(new_vote)
     db.session.commit()
 
-    vote_count = Vote.query.filter_by(story_id=story_id).count()
+    vote_count = Vote.query.filter_by(
+        story_id=story_id
+    ).count()
 
     return jsonify({
         "message": "Vote pris en compte !",
