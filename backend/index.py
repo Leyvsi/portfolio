@@ -1,60 +1,72 @@
+import os
+
+from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_cors import CORS
+
 from api.v1.views import app_views
-from models import db, User, Comment # Import the SQLite database and models
+from models import db, User, Comment
+
+load_dotenv()
 
 app = Flask(__name__)
 
-# Enable CORS so your frontend can communicate with this backend
+# CORS
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
-# Configure SQLite database path
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Database configuration
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SQLITE_PATH = os.path.join(BASE_DIR, "instance", "site.db")
 
-# Initialize the database with the Flask app
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+    "DATABASE_URL",
+    f"sqlite:///{SQLITE_PATH.replace(os.sep, '/')}"
+)
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Initialize database
 db.init_app(app)
 
-# Automatically create the site.db file and its tables on startup
+
+# Create database tables
 with app.app_context():
     db.create_all()
-    
-    # Simple English comment: check and seed administrative credentials on startup
-    admins_to_create = [
-        {"username": "Leyvsi", "password": "sylvie"},
-        {"username": "Mel95", "password": "melissa"}
-    ]
-    
-    for admin_data in admins_to_create:
-        existing_admin = User.query.filter_by(username=admin_data["username"]).first()
-        if not existing_admin:
-            admin_user = User(username=admin_data["username"], is_admin=True)
-            admin_user.set_password(admin_data["password"])
-            db.session.add(admin_user)
-            db.session.commit()
-            print(f"[*] Admin account {admin_data['username']} verified/created successfully.")
 
-# --- API STATS ROUTE ---
-# Simple English comment: Query active counters directly from SQLite tables
-# Note: Defined directly on the 'app' instance to avoid Blueprint setup conflicts
-@app.route('/api/v1/stats', methods=['GET'])
+
+# API stats
+@app.route("/api/v1/stats", methods=["GET"])
 def get_stats():
     try:
         user_count = User.query.count()
         comment_count = Comment.query.count()
-        reported_count = Comment.query.filter(Comment.reports > 0).count()
-        
+        reported_count = Comment.query.filter(
+            Comment.reports > 0
+        ).count()
+
         return jsonify({
             "users": user_count,
             "comments": comment_count,
             "reports": reported_count
         }), 200
-    except Exception:
-        return jsonify({"users": 0, "comments": 0, "reports": 0}), 500
 
-# Register your API blueprint routes (Must be done after defining app-level settings)
+    except Exception as error:
+        print(f"[ERROR] Stats: {error}")
+
+        return jsonify({
+            "users": 0,
+            "comments": 0,
+            "reports": 0
+        }), 500
+
+
+# Register API routes
 app.register_blueprint(app_views)
 
+
 if __name__ == "__main__":
-    # Run the server on port 5000
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
