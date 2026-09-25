@@ -121,14 +121,14 @@
         }
 
         function likeTheory(theoryId, caseId) {
-            fetch(`http://127.0.0.1:5000/api/v1/comments/${theoryId}/like`, { method: 'POST' })
+            fetch(`http://127.0.0.1:5000/api/v1/theories/${caseId}/${theoryId}/like`, { method: 'POST' })
                 .then(res => res.json())
                 .then(() => loadTheories(caseId));
         }
 
         function reportTheory(theoryId, caseId) {
             if (confirm("Voulez-vous signaler cette piste pour modération ?")) {
-                fetch(`http://127.0.0.1:5000/api/v1/comments/${theoryId}/report`, { method: 'POST' })
+                fetch(`http://127.0.0.1:5000/api/v1/theories/${caseId}/${theoryId}/report`, { method: 'POST' })
                     .then(res => res.json())
                     .then(() => {
                         alert("Théorie signalée avec succès.");
