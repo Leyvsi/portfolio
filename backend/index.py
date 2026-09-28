@@ -1,38 +1,32 @@
 import os
 
-from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_cors import CORS
 
 from api.v1.views import app_views
 from models import db, User, Comment
 
-load_dotenv()
-
 app = Flask(__name__)
 
-# CORS
+# Allow CORS for all domains
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
-# Database configuration
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SQLITE_PATH = os.path.join(BASE_DIR, "instance", "site.db")
+# Use SQLite: Zero configuration, no passwords needed for the team
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
+SQLITE_PATH = os.path.join(INSTANCE_DIR, "site.db")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL",
-    f"sqlite:///{SQLITE_PATH.replace(os.sep, '/')}"
-)
-
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{SQLITE_PATH.replace(os.sep, '/')}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize database
 db.init_app(app)
 
-
-# Create database tables
+# Create all database tables automatically on startup
 with app.app_context():
+    # Ensure the instance folder exists before creating the database
+    os.makedirs(INSTANCE_DIR, exist_ok=True)
     db.create_all()
-
 
 # API stats
 @app.route("/api/v1/stats", methods=["GET"])
@@ -59,12 +53,11 @@ def get_stats():
             "reports": 0
         }), 500
 
-
 # Register API routes
 app.register_blueprint(app_views)
 
-
 if __name__ == "__main__":
+    # Start the Flask server
     app.run(
         host="0.0.0.0",
         port=5000,
