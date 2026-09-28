@@ -58,6 +58,12 @@
                         <input type="text" id="reg-username" placeholder="Identifiant" required>
                     </div>
                     
+                    <!-- Added email field required by the database model -->
+                    <div class="input-group">
+                        <label for="reg-email">Adresse Email *</label>
+                        <input type="email" id="reg-email" placeholder="votre@email.com" required>
+                    </div>
+                    
                     <div class="input-group">
                         <label for="reg-password">Choisissez un Mot de passe *</label>
                         <input type="password" id="reg-password" placeholder="Mot de passe sécurisé" required>
@@ -120,7 +126,7 @@
             setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
         }
 
-        // Simple English comment: dynamic view switching between login tabs
+        // Switch between login, register, and reset views
         function switchSection(section) {
             document.getElementById('section-login').style.display = (section === 'login') ? 'block' : 'none';
             document.getElementById('section-register').style.display = (section === 'register') ? 'block' : 'none';
@@ -145,12 +151,11 @@
                     localStorage.setItem('is_admin', data.is_admin);
                     showAlert(data.message, 'success');
 
-                    // If user is admin, show the special routing action button
+                    // Show admin banner if the user has admin rights
                     if (data.is_admin) {
                         adminBanner.style.display = 'block';
                     } else {
                         adminBanner.style.display = 'none';
-                        // Normal users redirected to home
                         setTimeout(() => { window.location.href = 'index.html'; }, 1500);
                     }
                 } else {
@@ -163,20 +168,22 @@
         function handleRegister(e) {
             e.preventDefault();
             const username = document.getElementById('reg-username').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
             const password = document.getElementById('reg-password').value;
 
-            fetch('http://127.0.0.1:5000/api/v1/register', {
+            // Updated URL to point to the users blueprint route
+            fetch('http://127.0.0.1:5000/api/v1/users', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ username, email, password })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    showAlert(data.message, 'success');
+                    showAlert("Compte créé avec succès !", 'success');
                     setTimeout(() => { switchSection('login'); }, 2000);
                 } else {
-                    showAlert(data.message, 'error');
+                    showAlert(data.error || "Erreur lors de l'inscription.", 'error');
                 }
             })
             .catch(() => showAlert("Erreur lors de la tentative d'enregistrement.", "error"));
