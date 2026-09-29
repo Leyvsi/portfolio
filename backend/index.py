@@ -60,7 +60,7 @@ def login_user():
             "message": "Identifiants incorrects."
         }), 401
 
-    # Return user data
+    # Return user data including email
     return jsonify({
         "status": "success",
         "message": "Connexion réussie !",
@@ -73,7 +73,6 @@ def login_user():
 @app.route('/api/v1/comments', methods=['GET'])
 def get_comments():
     try:
-        # Fetch comments from database
         comments = Comment.query.all()
         comments_list = []
         
@@ -81,7 +80,8 @@ def get_comments():
             comments_list.append({
                 "id": c.id,
                 "username": getattr(c, 'username', 'Anonyme'),
-                "content": getattr(c, 'content', ''),
+                "text": getattr(c, 'content', getattr(c, 'text', '')),
+                "likes": getattr(c, 'likes', 0),
                 "reports": getattr(c, 'reports', 0)
             })
             
@@ -93,14 +93,13 @@ def get_comments():
         print(f"[ERROR] Get Comments: {error}")
         return jsonify({"status": "error", "message": "Erreur serveur."}), 500
 
-
 # Route to create a new comment
 @app.route('/api/v1/comments', methods=['POST'])
 def add_comment():
     req_data = request.get_json() or {}
     
     username = req_data.get('username', '').strip()
-    content = req_data.get('content', '').strip()
+    content = req_data.get('content', req_data.get('text', '')).strip()
 
     if not username or not content:
         return jsonify({
@@ -109,7 +108,6 @@ def add_comment():
         }), 400
 
     try:
-        # Create and save the new comment
         new_comment = Comment(username=username, content=content)
         db.session.add(new_comment)
         db.session.commit()
@@ -122,6 +120,104 @@ def add_comment():
         db.session.rollback()
         print(f"[ERROR] Add Comment: {error}")
         return jsonify({"status": "error", "message": "Impossible de publier le commentaire."}), 500
+
+# Route to fetch comments for specific stories
+@app.route('/api/v1/stories/<story_id>/comments', methods=['GET'])
+def get_story_comments(story_id):
+    try:
+        comments = Comment.query.all()
+        comments_list = [{
+            "id": c.id,
+            "username": getattr(c, 'username', 'Anonyme'),
+            "text": getattr(c, 'content', getattr(c, 'text', '')),
+            "likes": getattr(c, 'likes', 0),
+            "reports": getattr(c, 'reports', 0)
+        } for c in comments]
+        return jsonify(comments_list), 200
+    except Exception as e:
+        print(f"[ERROR] Get Story Comments: {e}")
+        return jsonify([]), 200
+
+# Route to post comment for specific stories
+@app.route('/api/v1/stories/<story_id>/comments', methods=['POST'])
+def post_story_comment(story_id):
+    req_data = request.get_json() or {}
+    try:
+        new_comment = Comment(
+            username=req_data.get('username', 'Anonyme'),
+            content=req_data.get('text', req_data.get('content', ''))
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+        return jsonify({"status": "success", "message": "Commentaire publié !"}), 201
+    except Exception as e:
+        db.session.rollback()
+        print(f"[ERROR] Post Story Comment: {e}")
+        return jsonify({"status": "error", "message": "Erreur serveur."}), 500
+
+# Route to fetch comments for theories / cold cases
+@app.route('/api/v1/theories/<case_id>/comments', methods=['GET'])
+def get_theory_comments(case_id):
+    try:
+        comments = Comment.query.all()
+        comments_list = [{
+            "id": c.id,
+            "username": getattr(c, 'username', 'Anonyme'),
+            "text": getattr(c, 'content', getattr(c, 'text', '')),
+            "likes": getattr(c, 'likes', 0),
+            "reports": getattr(c, 'reports', 0)
+        } for c in comments]
+        return jsonify(comments_list), 200
+    except Exception as e:
+        print(f"[ERROR] Get Theory Comments: {e}")
+        return jsonify([]), 200
+
+# Route to post comment for theories / cold cases
+@app.route('/api/v1/theories/<case_id>/comments', methods=['POST'])
+def post_theory_comment(case_id):
+    req_data = request.get_json() or {}
+    try:
+        new_comment = Comment(
+            username=req_data.get('username', 'Anonyme'),
+            content=req_data.get('text', req_data.get('content', ''))
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+        return jsonify({"status": "success", "message": "Théorie publiée !"}), 201
+    except Exception as e:
+        db.session.rollback()
+        print(f"[ERROR] Post Theory Comment: {e}")
+        return jsonify({"status": "error", "message": "Erreur serveur."}), 500
+
+# Route to like a comment
+@app.route('/api/v1/comments/<int:comment_id>/like', methods=['POST'])
+@app.route('/api/v1/theories/<case_id>/<int:comment_id>/like', methods=['POST'])
+def like_comment(comment_id, case_id=None):
+    try:
+        comment = Comment.query.get(comment_id)
+        if comment:
+            comment.likes = getattr(comment, 'likes', 0) + 1
+            db.session.commit()
+            return jsonify({"status": "success", "likes": comment.likes}), 200
+        return jsonify({"status": "error", "message": "Introuvable"}), 404
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+# Route to report a comment
+@app.route('/api/v1/comments/<int:comment_id>/report', methods=['POST'])
+@app.route('/api/v1/theories/<case_id>/<int:comment_id>/report', methods=['POST'])
+def report_comment(comment_id, case_id=None):
+    try:
+        comment = Comment.query.get(comment_id)
+        if comment:
+            comment.reports = getattr(comment, 'reports', 0) + 1
+            db.session.commit()
+            return jsonify({"status": "success", "reports": comment.reports}), 200
+        return jsonify({"status": "error", "message": "Introuvable"}), 404
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # Load all routes from views
 app.register_blueprint(app_views)
