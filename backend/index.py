@@ -60,10 +60,12 @@ def login_user():
             "message": "Identifiants incorrects."
         }), 401
 
+    # Return user data
     return jsonify({
         "status": "success",
         "message": "Connexion réussie !",
         "username": user.username,
+        "email": user.email,
         "is_admin": user.is_admin
     }), 200
 
