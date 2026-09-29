@@ -55,66 +55,65 @@
 </footer>
 
 <script>
+// Simple English comment: Fetch user data directly from local storage for instant display
 const loggedUser = localStorage.getItem('username');
+const loggedEmail = localStorage.getItem('email');
 
 if (!loggedUser) {
-alert("Vous devez être connecté pour accéder à cette page.");
-window.location.href = "connexion.html";
-}
-
-// Fetch secure profile information
-fetch(`http://127.0.0.1:5000/api/user/profile/${loggedUser}`)
-.then(res => res.json())
-.then(data => {
-if (data.status === 'success') {
-document.getElementById('profile-username').textContent = data.profile.username;
-document.getElementById('profile-email').textContent = data.profile.email;
+    alert("Vous devez être connecté pour accéder à cette page.");
+    window.location.href = "connexion.html";
 } else {
-alert(data.message);
-logout();
+    // Inject stored data immediately, replacing "Chargement..."
+    document.getElementById('profile-username').textContent = loggedUser;
+    
+    if (loggedEmail) {
+        document.getElementById('profile-email').textContent = loggedEmail;
+    } else {
+        document.getElementById('profile-email').textContent = "Non renseignée";
+    }
 }
-})
-.catch(err => console.error("Erreur profil :", err));
 
 // Submit profile password change form
 document.getElementById('change-password-form').addEventListener('submit', function(e) {
-e.preventDefault();
+    e.preventDefault();
 
-const currentPassword = document.getElementById('current-password').value;
-const newPassword = document.getElementById('new-password').value;
-const confirmNew = document.getElementById('confirm-new-password').value;
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmNew = document.getElementById('confirm-new-password').value;
 
-if (newPassword !== confirmNew) {
-alert("Le nouveau mot de passe et sa confirmation ne correspondent pas.");
-return;
-}
+    if (newPassword !== confirmNew) {
+        alert("Le nouveau mot de passe et sa confirmation ne correspondent pas.");
+        return;
+    }
 
-fetch('http://127.0.0.1:5000/api/user/change-password', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({
-username: loggedUser,
-current_password: currentPassword,
-new_password: newPassword
-})
-})
-.then(res => res.json())
-.then(data => {
-if (data.status === 'success') {
-alert(data.message);
-document.getElementById('change-password-form').reset();
-} else {
-alert(data.message);
-}
-})
-.catch(err => alert("Serveur indisponible."));
+    fetch('http://127.0.0.1:5000/api/user/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: loggedUser,
+            current_password: currentPassword,
+            new_password: newPassword
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            document.getElementById('change-password-form').reset();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => alert("Serveur indisponible."));
 });
 
 // Clears specific user session keys
 function logout() {
-localStorage.removeItem('username');
-localStorage.removeItem('user_role');
-window.location.href = "index.html";
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    localStorage.removeItem('is_admin');
+    localStorage.removeItem('user_role');
+    window.location.href = "index.html";
 }
 </script>
 </body>
