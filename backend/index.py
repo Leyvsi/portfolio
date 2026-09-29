@@ -69,6 +69,60 @@ def login_user():
         "is_admin": user.is_admin
     }), 200
 
+# Route to fetch all comments
+@app.route('/api/v1/comments', methods=['GET'])
+def get_comments():
+    try:
+        # Fetch comments from database
+        comments = Comment.query.all()
+        comments_list = []
+        
+        for c in comments:
+            comments_list.append({
+                "id": c.id,
+                "username": getattr(c, 'username', 'Anonyme'),
+                "content": getattr(c, 'content', ''),
+                "reports": getattr(c, 'reports', 0)
+            })
+            
+        return jsonify({
+            "status": "success", 
+            "comments": comments_list
+        }), 200
+    except Exception as error:
+        print(f"[ERROR] Get Comments: {error}")
+        return jsonify({"status": "error", "message": "Erreur serveur."}), 500
+
+
+# Route to create a new comment
+@app.route('/api/v1/comments', methods=['POST'])
+def add_comment():
+    req_data = request.get_json() or {}
+    
+    username = req_data.get('username', '').strip()
+    content = req_data.get('content', '').strip()
+
+    if not username or not content:
+        return jsonify({
+            "status": "error", 
+            "message": "Le pseudo et le contenu sont obligatoires."
+        }), 400
+
+    try:
+        # Create and save the new comment
+        new_comment = Comment(username=username, content=content)
+        db.session.add(new_comment)
+        db.session.commit()
+        
+        return jsonify({
+            "status": "success", 
+            "message": "Théorie publiée avec succès !"
+        }), 201
+    except Exception as error:
+        db.session.rollback()
+        print(f"[ERROR] Add Comment: {error}")
+        return jsonify({"status": "error", "message": "Impossible de publier le commentaire."}), 500
+
 # Load all routes from views
 app.register_blueprint(app_views)
 
