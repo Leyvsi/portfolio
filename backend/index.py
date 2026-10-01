@@ -181,16 +181,35 @@ def post_theory_comment(case_id):
         print(f"[ERROR] Post Theory Comment: {e}")
         return jsonify({"status": "error", "message": "Erreur serveur."}), 500
 
+# Dictionary to track IPs for each comment
+ip_likes_tracker = {}
+
 # Route to like a comment
 @app.route('/api/v1/comments/<int:comment_id>/like', methods=['POST'])
 @app.route('/api/v1/theories/<case_id>/<int:comment_id>/like', methods=['POST'])
 def like_comment(comment_id, case_id=None):
     try:
+        # Get the user IP address
+        user_ip = request.remote_addr
+        
+        # Initialize the set for this comment if it does not exist
+        if comment_id not in ip_likes_tracker:
+            ip_likes_tracker[comment_id] = set()
+            
+        # Check if this IP already liked this comment
+        if user_ip in ip_likes_tracker[comment_id]:
+            return jsonify({"status": "error", "message": "Already liked by this IP"}), 403
+
         comment = Comment.query.get(comment_id)
         if comment:
             comment.likes = getattr(comment, 'likes', 0) + 1
             db.session.commit()
+            
+            # Save the IP to block future likes
+            ip_likes_tracker[comment_id].add(user_ip)
+            
             return jsonify({"status": "success", "likes": comment.likes}), 200
+        
         return jsonify({"status": "error", "message": "Introuvable"}), 404
     except Exception as e:
         db.session.rollback()
