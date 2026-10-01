@@ -14,18 +14,41 @@ def get_stories():
     for story in stories:
         result.append({
             "id": story.id,
+            "slug": story.slug,
             "title": story.title,
             "summary": story.summary,
             "content": story.content,
             "image_url": story.image_url,
             "category_id": story.category_id,
             "author_id": story.author_id,
-            "votes": Vote.query.filter_by(story_id=story.id).count(),
+            "votes": Vote.query.filter_by(
+                story_id=story.id
+            ).count(),
             "created_at": (
                 story.created_at.isoformat()
                 if story.created_at else None
             )
         })
+
+    return jsonify(result), 200
+
+
+@app_views.route('/stories/slug/<string:slug>', methods=['GET'])
+def get_story_by_slug(slug):
+    """Return one story using its slug."""
+    story = Story.query.filter_by(slug=slug).first()
+
+    if not story:
+        return jsonify({
+            "error": "Story not found"
+        }), 404
+
+    vote_count = Vote.query.filter_by(
+        story_id=story.id
+    ).count()
+
+    result = story.to_dict()
+    result["votes"] = vote_count
 
     return jsonify(result), 200
 
@@ -87,8 +110,6 @@ def post_story_vote(story_id):
 @app_views.route('/coldcases/<int:case_id>/updates', methods=['GET'])
 def get_case_updates(case_id):
     """Return updates for a cold case."""
-    # This feature still uses the old data_store.
-    # It will be migrated separately.
     from api.v1.views.index import data_store
 
     return jsonify(
