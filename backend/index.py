@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 from api.v1.views import app_views
 from models import db, User, Comment
@@ -30,6 +31,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize database
 db.init_app(app)
+
+# Initialize database migrations
+migrate = Migrate(app, db)
 
 
 # Create tables on startup
