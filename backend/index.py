@@ -60,7 +60,6 @@ def login_user():
             "message": "Identifiants incorrects."
         }), 401
 
-    # Return user data including email
     return jsonify({
         "status": "success",
         "message": "Connexion réussie !",
@@ -69,21 +68,19 @@ def login_user():
         "is_admin": user.is_admin
     }), 200
 
-# Route to fetch all comments
+# Route to fetch all comments (Admin/Global)
 @app.route('/api/v1/comments', methods=['GET'])
 def get_comments():
     try:
         comments = Comment.query.all()
-        comments_list = []
-        
-        for c in comments:
-            comments_list.append({
-                "id": c.id,
-                "username": getattr(c, 'username', 'Anonyme'),
-                "text": getattr(c, 'text', getattr(c, 'content', '')),
-                "likes": getattr(c, 'likes', 0),
-                "reports": getattr(c, 'reports', 0)
-            })
+        comments_list = [{
+            "id": c.id,
+            "story_id": getattr(c, 'story_id', ''),
+            "username": getattr(c, 'username', 'Anonyme'),
+            "text": getattr(c, 'text', getattr(c, 'content', '')),
+            "likes": getattr(c, 'likes', 0),
+            "reports": getattr(c, 'reports', 0)
+        } for c in comments]
             
         return jsonify({
             "status": "success", 
@@ -93,7 +90,7 @@ def get_comments():
         print(f"[ERROR] Get Comments: {error}")
         return jsonify({"status": "error", "message": "Erreur serveur."}), 500
 
-# Route to create a new comment
+# Route to create a global comment
 @app.route('/api/v1/comments', methods=['POST'])
 def add_comment():
     req_data = request.get_json() or {}
@@ -102,21 +99,13 @@ def add_comment():
     content = req_data.get('content', req_data.get('text', '')).strip()
 
     if not username or not content:
-        return jsonify({
-            "status": "error", 
-            "message": "Le pseudo et le contenu sont obligatoires."
-        }), 400
+        return jsonify({"status": "error", "message": "Le pseudo et le contenu sont obligatoires."}), 400
 
     try:
-        # Create and save the new comment
-        new_comment = Comment(username=username, text=content)
+        new_comment = Comment(username=username, text=content, story_id='global')
         db.session.add(new_comment)
         db.session.commit()
-        
-        return jsonify({
-            "status": "success", 
-            "message": "Théorie publiée avec succès !"
-        }), 201
+        return jsonify({"status": "success", "message": "Publié avec succès !"}), 201
     except Exception as error:
         db.session.rollback()
         print(f"[ERROR] Add Comment: {error}")
@@ -126,7 +115,7 @@ def add_comment():
 @app.route('/api/v1/stories/<story_id>/comments', methods=['GET'])
 def get_story_comments(story_id):
     try:
-        comments = Comment.query.all()
+        comments = Comment.query.filter_by(story_id=story_id).all()
         comments_list = [{
             "id": c.id,
             "username": getattr(c, 'username', 'Anonyme'),
@@ -144,8 +133,8 @@ def get_story_comments(story_id):
 def post_story_comment(story_id):
     req_data = request.get_json() or {}
     try:
-        # Create and save the new comment
         new_comment = Comment(
+            story_id=story_id,
             username=req_data.get('username', 'Anonyme'),
             text=req_data.get('text', req_data.get('content', ''))
         )
@@ -161,7 +150,7 @@ def post_story_comment(story_id):
 @app.route('/api/v1/theories/<case_id>/comments', methods=['GET'])
 def get_theory_comments(case_id):
     try:
-        comments = Comment.query.all()
+        comments = Comment.query.filter_by(story_id=case_id).all()
         comments_list = [{
             "id": c.id,
             "username": getattr(c, 'username', 'Anonyme'),
@@ -179,8 +168,8 @@ def get_theory_comments(case_id):
 def post_theory_comment(case_id):
     req_data = request.get_json() or {}
     try:
-        # Create and save the new comment
         new_comment = Comment(
+            story_id=case_id,
             username=req_data.get('username', 'Anonyme'),
             text=req_data.get('text', req_data.get('content', ''))
         )
