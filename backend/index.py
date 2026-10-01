@@ -181,7 +181,7 @@ def post_theory_comment(case_id):
         print(f"[ERROR] Post Theory Comment: {e}")
         return jsonify({"status": "error", "message": "Erreur serveur."}), 500
 
-# Dictionary to track IPs for each comment
+# Dictionary to track IPs for each comment (Likes)
 ip_likes_tracker = {}
 
 # Route to like a comment
@@ -215,16 +215,35 @@ def like_comment(comment_id, case_id=None):
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
 
+# Dictionary to track IPs for each comment (Reports)
+ip_reports_tracker = {}
+
 # Route to report a comment
 @app.route('/api/v1/comments/<int:comment_id>/report', methods=['POST'])
 @app.route('/api/v1/theories/<case_id>/<int:comment_id>/report', methods=['POST'])
 def report_comment(comment_id, case_id=None):
     try:
+        # Get the user IP address
+        user_ip = request.remote_addr
+        
+        # Initialize the set for this comment if it does not exist
+        if comment_id not in ip_reports_tracker:
+            ip_reports_tracker[comment_id] = set()
+            
+        # Check if this IP already reported this comment
+        if user_ip in ip_reports_tracker[comment_id]:
+            return jsonify({"status": "error", "message": "Already reported by this IP"}), 403
+
         comment = Comment.query.get(comment_id)
         if comment:
             comment.reports = getattr(comment, 'reports', 0) + 1
             db.session.commit()
+            
+            # Save the IP to block future reports
+            ip_reports_tracker[comment_id].add(user_ip)
+            
             return jsonify({"status": "success", "reports": comment.reports}), 200
+        
         return jsonify({"status": "error", "message": "Introuvable"}), 404
     except Exception as e:
         db.session.rollback()
