@@ -80,7 +80,7 @@ def get_comments():
             comments_list.append({
                 "id": c.id,
                 "username": getattr(c, 'username', 'Anonyme'),
-                "text": getattr(c, 'content', getattr(c, 'text', '')),
+                "text": getattr(c, 'text', getattr(c, 'content', '')),
                 "likes": getattr(c, 'likes', 0),
                 "reports": getattr(c, 'reports', 0)
             })
@@ -108,7 +108,8 @@ def add_comment():
         }), 400
 
     try:
-        new_comment = Comment(username=username, content=content)
+        # Create and save the new comment
+        new_comment = Comment(username=username, text=content)
         db.session.add(new_comment)
         db.session.commit()
         
@@ -129,7 +130,7 @@ def get_story_comments(story_id):
         comments_list = [{
             "id": c.id,
             "username": getattr(c, 'username', 'Anonyme'),
-            "text": getattr(c, 'content', getattr(c, 'text', '')),
+            "text": getattr(c, 'text', getattr(c, 'content', '')),
             "likes": getattr(c, 'likes', 0),
             "reports": getattr(c, 'reports', 0)
         } for c in comments]
@@ -143,9 +144,10 @@ def get_story_comments(story_id):
 def post_story_comment(story_id):
     req_data = request.get_json() or {}
     try:
+        # Create and save the new comment
         new_comment = Comment(
             username=req_data.get('username', 'Anonyme'),
-            content=req_data.get('text', req_data.get('content', ''))
+            text=req_data.get('text', req_data.get('content', ''))
         )
         db.session.add(new_comment)
         db.session.commit()
@@ -163,7 +165,7 @@ def get_theory_comments(case_id):
         comments_list = [{
             "id": c.id,
             "username": getattr(c, 'username', 'Anonyme'),
-            "text": getattr(c, 'content', getattr(c, 'text', '')),
+            "text": getattr(c, 'text', getattr(c, 'content', '')),
             "likes": getattr(c, 'likes', 0),
             "reports": getattr(c, 'reports', 0)
         } for c in comments]
@@ -177,9 +179,10 @@ def get_theory_comments(case_id):
 def post_theory_comment(case_id):
     req_data = request.get_json() or {}
     try:
+        # Create and save the new comment
         new_comment = Comment(
             username=req_data.get('username', 'Anonyme'),
-            content=req_data.get('text', req_data.get('content', ''))
+            text=req_data.get('text', req_data.get('content', ''))
         )
         db.session.add(new_comment)
         db.session.commit()
