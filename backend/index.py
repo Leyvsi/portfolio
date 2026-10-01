@@ -1,4 +1,5 @@
 import os
+from urllib.parse import quote_plus
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
@@ -21,10 +22,45 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SQLITE_PATH = os.path.join(BASE_DIR, "instance", "site.db")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL",
-    f"sqlite:///{SQLITE_PATH.replace(os.sep, '/')}"
-)
+AIVEN_DB_HOST = os.getenv("AIVEN_DB_HOST")
+AIVEN_DB_PORT = os.getenv("AIVEN_DB_PORT")
+AIVEN_DB_USER = os.getenv("AIVEN_DB_USER")
+AIVEN_DB_PASSWORD = os.getenv("AIVEN_DB_PASSWORD")
+AIVEN_DB_NAME = os.getenv("AIVEN_DB_NAME")
+AIVEN_CA_CERT = os.getenv("AIVEN_CA_CERT")
+
+
+if all([
+    AIVEN_DB_HOST,
+    AIVEN_DB_PORT,
+    AIVEN_DB_USER,
+    AIVEN_DB_PASSWORD,
+    AIVEN_DB_NAME,
+    AIVEN_CA_CERT
+]):
+    encoded_user = quote_plus(AIVEN_DB_USER)
+    encoded_password = quote_plus(AIVEN_DB_PASSWORD)
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        f"mysql+pymysql://{encoded_user}:{encoded_password}"
+        f"@{AIVEN_DB_HOST}:{AIVEN_DB_PORT}/{AIVEN_DB_NAME}"
+    )
+
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "connect_args": {
+            "ssl": {
+                "ca": os.path.abspath(AIVEN_CA_CERT)
+            }
+        },
+        "pool_pre_ping": True
+    }
+
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+        "DATABASE_URL",
+        f"sqlite:///{SQLITE_PATH.replace(os.sep, '/')}"
+    )
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -34,12 +70,6 @@ db.init_app(app)
 
 # Initialize database migrations
 migrate = Migrate(app, db)
-
-
-# Create tables on startup
-with app.app_context():
-    os.makedirs(os.path.dirname(SQLITE_PATH), exist_ok=True)
-    db.create_all()
 
 
 # Application statistics
