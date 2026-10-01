@@ -71,10 +71,24 @@ class Story(db.Model):
         nullable=False
     )
 
-    title = db.Column(db.String(200), nullable=False)
-    summary = db.Column(db.Text, nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    image_url = db.Column(db.String(500))
+    title = db.Column(
+        db.String(200),
+        nullable=False
+    )
+
+    summary = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    content = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    image_url = db.Column(
+        db.String(500)
+    )
 
     category_id = db.Column(
         db.Integer,
@@ -155,17 +169,28 @@ class Theory(db.Model):
 
     __tablename__ = "theories"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     story_id = db.Column(
         db.Integer,
-        db.ForeignKey("stories.id"),
+        db.ForeignKey(
+            "stories.id",
+            name="fk_theories_story",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("users.id"),
+        db.ForeignKey(
+            "users.id",
+            name="fk_theories_user",
+            ondelete="SET NULL"
+        ),
         nullable=True
     )
 
@@ -207,17 +232,28 @@ class Comment(db.Model):
 
     __tablename__ = "comments"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     story_id = db.Column(
         db.Integer,
-        db.ForeignKey("stories.id"),
+        db.ForeignKey(
+            "stories.id",
+            name="fk_comments_story",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("users.id"),
+        db.ForeignKey(
+            "users.id",
+            name="fk_comments_user",
+            ondelete="SET NULL"
+        ),
         nullable=True
     )
 
@@ -280,17 +316,28 @@ class Vote(db.Model):
 
     __tablename__ = "votes"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     story_id = db.Column(
         db.Integer,
-        db.ForeignKey("stories.id"),
+        db.ForeignKey(
+            "stories.id",
+            name="fk_votes_story",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("users.id"),
+        db.ForeignKey(
+            "users.id",
+            name="fk_votes_user",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
@@ -324,11 +371,18 @@ class Proposal(db.Model):
 
     __tablename__ = "proposals"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("users.id"),
+        db.ForeignKey(
+            "users.id",
+            name="fk_proposals_user",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
