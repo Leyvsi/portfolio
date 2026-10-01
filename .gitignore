@@ -10,3 +10,5 @@ backend/*.db
 *.pyc
 .env
 instance/
+certs/
+portfolio_db_backup.sql
