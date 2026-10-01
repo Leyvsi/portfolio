@@ -39,8 +39,10 @@ class User(db.Model):
             "username": self.username,
             "email": self.email,
             "is_admin": self.is_admin,
-            "created_at": self.created_at.isoformat()
-            if self.created_at else None
+            "created_at": (
+                self.created_at.isoformat()
+                if self.created_at else None
+            )
         }
 
 
@@ -62,6 +64,13 @@ class Story(db.Model):
     __tablename__ = "stories"
 
     id = db.Column(db.Integer, primary_key=True)
+
+    slug = db.Column(
+        db.String(150),
+        unique=True,
+        nullable=False
+    )
+
     title = db.Column(db.String(200), nullable=False)
     summary = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
@@ -79,7 +88,12 @@ class Story(db.Model):
         nullable=False
     )
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
     updated_at = db.Column(
         db.DateTime,
         default=datetime.utcnow,
@@ -87,8 +101,15 @@ class Story(db.Model):
         nullable=False
     )
 
-    category = db.relationship("Category", back_populates="stories")
-    author = db.relationship("User", back_populates="stories")
+    category = db.relationship(
+        "Category",
+        back_populates="stories"
+    )
+
+    author = db.relationship(
+        "User",
+        back_populates="stories"
+    )
 
     comments = db.relationship(
         "Comment",
@@ -111,16 +132,21 @@ class Story(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
+            "slug": self.slug,
             "title": self.title,
             "summary": self.summary,
             "content": self.content,
             "image_url": self.image_url,
             "category_id": self.category_id,
             "author_id": self.author_id,
-            "created_at": self.created_at.isoformat()
-            if self.created_at else None,
-            "updated_at": self.updated_at.isoformat()
-            if self.updated_at else None
+            "created_at": (
+                self.created_at.isoformat()
+                if self.created_at else None
+            ),
+            "updated_at": (
+                self.updated_at.isoformat()
+                if self.updated_at else None
+            )
         }
 
 
@@ -143,14 +169,37 @@ class Theory(db.Model):
         nullable=True
     )
 
-    title = db.Column(db.String(200), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    likes = db.Column(db.Integer, default=0, nullable=False)
+    title = db.Column(
+        db.String(200),
+        nullable=False
+    )
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    content = db.Column(
+        db.Text,
+        nullable=False
+    )
 
-    story = db.relationship("Story", back_populates="theories")
-    author = db.relationship("User", back_populates="theories")
+    likes = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    story = db.relationship(
+        "Story",
+        back_populates="theories"
+    )
+
+    author = db.relationship(
+        "User",
+        back_populates="theories"
+    )
 
 
 class Comment(db.Model):
@@ -172,16 +221,43 @@ class Comment(db.Model):
         nullable=True
     )
 
-    username = db.Column(db.String(100), default="Anonyme")
-    text = db.Column(db.Text, nullable=False)
+    username = db.Column(
+        db.String(100),
+        default="Anonyme"
+    )
 
-    likes = db.Column(db.Integer, default=0, nullable=False)
-    reports = db.Column(db.Integer, default=0, nullable=False)
+    text = db.Column(
+        db.Text,
+        nullable=False
+    )
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    likes = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
 
-    story = db.relationship("Story", back_populates="comments")
-    user = db.relationship("User", back_populates="comments")
+    reports = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    story = db.relationship(
+        "Story",
+        back_populates="comments"
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="comments"
+    )
 
     def to_dict(self):
         return {
@@ -192,8 +268,10 @@ class Comment(db.Model):
             "text": self.text,
             "likes": self.likes,
             "reports": self.reports,
-            "created_at": self.created_at.isoformat()
-            if self.created_at else None
+            "created_at": (
+                self.created_at.isoformat()
+                if self.created_at else None
+            )
         }
 
 
@@ -216,10 +294,21 @@ class Vote(db.Model):
         nullable=False
     )
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
 
-    story = db.relationship("Story", back_populates="votes")
-    user = db.relationship("User", back_populates="votes")
+    story = db.relationship(
+        "Story",
+        back_populates="votes"
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="votes"
+    )
 
     __table_args__ = (
         db.UniqueConstraint(
@@ -243,8 +332,15 @@ class Proposal(db.Model):
         nullable=False
     )
 
-    title = db.Column(db.String(200), nullable=False)
-    content = db.Column(db.Text, nullable=False)
+    title = db.Column(
+        db.String(200),
+        nullable=False
+    )
+
+    content = db.Column(
+        db.Text,
+        nullable=False
+    )
 
     status = db.Column(
         db.String(20),
@@ -252,7 +348,12 @@ class Proposal(db.Model):
         nullable=False
     )
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
     updated_at = db.Column(
         db.DateTime,
         default=datetime.utcnow,
@@ -260,4 +361,7 @@ class Proposal(db.Model):
         nullable=False
     )
 
-    user = db.relationship("User", back_populates="proposals")
+    user = db.relationship(
+        "User",
+        back_populates="proposals"
+    )
