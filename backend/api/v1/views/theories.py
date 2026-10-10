@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, session
 
 from api.v1.views import app_views
 from models import db, Theory, Story, User
@@ -59,11 +59,10 @@ def post_theory(story_id):
             "error": "Story not found"
         }), 404
 
-    req_data = request.get_json() or {}
+    req_data = request.get_json(silent=True) or {}
 
     title = req_data.get("title", "").strip()
     content = req_data.get("content", "").strip()
-    user_id = req_data.get("user_id")
 
     if not title:
         return jsonify({
@@ -75,13 +74,18 @@ def post_theory(story_id):
             "error": "Theory content is required"
         }), 400
 
+    user_id = session.get("user_id")
+
     if user_id is not None:
         user = db.session.get(User, user_id)
 
         if not user:
+            session.clear()
+
             return jsonify({
-                "error": "User not found"
-            }), 404
+                "status": "error",
+                "message": "Utilisateur introuvable."
+            }), 401
 
     new_theory = Theory(
         story_id=story_id,

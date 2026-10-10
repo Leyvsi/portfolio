@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, session
 
 from api.v1.views import app_views
 from models import db, Proposal, User
@@ -38,16 +38,27 @@ def get_proposals():
 
 @app_views.route("/proposals", methods=["POST"])
 def create_proposal():
-    req_data = request.get_json() or {}
+    req_data = request.get_json(silent=True) or {}
 
-    user_id = req_data.get("user_id")
+    user_id = session.get("user_id")
     title = req_data.get("title", "").strip()
     content = req_data.get("content", "").strip()
 
-    if not user_id:
+    if user_id is None:
         return jsonify({
-            "error": "user_id est obligatoire"
-        }), 400
+            "status": "error",
+            "message": "Authentification requise pour proposer une histoire."
+        }), 401
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        session.clear()
+
+        return jsonify({
+            "status": "error",
+            "message": "Utilisateur introuvable."
+        }), 401
 
     if not title:
         return jsonify({
@@ -59,15 +70,8 @@ def create_proposal():
             "error": "Le contenu est obligatoire"
         }), 400
 
-    user = db.session.get(User, user_id)
-
-    if not user:
-        return jsonify({
-            "error": "User not found"
-        }), 404
-
     new_proposal = Proposal(
-        user_id=user_id,
+        user_id=user.id,
         title=title,
         content=content,
         status="pending"
