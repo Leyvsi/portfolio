@@ -2,7 +2,7 @@ import os
 from urllib.parse import quote_plus
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from flask_migrate import Migrate
 
@@ -14,13 +14,38 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Allow cross-origin requests during development
-CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
+if not app.config["SECRET_KEY"]:
+    raise RuntimeError(
+        "SECRET_KEY is missing. Add it to the .env file."
+    )
+
+# Allow the frontend to send the Flask session cookie during development.
+CORS(
+    app,
+    resources={
+        r"/api/v1/*": {
+            "origins": [
+                "http://127.0.0.1:5500",
+                "http://localhost:5500",
+            ]
+        }
+    },
+    supports_credentials=True
+)
 
 
 # Database configuration
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SQLITE_PATH = os.path.join(BASE_DIR, "instance", "site.db")
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))
+)
+
+SQLITE_PATH = os.path.join(
+    BASE_DIR,
+    "instance",
+    "site.db"
+)
 
 AIVEN_DB_HOST = os.getenv("AIVEN_DB_HOST")
 AIVEN_DB_PORT = os.getenv("AIVEN_DB_PORT")
@@ -64,6 +89,10 @@ else:
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# Session cookie configuration
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
 
 # Initialize database
 db.init_app(app)
@@ -78,6 +107,7 @@ def get_stats():
     try:
         user_count = User.query.count()
         comment_count = Comment.query.count()
+
         reported_count = Comment.query.filter(
             Comment.reports > 0
         ).count()
@@ -101,7 +131,7 @@ def get_stats():
 # User login
 @app.route("/api/v1/login", methods=["POST"])
 def login_user():
-    req_data = request.get_json() or {}
+    req_data = request.get_json(silent=True) or {}
 
     username = req_data.get("username", "").strip()
     password = req_data.get("password", "")
@@ -112,7 +142,9 @@ def login_user():
             "message": "Identifiant et mot de passe obligatoires."
         }), 400
 
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(
+        username=username
+    ).first()
 
     if not user or not user.check_password(password):
         return jsonify({
@@ -120,15 +152,65 @@ def login_user():
             "message": "Identifiants incorrects."
         }), 401
 
+    session.clear()
+
+    session["user_id"] = user.id
+    session["is_admin"] = bool(user.is_admin)
+
+    user_data = {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "is_admin": bool(user.is_admin)
+    }
+
     return jsonify({
         "status": "success",
         "message": "Connexion réussie !",
+        "user": user_data
+    }), 200
+
+
+# Return the currently authenticated user
+@app.route("/api/v1/me", methods=["GET"])
+def get_current_user():
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return jsonify({
+            "status": "error",
+            "message": "Utilisateur non connecté."
+        }), 401
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        session.clear()
+
+        return jsonify({
+            "status": "error",
+            "message": "Utilisateur introuvable."
+        }), 401
+
+    return jsonify({
+        "status": "success",
         "user": {
             "id": user.id,
             "username": user.username,
             "email": user.email,
-            "is_admin": user.is_admin
+            "is_admin": bool(user.is_admin)
         }
+    }), 200
+
+
+# User logout
+@app.route("/api/v1/logout", methods=["POST"])
+def logout_user():
+    session.clear()
+
+    return jsonify({
+        "status": "success",
+        "message": "Déconnexion réussie."
     }), 200
 
 
