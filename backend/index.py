@@ -1,4 +1,5 @@
 import os
+import secrets
 from urllib.parse import quote_plus
 
 from dotenv import load_dotenv
@@ -21,15 +22,42 @@ if not app.config["SECRET_KEY"]:
         "SECRET_KEY is missing. Add it to the .env file."
     )
 
-# Allow the frontend to send the Flask session cookie during development.
+
+def env_to_bool(name, default=False):
+    """Read a boolean value from an environment variable."""
+    value = os.getenv(name)
+
+    if value is None:
+        return default
+
+    return value.strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on"
+    }
+
+
+# CORS configuration
+cors_origins_env = os.getenv("CORS_ALLOWED_ORIGINS")
+
+if not cors_origins_env:
+    raise RuntimeError(
+        "CORS_ALLOWED_ORIGINS is missing. "
+        "Add it to the .env file."
+    )
+
+cors_origins = [
+    origin.strip()
+    for origin in cors_origins_env.split(",")
+    if origin.strip()
+]
+
 CORS(
     app,
     resources={
         r"/api/v1/*": {
-            "origins": [
-                "http://127.0.0.1:5500",
-                "http://localhost:5500",
-            ]
+            "origins": cors_origins
         }
     },
     supports_credentials=True
@@ -89,9 +117,14 @@ else:
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+
 # Session cookie configuration
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = env_to_bool(
+    "SESSION_COOKIE_SECURE",
+    default=False
+)
 
 
 # Initialize database
@@ -99,6 +132,57 @@ db.init_app(app)
 
 # Initialize database migrations
 migrate = Migrate(app, db)
+
+
+def get_csrf_token():
+    """Return the current CSRF token, creating one if necessary."""
+    csrf_token = session.get("csrf_token")
+
+    if not csrf_token:
+        csrf_token = secrets.token_urlsafe(32)
+        session["csrf_token"] = csrf_token
+
+    return csrf_token
+
+
+@app.before_request
+def protect_session_requests_from_csrf():
+    """Require a CSRF token for state-changing authenticated requests."""
+    protected_methods = {
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+    }
+
+    if request.method not in protected_methods:
+        return None
+
+    # Login does not rely on an existing authenticated session.
+    if request.path == "/api/v1/login":
+        return None
+
+    # Anonymous requests do not use an authenticated Flask session.
+    if session.get("user_id") is None:
+        return None
+
+    expected_token = session.get("csrf_token")
+    received_token = request.headers.get("X-CSRF-Token")
+
+    if (
+        not expected_token
+        or not received_token
+        or not secrets.compare_digest(
+            expected_token,
+            received_token
+        )
+    ):
+        return jsonify({
+            "status": "error",
+            "message": "Token CSRF invalide ou manquant."
+        }), 403
+
+    return None
 
 
 # Application statistics
@@ -157,6 +241,8 @@ def login_user():
     session["user_id"] = user.id
     session["is_admin"] = bool(user.is_admin)
 
+    csrf_token = get_csrf_token()
+
     user_data = {
         "id": user.id,
         "username": user.username,
@@ -167,7 +253,8 @@ def login_user():
     return jsonify({
         "status": "success",
         "message": "Connexion réussie !",
-        "user": user_data
+        "user": user_data,
+        "csrf_token": csrf_token
     }), 200
 
 
@@ -192,6 +279,8 @@ def get_current_user():
             "message": "Utilisateur introuvable."
         }), 401
 
+    csrf_token = get_csrf_token()
+
     return jsonify({
         "status": "success",
         "user": {
@@ -199,7 +288,8 @@ def get_current_user():
             "username": user.username,
             "email": user.email,
             "is_admin": bool(user.is_admin)
-        }
+        },
+        "csrf_token": csrf_token
     }), 200
 
 
