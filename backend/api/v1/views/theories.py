@@ -52,6 +52,23 @@ def get_theories(story_id):
 )
 def post_theory(story_id):
     """Create a theory for one story."""
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return jsonify({
+            "status": "error",
+            "message": "Authentification requise pour publier une theorie."
+        }), 401
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        session.clear()
+        return jsonify({
+            "status": "error",
+            "message": "Utilisateur introuvable."
+        }), 401
+
     story = db.session.get(Story, story_id)
 
     if not story:
@@ -74,22 +91,9 @@ def post_theory(story_id):
             "error": "Theory content is required"
         }), 400
 
-    user_id = session.get("user_id")
-
-    if user_id is not None:
-        user = db.session.get(User, user_id)
-
-        if not user:
-            session.clear()
-
-            return jsonify({
-                "status": "error",
-                "message": "Utilisateur introuvable."
-            }), 401
-
     new_theory = Theory(
         story_id=story_id,
-        user_id=user_id,
+        user_id=user.id,
         title=title,
         content=content
     )

@@ -1,8 +1,7 @@
 import os
-from functools import wraps
-from flask import jsonify, request, render_template_string, session
+from flask import jsonify, request, render_template_string
 from api.v1.views import app_views
-from models import db, User
+from api.v1.views.permissions import admin_required
 
 data_store = {
     "visites": 142,
@@ -18,37 +17,6 @@ data_store = {
     "utilisateurs": ["Lupin99", "SherlockParis"],
     "signalements": []
 }
-
-def admin_required(view_function):
-    """Allow access only to authenticated administrators."""
-    @wraps(view_function)
-    def wrapped_view(*args, **kwargs):
-        user_id = session.get("user_id")
-
-        if user_id is None:
-            return jsonify({
-                "status": "error",
-                "message": "Authentification requise."
-            }), 401
-
-        user = db.session.get(User, user_id)
-
-        if not user:
-            session.clear()
-            return jsonify({
-                "status": "error",
-                "message": "Utilisateur introuvable."
-            }), 401
-
-        if not user.is_admin:
-            return jsonify({
-                "status": "error",
-                "message": "Acces administrateur requis."
-            }), 403
-
-        return view_function(*args, **kwargs)
-
-    return wrapped_view
 
 @app_views.route('/stats', methods=['GET'])
 def get_stats():

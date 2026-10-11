@@ -28,6 +28,23 @@ def get_story_comments(story_id):
 
 @app_views.route("/stories/<int:story_id>/comments", methods=["POST"])
 def post_story_comment(story_id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return jsonify({
+            "status": "error",
+            "message": "Authentification requise pour commenter."
+        }), 401
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        session.clear()
+        return jsonify({
+            "status": "error",
+            "message": "Utilisateur introuvable."
+        }), 401
+
     story = db.session.get(Story, story_id)
 
     if not story:
@@ -44,29 +61,10 @@ def post_story_comment(story_id):
             "error": "Comment text is required"
         }), 400
 
-    user_id = session.get("user_id")
-
-    if user_id is not None:
-        user = db.session.get(User, user_id)
-
-        if not user:
-            session.clear()
-
-            return jsonify({
-                "status": "error",
-                "message": "Utilisateur introuvable."
-            }), 401
-
-        username = user.username
-
-    else:
-        user_id = None
-        username = "Anonyme"
-
     new_comment = Comment(
         story_id=story_id,
-        user_id=user_id,
-        username=username,
+        user_id=user.id,
+        username=user.username,
         text=text
     )
 

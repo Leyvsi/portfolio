@@ -2,6 +2,7 @@ from flask import jsonify, request
 import re
 
 from api.v1.views import app_views
+from api.v1.views.permissions import admin_required
 from models import db, User
 
 
@@ -26,6 +27,7 @@ def is_valid_password(password):
 
 
 @app_views.route('/users', methods=['GET'])
+@admin_required
 def get_users():
     """Return all users."""
     users = User.query.all()

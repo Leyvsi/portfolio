@@ -1,6 +1,7 @@
 from flask import jsonify, request, session
 
 from api.v1.views import app_views
+from api.v1.views.permissions import admin_required
 from models import db, Proposal, User
 
 
@@ -23,6 +24,7 @@ def proposal_to_dict(proposal):
 
 
 @app_views.route("/proposals", methods=["GET"])
+@admin_required
 def get_proposals():
     proposals = (
         Proposal.query
