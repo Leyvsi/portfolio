@@ -1,7 +1,9 @@
-from flask import jsonify, request
 import re
 
+from flask import jsonify, request
+
 from api.v1.views import app_views
+from api.v1.views.permissions import admin_required
 from models import db, User
 
 
@@ -26,10 +28,15 @@ def is_valid_password(password):
 
 
 @app_views.route('/users', methods=['GET'])
+@admin_required
 def get_users():
-    """Return all users."""
+    """Return all users to administrators only."""
     users = User.query.all()
-    return jsonify([user.to_dict() for user in users]), 200
+
+    return jsonify([
+        user.to_dict()
+        for user in users
+    ]), 200
 
 
 @app_views.route('/users', methods=['POST'])
@@ -42,21 +49,30 @@ def register_user():
     password = req_data.get('password', '')
 
     if not username or not email or not password:
-        return jsonify({"error": "Champs manquants"}), 400
+        return jsonify({
+            "error": "Champs manquants"
+        }), 400
 
     if not is_valid_password(password):
         return jsonify({
-            "error": "Le mot de passe ne respecte pas les critères de sécurité"
+            "error": (
+                "Le mot de passe ne respecte pas "
+                "les critères de sécurité"
+            )
         }), 400
 
-    existing_username = User.query.filter_by(username=username).first()
+    existing_username = User.query.filter_by(
+        username=username
+    ).first()
 
     if existing_username:
         return jsonify({
             "error": "Cet utilisateur existe déjà"
         }), 400
 
-    existing_email = User.query.filter_by(email=email).first()
+    existing_email = User.query.filter_by(
+        email=email
+    ).first()
 
     if existing_email:
         return jsonify({
