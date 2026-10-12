@@ -1,6 +1,7 @@
 import os
 from flask import jsonify, request, render_template_string
 from api.v1.views import app_views
+from api.v1.views.permissions import admin_required
 
 data_store = {
     "visites": 142,
@@ -33,10 +34,12 @@ def post_report():
     return jsonify({"status": "success", "report": nouveau_signalement}), 201
 
 @app_views.route('/admin/reports', methods=['GET'])
+@admin_required
 def get_admin_reports():
     return jsonify(data_store["signalements"]), 200
 
 @app_views.route('/admin/users/<string:username>/ban', methods=['DELETE'])
+@admin_required
 def ban_user(username):
     if username in data_store["utilisateurs"]:
         data_store["utilisateurs"].remove(username)

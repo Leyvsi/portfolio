@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, session
 
 from api.v1.views import app_views
 from models import db, Story, Vote, User
@@ -55,15 +55,24 @@ def get_story_by_slug(slug):
 
 @app_views.route('/votes/<int:story_id>', methods=['POST'])
 def post_story_vote(story_id):
-    """Add one vote to a story."""
-    req_data = request.get_json() or {}
+    """Add one vote to a story for the authenticated user."""
+    user_id = session.get("user_id")
 
-    user_id = req_data.get("user_id")
-
-    if not user_id:
+    if user_id is None:
         return jsonify({
-            "error": "user_id est obligatoire pour voter"
-        }), 400
+            "status": "error",
+            "message": "Authentification requise pour voter."
+        }), 401
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        session.clear()
+
+        return jsonify({
+            "status": "error",
+            "message": "Utilisateur introuvable."
+        }), 401
 
     story = db.session.get(Story, story_id)
 
@@ -72,16 +81,9 @@ def post_story_vote(story_id):
             "error": "Story not found"
         }), 404
 
-    user = db.session.get(User, user_id)
-
-    if not user:
-        return jsonify({
-            "error": "User not found"
-        }), 404
-
     existing_vote = Vote.query.filter_by(
         story_id=story_id,
-        user_id=user_id
+        user_id=user.id
     ).first()
 
     if existing_vote:
@@ -91,7 +93,7 @@ def post_story_vote(story_id):
 
     new_vote = Vote(
         story_id=story_id,
-        user_id=user_id
+        user_id=user.id
     )
 
     db.session.add(new_vote)

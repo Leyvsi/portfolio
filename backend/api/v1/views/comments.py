@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, session
 
 from api.v1.views import app_views
 from models import db, Comment, Story, User
@@ -28,6 +28,23 @@ def get_story_comments(story_id):
 
 @app_views.route("/stories/<int:story_id>/comments", methods=["POST"])
 def post_story_comment(story_id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return jsonify({
+            "status": "error",
+            "message": "Authentification requise pour commenter."
+        }), 401
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        session.clear()
+        return jsonify({
+            "status": "error",
+            "message": "Utilisateur introuvable."
+        }), 401
+
     story = db.session.get(Story, story_id)
 
     if not story:
@@ -35,35 +52,19 @@ def post_story_comment(story_id):
             "error": "Story not found"
         }), 404
 
-    req_data = request.get_json() or {}
+    req_data = request.get_json(silent=True) or {}
 
     text = req_data.get("text", "").strip()
-    user_id = req_data.get("user_id")
-    username = req_data.get("username", "Anonyme").strip()
 
     if not text:
         return jsonify({
             "error": "Comment text is required"
         }), 400
 
-    if user_id is not None:
-        user = db.session.get(User, user_id)
-
-        if not user:
-            return jsonify({
-                "error": "User not found"
-            }), 404
-
-        # Use the real username stored in the database
-        username = user.username
-
-    if not username:
-        username = "Anonyme"
-
     new_comment = Comment(
         story_id=story_id,
-        user_id=user_id,
-        username=username,
+        user_id=user.id,
+        username=user.username,
         text=text
     )
 
