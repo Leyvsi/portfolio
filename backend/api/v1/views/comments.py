@@ -118,6 +118,7 @@ def report_comment(comment_id):
         reason=reason.strip()
     )
 
+    comment.reports += 1
     db.session.add(report)
     db.session.commit()
 
