@@ -17,6 +17,7 @@ class User(db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_banned = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     stories = db.relationship("Story", back_populates="author")
@@ -139,6 +140,12 @@ class Story(db.Model):
 
     theories = db.relationship(
         "Theory",
+        back_populates="story",
+        cascade="all, delete-orphan"
+    )
+
+    cold_case_updates = db.relationship(
+        "ColdCaseUpdate",
         back_populates="story",
         cascade="all, delete-orphan"
     )
@@ -419,3 +426,102 @@ class Proposal(db.Model):
         "User",
         back_populates="proposals"
     )
+
+
+class Report(db.Model):
+    """Report submitted for moderation."""
+
+    __tablename__ = "reports"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    type = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    target_id = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    reason = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    status = db.Column(
+        db.String(20),
+        default="pending",
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "type": self.type,
+            "target_id": self.target_id,
+            "reason": self.reason,
+            "status": self.status,
+            "created_at": (
+                self.created_at.isoformat()
+                if self.created_at else None
+            )
+        }
+
+
+class ColdCaseUpdate(db.Model):
+    """Update attached to a cold case story."""
+
+    __tablename__ = "cold_case_updates"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    story_id = db.Column(
+        db.Integer,
+        db.ForeignKey(
+            "stories.id",
+            name="fk_cold_case_updates_story",
+            ondelete="CASCADE"
+        ),
+        nullable=False
+    )
+
+    content = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    story = db.relationship(
+        "Story",
+        back_populates="cold_case_updates"
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "story_id": self.story_id,
+            "content": self.content,
+            "created_at": (
+                self.created_at.isoformat()
+                if self.created_at else None
+            )
+        }

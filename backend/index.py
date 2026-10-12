@@ -236,6 +236,12 @@ def login_user():
             "message": "Identifiants incorrects."
         }), 401
 
+    if user.is_banned:
+        return jsonify({
+            "status": "error",
+            "message": "Compte suspendu."
+        }), 403
+
     session.clear()
 
     session["user_id"] = user.id

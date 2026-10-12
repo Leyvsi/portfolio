@@ -2,6 +2,7 @@ import os
 from flask import jsonify, request, render_template_string
 from api.v1.views import app_views
 from api.v1.views.permissions import admin_required
+from models import db, Report, User
 
 data_store = {
     "visites": 142,
@@ -12,10 +13,7 @@ data_store = {
     ],
     "commentaires_resolus": {"1": [], "2": [], "3": []},
     "theories": {"cc1": [], "cc2": [], "cc3": []},
-    "commentaires_theories": {},
-    "updates": {"cc1": [], "cc2": [], "cc3": []},
-    "utilisateurs": ["Lupin99", "SherlockParis"],
-    "signalements": []
+    "commentaires_theories": {}
 }
 
 @app_views.route('/stats', methods=['GET'])
@@ -24,28 +22,78 @@ def get_stats():
 
 @app_views.route('/reports', methods=['POST'])
 def post_report():
-    req_data = request.get_json() or {}
-    nouveau_signalement = {
-        "type": req_data.get("type", "autre"),
-        "target_id": req_data.get("target_id", ""),
-        "reason": req_data.get("reason", "").strip()
-    }
-    data_store["signalements"].append(nouveau_signalement)
-    return jsonify({"status": "success", "report": nouveau_signalement}), 201
+    req_data = request.get_json(silent=True)
+
+    if not isinstance(req_data, dict):
+        return jsonify({
+            "status": "error",
+            "message": "Corps JSON invalide."
+        }), 400
+
+    report_type = req_data.get("type")
+    target_id = req_data.get("target_id")
+    reason = req_data.get("reason")
+
+    if (
+        not isinstance(report_type, str)
+        or not report_type.strip()
+        or not isinstance(target_id, str)
+        or not target_id.strip()
+        or not isinstance(reason, str)
+        or not reason.strip()
+    ):
+        return jsonify({
+            "status": "error",
+            "message": "type, target_id et reason sont obligatoires."
+        }), 400
+
+    report = Report(
+        type=report_type.strip(),
+        target_id=target_id.strip(),
+        reason=reason.strip()
+    )
+
+    db.session.add(report)
+    db.session.commit()
+
+    return jsonify({
+        "status": "success",
+        "report": report.to_dict()
+    }), 201
+
 
 @app_views.route('/admin/reports', methods=['GET'])
 @admin_required
 def get_admin_reports():
-    return jsonify(data_store["signalements"]), 200
+    reports = Report.query.order_by(
+        Report.created_at.desc()
+    ).all()
+
+    return jsonify([
+        report.to_dict()
+        for report in reports
+    ]), 200
+
 
 @app_views.route('/admin/users/<string:username>/ban', methods=['DELETE'])
 @admin_required
 def ban_user(username):
-    if username in data_store["utilisateurs"]:
-        data_store["utilisateurs"].remove(username)
-        data_store["signalements"] = [s for s in data_store["signalements"] if s["target_id"] != username]
-        return jsonify({"status": "success", "message": f"L'utilisateur {username} a ete banni"}), 200
-    return jsonify({"error": "User not found"}), 404
+    user = User.query.filter_by(
+        username=username
+    ).first()
+
+    if not user:
+        return jsonify({
+            "error": "User not found"
+        }), 404
+
+    user.is_banned = True
+    db.session.commit()
+
+    return jsonify({
+        "status": "success",
+        "message": f"L'utilisateur {username} a été banni"
+    }), 200
 
 @app_views.route('/swagger.json', methods=['GET'])
 def get_swagger_json():

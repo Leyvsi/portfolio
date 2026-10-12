@@ -1,7 +1,7 @@
 from flask import jsonify, session
 
 from api.v1.views import app_views
-from models import db, Story, Vote, User
+from models import db, Story, Vote, User, ColdCaseUpdate
 
 
 @app_views.route('/stories', methods=['GET'])
@@ -112,8 +112,20 @@ def post_story_vote(story_id):
 @app_views.route('/coldcases/<int:case_id>/updates', methods=['GET'])
 def get_case_updates(case_id):
     """Return updates for a cold case."""
-    from api.v1.views.index import data_store
+    story = db.session.get(Story, case_id)
 
-    return jsonify(
-        data_store["updates"].get(str(case_id), [])
-    ), 200
+    if not story:
+        return jsonify({
+            "error": "Story not found"
+        }), 404
+
+    updates = ColdCaseUpdate.query.filter_by(
+        story_id=case_id
+    ).order_by(
+        ColdCaseUpdate.created_at.asc()
+    ).all()
+
+    return jsonify([
+        update.to_dict()
+        for update in updates
+    ]), 200
