@@ -1,8 +1,11 @@
-from flask import jsonify, request, session
+from flask import jsonify, request
 
 from api.v1.views import app_views
-from api.v1.views.permissions import admin_required
-from models import db, Proposal, User
+from api.v1.views.permissions import (
+    admin_required,
+    get_authenticated_user
+)
+from models import db, Proposal
 
 
 def proposal_to_dict(proposal):
@@ -42,25 +45,13 @@ def get_proposals():
 def create_proposal():
     req_data = request.get_json(silent=True) or {}
 
-    user_id = session.get("user_id")
     title = req_data.get("title", "").strip()
     content = req_data.get("content", "").strip()
 
-    if user_id is None:
-        return jsonify({
-            "status": "error",
-            "message": "Authentification requise pour proposer une histoire."
-        }), 401
+    user, error_response = get_authenticated_user()
 
-    user = db.session.get(User, user_id)
-
-    if not user:
-        session.clear()
-
-        return jsonify({
-            "status": "error",
-            "message": "Utilisateur introuvable."
-        }), 401
+    if error_response:
+        return error_response
 
     if not title:
         return jsonify({

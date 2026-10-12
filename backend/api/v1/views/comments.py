@@ -1,7 +1,8 @@
-from flask import jsonify, request, session
+from flask import jsonify, request
 
 from api.v1.views import app_views
-from models import db, Comment, Story, User
+from api.v1.views.permissions import get_authenticated_user
+from models import db, Comment, Story, Report
 
 
 @app_views.route("/stories/<int:story_id>/comments", methods=["GET"])
@@ -28,22 +29,10 @@ def get_story_comments(story_id):
 
 @app_views.route("/stories/<int:story_id>/comments", methods=["POST"])
 def post_story_comment(story_id):
-    user_id = session.get("user_id")
+    user, error_response = get_authenticated_user()
 
-    if user_id is None:
-        return jsonify({
-            "status": "error",
-            "message": "Authentification requise pour commenter."
-        }), 401
-
-    user = db.session.get(User, user_id)
-
-    if not user:
-        session.clear()
-        return jsonify({
-            "status": "error",
-            "message": "Utilisateur introuvable."
-        }), 401
+    if error_response:
+        return error_response
 
     story = db.session.get(Story, story_id)
 
@@ -79,6 +68,11 @@ def post_story_comment(story_id):
 
 @app_views.route("/comments/<int:comment_id>/like", methods=["POST"])
 def like_comment(comment_id):
+    user, error_response = get_authenticated_user()
+
+    if error_response:
+        return error_response
+
     comment = db.session.get(Comment, comment_id)
 
     if not comment:
@@ -97,6 +91,11 @@ def like_comment(comment_id):
 
 @app_views.route("/comments/<int:comment_id>/report", methods=["POST"])
 def report_comment(comment_id):
+    user, error_response = get_authenticated_user()
+
+    if error_response:
+        return error_response
+
     comment = db.session.get(Comment, comment_id)
 
     if not comment:
@@ -104,10 +103,25 @@ def report_comment(comment_id):
             "error": "Comment not found"
         }), 404
 
-    comment.reports += 1
+    req_data = request.get_json(silent=True) or {}
+    reason = req_data.get("reason", "")
+
+    if not isinstance(reason, str) or not reason.strip():
+        return jsonify({
+            "status": "error",
+            "message": "La raison du signalement est obligatoire."
+        }), 400
+
+    report = Report(
+        type="comment",
+        target_id=str(comment.id),
+        reason=reason.strip()
+    )
+
+    db.session.add(report)
     db.session.commit()
 
     return jsonify({
         "status": "success",
-        "comment": comment.to_dict()
-    }), 200
+        "report": report.to_dict()
+    }), 201

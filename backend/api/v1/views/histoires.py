@@ -1,7 +1,8 @@
-from flask import jsonify, session
+from flask import jsonify
 
 from api.v1.views import app_views
-from models import db, Story, Vote, User, ColdCaseUpdate
+from api.v1.views.permissions import get_authenticated_user
+from models import db, Story, Vote, ColdCaseUpdate
 
 
 @app_views.route('/stories', methods=['GET'])
@@ -56,23 +57,10 @@ def get_story_by_slug(slug):
 @app_views.route('/votes/<int:story_id>', methods=['POST'])
 def post_story_vote(story_id):
     """Add one vote to a story for the authenticated user."""
-    user_id = session.get("user_id")
+    user, error_response = get_authenticated_user()
 
-    if user_id is None:
-        return jsonify({
-            "status": "error",
-            "message": "Authentification requise pour voter."
-        }), 401
-
-    user = db.session.get(User, user_id)
-
-    if not user:
-        session.clear()
-
-        return jsonify({
-            "status": "error",
-            "message": "Utilisateur introuvable."
-        }), 401
+    if error_response:
+        return error_response
 
     story = db.session.get(Story, story_id)
 

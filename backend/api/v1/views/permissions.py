@@ -5,26 +5,54 @@ from flask import jsonify, session
 from models import db, User
 
 
+def get_authenticated_user():
+    """Return the authenticated user or an API error response."""
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Authentification requise."
+            }),
+            401
+        )
+
+    user = db.session.get(User, user_id)
+
+    if not user:
+        session.clear()
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Utilisateur introuvable."
+            }),
+            401
+        )
+
+    if user.is_banned:
+        session.clear()
+
+        return None, (
+            jsonify({
+                "status": "error",
+                "message": "Compte suspendu."
+            }),
+            403
+        )
+
+    return user, None
+
+
 def admin_required(view_function):
     """Allow access only to authenticated administrators."""
     @wraps(view_function)
     def wrapped_view(*args, **kwargs):
-        user_id = session.get("user_id")
+        user, error_response = get_authenticated_user()
 
-        if user_id is None:
-            return jsonify({
-                "status": "error",
-                "message": "Authentification requise."
-            }), 401
-
-        user = db.session.get(User, user_id)
-
-        if not user:
-            session.clear()
-            return jsonify({
-                "status": "error",
-                "message": "Utilisateur introuvable."
-            }), 401
+        if error_response:
+            return error_response
 
         if not user.is_admin:
             return jsonify({

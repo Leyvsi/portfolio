@@ -8,7 +8,8 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 
 from api.v1.views import app_views
-from models import db, User, Comment
+from api.v1.views.permissions import get_authenticated_user
+from models import db, User, Comment, Report
 
 
 load_dotenv()
@@ -192,9 +193,7 @@ def get_stats():
         user_count = User.query.count()
         comment_count = Comment.query.count()
 
-        reported_count = Comment.query.filter(
-            Comment.reports > 0
-        ).count()
+        reported_count = Report.query.count()
 
         return jsonify({
             "users": user_count,
@@ -267,23 +266,10 @@ def login_user():
 # Return the currently authenticated user
 @app.route("/api/v1/me", methods=["GET"])
 def get_current_user():
-    user_id = session.get("user_id")
+    user, error_response = get_authenticated_user()
 
-    if user_id is None:
-        return jsonify({
-            "status": "error",
-            "message": "Utilisateur non connecté."
-        }), 401
-
-    user = db.session.get(User, user_id)
-
-    if not user:
-        session.clear()
-
-        return jsonify({
-            "status": "error",
-            "message": "Utilisateur introuvable."
-        }), 401
+    if error_response:
+        return error_response
 
     csrf_token = get_csrf_token()
 
