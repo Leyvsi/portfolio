@@ -1,7 +1,8 @@
-from flask import jsonify, request, session
+from flask import jsonify, request
 
 from api.v1.views import app_views
-from models import db, Theory, Story, User
+from api.v1.views.permissions import get_authenticated_user
+from models import db, Theory, Story
 
 
 def theory_to_dict(theory):
@@ -52,22 +53,10 @@ def get_theories(story_id):
 )
 def post_theory(story_id):
     """Create a theory for one story."""
-    user_id = session.get("user_id")
+    user, error_response = get_authenticated_user()
 
-    if user_id is None:
-        return jsonify({
-            "status": "error",
-            "message": "Authentification requise pour publier une theorie."
-        }), 401
-
-    user = db.session.get(User, user_id)
-
-    if not user:
-        session.clear()
-        return jsonify({
-            "status": "error",
-            "message": "Utilisateur introuvable."
-        }), 401
+    if error_response:
+        return error_response
 
     story = db.session.get(Story, story_id)
 
@@ -113,6 +102,11 @@ def post_theory(story_id):
 )
 def like_theory(theory_id):
     """Add one like to a theory."""
+    user, error_response = get_authenticated_user()
+
+    if error_response:
+        return error_response
+
     theory = db.session.get(Theory, theory_id)
 
     if not theory:

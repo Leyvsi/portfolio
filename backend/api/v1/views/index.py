@@ -16,10 +16,6 @@ data_store = {
     "commentaires_theories": {}
 }
 
-@app_views.route('/stats', methods=['GET'])
-def get_stats():
-    return jsonify({"visits": data_store["visites"]}), 200
-
 @app_views.route('/reports', methods=['POST'])
 def post_report():
     req_data = request.get_json(silent=True)
