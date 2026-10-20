@@ -280,11 +280,6 @@ class Comment(db.Model):
         nullable=False
     )
 
-    reports = db.Column(
-        db.Integer,
-        default=0,
-        nullable=False
-    )
 
     created_at = db.Column(
         db.DateTime,
@@ -310,7 +305,6 @@ class Comment(db.Model):
             "username": self.username,
             "text": self.text,
             "likes": self.likes,
-            "reports": self.reports,
             "created_at": (
                 self.created_at.isoformat()
                 if self.created_at else None
