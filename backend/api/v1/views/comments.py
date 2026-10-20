@@ -5,6 +5,17 @@ from api.v1.views.permissions import get_authenticated_user
 from models import db, Comment, Story, Report
 
 
+def comment_to_dict(comment):
+    data = comment.to_dict()
+
+    data["reports"] = Report.query.filter_by(
+        type="comment",
+        target_id=str(comment.id)
+    ).count()
+
+    return data
+
+
 @app_views.route("/stories/<int:story_id>/comments", methods=["GET"])
 def get_story_comments(story_id):
     story = db.session.get(Story, story_id)
@@ -22,7 +33,7 @@ def get_story_comments(story_id):
     )
 
     return jsonify([
-        comment.to_dict()
+        comment_to_dict(comment)
         for comment in comments
     ]), 200
 
@@ -62,7 +73,7 @@ def post_story_comment(story_id):
 
     return jsonify({
         "status": "success",
-        "comment": new_comment.to_dict()
+        "comment": comment_to_dict(new_comment)
     }), 201
 
 
@@ -85,7 +96,7 @@ def like_comment(comment_id):
 
     return jsonify({
         "status": "success",
-        "comment": comment.to_dict()
+        "comment": comment_to_dict(comment)
     }), 200
 
 
@@ -118,7 +129,6 @@ def report_comment(comment_id):
         reason=reason.strip()
     )
 
-    comment.reports += 1
     db.session.add(report)
     db.session.commit()
 
