@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from flask_migrate import Migrate
+from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.exceptions import HTTPException
 
 from api.v1.views import app_views
 from api.v1.views.permissions import get_authenticated_user
@@ -171,8 +173,12 @@ def protect_session_requests_from_csrf():
     received_token = request.headers.get("X-CSRF-Token")
 
     if (
-        not expected_token
-        or not received_token
+        not isinstance(expected_token, str)
+        or not isinstance(received_token, str)
+        or not expected_token.strip()
+        or not received_token.strip()
+        or not expected_token.isascii()
+        or not received_token.isascii()
         or not secrets.compare_digest(
             expected_token,
             received_token
@@ -186,13 +192,35 @@ def protect_session_requests_from_csrf():
     return None
 
 
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "status": "error",
+        "message": "Not found"
+    }), 404
+
+
+@app.errorhandler(HTTPException)
+def handle_api_http_error(error):
+    """Normalize framework API errors while preserving their HTTP headers."""
+    if request.path != "/api/v1" and not request.path.startswith("/api/v1/"):
+        return error
+
+    response = error.get_response()
+    response.set_data(app.json.dumps({
+        "status": "error",
+        "message": error.name
+    }))
+    response.content_type = "application/json"
+    return response
+
+
 # Application statistics
 @app.route("/api/v1/stats", methods=["GET"])
 def get_stats():
     try:
         user_count = User.query.count()
         comment_count = Comment.query.count()
-
         reported_count = Report.query.count()
 
         return jsonify({
@@ -201,25 +229,40 @@ def get_stats():
             "reports": reported_count
         }), 200
 
-    except Exception as error:
-        print(f"[ERROR] Stats: {error}")
-
+    except SQLAlchemyError:
+        db.session.rollback()
         return jsonify({
-            "users": 0,
-            "comments": 0,
-            "reports": 0
+            "status": "error",
+            "message": "Statistics unavailable"
         }), 500
 
 
 # User login
 @app.route("/api/v1/login", methods=["POST"])
 def login_user():
-    req_data = request.get_json(silent=True) or {}
+    req_data = request.get_json(silent=True)
+    if not isinstance(req_data, dict):
+        req_data = {}
 
-    username = req_data.get("username", "").strip()
-    password = req_data.get("password", "")
+    username = req_data.get("username")
+    password = req_data.get("password")
 
-    if not username or not password:
+    if (
+        not isinstance(username, str)
+        or not isinstance(password, str)
+        or not username.strip()
+        or not password
+    ):
+        return jsonify({
+            "status": "error",
+            "message": "Identifiant et mot de passe obligatoires."
+        }), 400
+
+    username = username.strip()
+    try:
+        username.encode("utf-8")
+        password.encode("utf-8")
+    except UnicodeEncodeError:
         return jsonify({
             "status": "error",
             "message": "Identifiant et mot de passe obligatoires."

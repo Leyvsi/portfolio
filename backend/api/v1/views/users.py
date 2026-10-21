@@ -1,9 +1,11 @@
-from flask import jsonify, request
+from flask import jsonify, session
 import re
 
 from api.v1.views import app_views
-from api.v1.views.permissions import admin_required
+from api.v1.views.permissions import admin_required, get_authenticated_user
 from models import db, User
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from api.v1.views.write_support import api_error, json_object, required_text, is_unique_conflict
 
 
 def is_valid_password(password):
@@ -36,46 +38,64 @@ def get_users():
 
 @app_views.route('/users', methods=['POST'])
 def register_user():
-    """Create a new user."""
-    req_data = request.get_json() or {}
+    """Create a new user; passwords are preserved exactly as supplied."""
+    if session.get("user_id") is not None:
+        user, error_response = get_authenticated_user()
+        if error_response:
+            return error_response
 
-    username = req_data.get('username', '').strip()
-    email = req_data.get('email', '').strip()
-    password = req_data.get('password', '')
+    req_data, error_response = json_object()
+    if error_response:
+        return error_response
 
-    if not username or not email or not password:
-        return jsonify({"error": "Champs manquants"}), 400
+    username, error_response = required_text(req_data, "username", max_length=100)
+    if error_response:
+        return error_response
+    email, error_response = required_text(req_data, "email", max_length=150)
+    if error_response:
+        return error_response
+    password, error_response = required_text(
+        req_data, "password", max_length=50, trim=False
+    )
+    if error_response:
+        return error_response
+
+    email_pattern = r"[A-Za-z0-9.!#$%&'*+/=?^_\x60{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)+"
+    local_part = email.partition("@")[0]
+    if (
+        not re.fullmatch(email_pattern, email)
+        or len(local_part) > 64
+        or local_part.startswith(".")
+        or local_part.endswith(".")
+        or ".." in local_part
+        or any(len(label) > 63 for label in email.partition("@")[2].split("."))
+    ):
+        return api_error("Adresse email invalide.")
 
     if not is_valid_password(password):
-        return jsonify({
-            "error": "Le mot de passe ne respecte pas les critères de sécurité"
-        }), 400
+        return api_error("Le mot de passe ne respecte pas les criteres de securite.")
 
-    existing_username = User.query.filter_by(username=username).first()
+    if User.query.filter_by(username=username).first():
+        return api_error("Cet utilisateur existe deja.")
+    if User.query.filter_by(email=email).first():
+        return api_error("Cette adresse email est deja utilisee.")
 
-    if existing_username:
-        return jsonify({
-            "error": "Cet utilisateur existe déjà"
-        }), 400
-
-    existing_email = User.query.filter_by(email=email).first()
-
-    if existing_email:
-        return jsonify({
-            "error": "Cette adresse email est déjà utilisée"
-        }), 400
-
-    new_user = User(
-        username=username,
-        email=email
-    )
-
+    new_user = User(username=username, email=email)
     new_user.set_password(password)
 
-    db.session.add(new_user)
-    db.session.commit()
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+    except IntegrityError as error:
+        db.session.rollback()
+        if is_unique_conflict(
+            error, mysql_keys={"username", "email"},
+            sqlite_columns={frozenset({"users.username"}), frozenset({"users.email"})}
+        ):
+            return api_error("Cet utilisateur ou cette adresse email existe deja.")
+        return api_error("Impossible de creer l'utilisateur.", 500)
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible de creer l'utilisateur.", 500)
 
-    return jsonify({
-        "status": "success",
-        "user": new_user.to_dict()
-    }), 201
+    return jsonify({"status": "success", "user": new_user.to_dict()}), 201

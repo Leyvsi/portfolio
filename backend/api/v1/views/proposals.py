@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify
 
 from api.v1.views import app_views
 from api.v1.views.permissions import (
@@ -6,6 +6,8 @@ from api.v1.views.permissions import (
     get_authenticated_user
 )
 from models import db, Proposal
+from sqlalchemy.exc import SQLAlchemyError
+from api.v1.views.write_support import api_error, json_object, required_text
 
 
 def proposal_to_dict(proposal):
@@ -43,25 +45,24 @@ def get_proposals():
 
 @app_views.route("/proposals", methods=["POST"])
 def create_proposal():
-    req_data = request.get_json(silent=True) or {}
-
-    title = req_data.get("title", "").strip()
-    content = req_data.get("content", "").strip()
-
     user, error_response = get_authenticated_user()
 
     if error_response:
         return error_response
 
-    if not title:
-        return jsonify({
-            "error": "Le titre est obligatoire"
-        }), 400
+    req_data, error_response = json_object()
+    if error_response:
+        return error_response
 
-    if not content:
-        return jsonify({
-            "error": "Le contenu est obligatoire"
-        }), 400
+    title, error_response = required_text(
+        req_data, "title", max_length=Proposal.title.type.length
+    )
+    if error_response:
+        return error_response
+
+    content, error_response = required_text(req_data, "content", text_column=True)
+    if error_response:
+        return error_response
 
     new_proposal = Proposal(
         user_id=user.id,
@@ -70,8 +71,12 @@ def create_proposal():
         status="pending"
     )
 
-    db.session.add(new_proposal)
-    db.session.commit()
+    try:
+        db.session.add(new_proposal)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible de creer la proposition.", 500)
 
     return jsonify({
         "status": "success",
