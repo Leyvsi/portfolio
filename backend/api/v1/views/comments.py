@@ -1,8 +1,11 @@
-from flask import jsonify, request
+from flask import jsonify
 
 from api.v1.views import app_views
 from api.v1.views.permissions import get_authenticated_user
 from models import db, Comment, Story, Report
+from sqlalchemy import update
+from sqlalchemy.exc import SQLAlchemyError
+from api.v1.views.write_support import api_error, get_resource, json_object, required_text
 
 
 def comment_to_dict(comment):
@@ -45,21 +48,20 @@ def post_story_comment(story_id):
     if error_response:
         return error_response
 
-    story = db.session.get(Story, story_id)
+    story = get_resource(Story, story_id)
 
     if not story:
         return jsonify({
             "error": "Story not found"
         }), 404
 
-    req_data = request.get_json(silent=True) or {}
+    req_data, error_response = json_object()
+    if error_response:
+        return error_response
 
-    text = req_data.get("text", "").strip()
-
-    if not text:
-        return jsonify({
-            "error": "Comment text is required"
-        }), 400
+    text, error_response = required_text(req_data, "text", text_column=True)
+    if error_response:
+        return error_response
 
     new_comment = Comment(
         story_id=story_id,
@@ -68,8 +70,12 @@ def post_story_comment(story_id):
         text=text
     )
 
-    db.session.add(new_comment)
-    db.session.commit()
+    try:
+        db.session.add(new_comment)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible de creer le commentaire.", 500)
 
     return jsonify({
         "status": "success",
@@ -84,19 +90,34 @@ def like_comment(comment_id):
     if error_response:
         return error_response
 
-    comment = db.session.get(Comment, comment_id)
+    comment = get_resource(Comment, comment_id)
 
     if not comment:
         return jsonify({
             "error": "Comment not found"
         }), 404
 
-    comment.likes += 1
-    db.session.commit()
+    try:
+        # Increment in SQL to avoid overwriting concurrent likes.
+        result = db.session.execute(
+            update(Comment)
+            .where(Comment.id == comment.id)
+            .values(likes=Comment.likes + 1)
+            .execution_options(synchronize_session=False)
+        )
+        if result.rowcount == 0:
+            db.session.rollback()
+            return jsonify({"error": "Comment not found"}), 404
+        db.session.refresh(comment)
+        payload = comment_to_dict(comment)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible d'enregistrer le like.", 500)
 
     return jsonify({
         "status": "success",
-        "comment": comment_to_dict(comment)
+        "comment": payload
     }), 200
 
 
@@ -107,30 +128,35 @@ def report_comment(comment_id):
     if error_response:
         return error_response
 
-    comment = db.session.get(Comment, comment_id)
+    comment = get_resource(Comment, comment_id)
 
     if not comment:
         return jsonify({
             "error": "Comment not found"
         }), 404
 
-    req_data = request.get_json(silent=True) or {}
-    reason = req_data.get("reason", "")
+    req_data, error_response = json_object()
+    if error_response:
+        return error_response
 
-    if not isinstance(reason, str) or not reason.strip():
-        return jsonify({
-            "status": "error",
-            "message": "La raison du signalement est obligatoire."
-        }), 400
+    reason, error_response = required_text(
+        req_data, "reason", text_column=True
+    )
+    if error_response:
+        return error_response
 
     report = Report(
         type="comment",
         target_id=str(comment.id),
-        reason=reason.strip()
+        reason=reason
     )
 
-    db.session.add(report)
-    db.session.commit()
+    try:
+        db.session.add(report)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible de signaler le commentaire.", 500)
 
     return jsonify({
         "status": "success",

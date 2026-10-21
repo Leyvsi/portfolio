@@ -1,8 +1,11 @@
-from flask import jsonify, request
+from flask import jsonify
 
 from api.v1.views import app_views
 from api.v1.views.permissions import get_authenticated_user
 from models import db, Theory, Story
+from sqlalchemy import update
+from sqlalchemy.exc import SQLAlchemyError
+from api.v1.views.write_support import api_error, get_resource, json_object, required_text
 
 
 def theory_to_dict(theory):
@@ -58,27 +61,26 @@ def post_theory(story_id):
     if error_response:
         return error_response
 
-    story = db.session.get(Story, story_id)
+    story = get_resource(Story, story_id)
 
     if not story:
         return jsonify({
             "error": "Story not found"
         }), 404
 
-    req_data = request.get_json(silent=True) or {}
+    req_data, error_response = json_object()
+    if error_response:
+        return error_response
 
-    title = req_data.get("title", "").strip()
-    content = req_data.get("content", "").strip()
+    title, error_response = required_text(
+        req_data, "title", max_length=Theory.title.type.length
+    )
+    if error_response:
+        return error_response
 
-    if not title:
-        return jsonify({
-            "error": "Theory title is required"
-        }), 400
-
-    if not content:
-        return jsonify({
-            "error": "Theory content is required"
-        }), 400
+    content, error_response = required_text(req_data, "content", text_column=True)
+    if error_response:
+        return error_response
 
     new_theory = Theory(
         story_id=story_id,
@@ -87,8 +89,12 @@ def post_theory(story_id):
         content=content
     )
 
-    db.session.add(new_theory)
-    db.session.commit()
+    try:
+        db.session.add(new_theory)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible de creer la theorie.", 500)
 
     return jsonify({
         "status": "success",
@@ -107,17 +113,32 @@ def like_theory(theory_id):
     if error_response:
         return error_response
 
-    theory = db.session.get(Theory, theory_id)
+    theory = get_resource(Theory, theory_id)
 
     if not theory:
         return jsonify({
             "error": "Theory not found"
         }), 404
 
-    theory.likes += 1
-    db.session.commit()
+    try:
+        # Increment in SQL to avoid overwriting concurrent likes.
+        result = db.session.execute(
+            update(Theory)
+            .where(Theory.id == theory.id)
+            .values(likes=Theory.likes + 1)
+            .execution_options(synchronize_session=False)
+        )
+        if result.rowcount == 0:
+            db.session.rollback()
+            return jsonify({"error": "Theory not found"}), 404
+        db.session.refresh(theory)
+        payload = theory_to_dict(theory)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible d'enregistrer le like.", 500)
 
     return jsonify({
         "status": "success",
-        "theory": theory_to_dict(theory)
+        "theory": payload
     }), 200

@@ -1,12 +1,19 @@
 import os
 from flask import jsonify, request, render_template_string
 from api.v1.views import app_views
-from api.v1.views.permissions import admin_required
-from models import db, Report, User
+from api.v1.views.permissions import admin_required, get_authenticated_user
+from models import db, Report, User, Comment
+from sqlalchemy.exc import SQLAlchemyError
+from api.v1.views.write_support import api_error
 
 
 @app_views.route('/reports', methods=['POST'])
 def post_report():
+    user, error_response = get_authenticated_user()
+
+    if error_response:
+        return error_response
+
     req_data = request.get_json(silent=True)
 
     if not isinstance(req_data, dict):
@@ -15,31 +22,65 @@ def post_report():
             "message": "Corps JSON invalide."
         }), 400
 
-    report_type = req_data.get("type")
-    target_id = req_data.get("target_id")
-    reason = req_data.get("reason")
+    values = {}
+    for field in ("type", "target_id", "reason"):
+        value = req_data.get(field)
+        if not isinstance(value, str) or not value.strip():
+            return jsonify({
+                "status": "error",
+                "message": "type, target_id et reason doivent etre des chaines non vides."
+            }), 400
+        values[field] = value.strip()
 
+    target_models = {"comment": Comment}
+    target_model = target_models.get(values["type"])
+    if target_model is None:
+        return jsonify({
+            "status": "error",
+            "message": "Type de signalement non pris en charge."
+        }), 400
+
+    target_id = values["target_id"]
+    target_digits = target_id.lstrip("0")
     if (
-        not isinstance(report_type, str)
-        or not report_type.strip()
-        or not isinstance(target_id, str)
-        or not target_id.strip()
-        or not isinstance(reason, str)
-        or not reason.strip()
+        not target_id.isascii()
+        or not target_id.isdecimal()
+        or not target_digits
+        or len(target_digits) > 10
     ):
         return jsonify({
             "status": "error",
-            "message": "type, target_id et reason sont obligatoires."
+            "message": "target_id doit etre un entier positif valide."
         }), 400
 
+    target_value = int(target_digits)
+    if target_value > 2147483647:
+        return jsonify({
+            "status": "error",
+            "message": "target_id doit etre un entier positif valide."
+        }), 400
+
+    if db.session.get(target_model, target_value) is None:
+        return jsonify({
+            "status": "error",
+            "message": "Cible du signalement introuvable."
+        }), 404
+
     report = Report(
-        type=report_type.strip(),
-        target_id=target_id.strip(),
-        reason=reason.strip()
+        type=values["type"],
+        target_id=str(target_value),
+        reason=values["reason"]
     )
 
-    db.session.add(report)
-    db.session.commit()
+    try:
+        db.session.add(report)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({
+            "status": "error",
+            "message": "Impossible d'enregistrer le signalement."
+        }), 500
 
     return jsonify({
         "status": "success",
@@ -72,8 +113,12 @@ def ban_user(username):
             "error": "User not found"
         }), 404
 
-    user.is_banned = True
-    db.session.commit()
+    try:
+        user.is_banned = True
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible de bannir l'utilisateur.", 500)
 
     return jsonify({
         "status": "success",

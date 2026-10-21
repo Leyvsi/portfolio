@@ -3,6 +3,8 @@ from flask import jsonify
 from api.v1.views import app_views
 from api.v1.views.permissions import get_authenticated_user
 from models import db, Story, Vote, ColdCaseUpdate
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from api.v1.views.write_support import api_error, get_resource, is_unique_conflict
 
 
 @app_views.route('/stories', methods=['GET'])
@@ -62,7 +64,7 @@ def post_story_vote(story_id):
     if error_response:
         return error_response
 
-    story = db.session.get(Story, story_id)
+    story = get_resource(Story, story_id)
 
     if not story:
         return jsonify({
@@ -84,8 +86,20 @@ def post_story_vote(story_id):
         user_id=user.id
     )
 
-    db.session.add(new_vote)
-    db.session.commit()
+    try:
+        db.session.add(new_vote)
+        db.session.commit()
+    except IntegrityError as error:
+        db.session.rollback()
+        if is_unique_conflict(
+            error, mysql_keys={"unique_user_story_vote"},
+            sqlite_columns={frozenset({"votes.user_id", "votes.story_id"})},
+        ):
+            return jsonify({"error": "Vous avez déjà voté pour cette histoire"}), 409
+        return api_error("Impossible d'enregistrer le vote.", 500)
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible d'enregistrer le vote.", 500)
 
     vote_count = Vote.query.filter_by(
         story_id=story_id
