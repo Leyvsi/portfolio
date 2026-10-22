@@ -1,107 +1,48 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Administration</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-    <!-- Simple English comment: Video background layout matching other login routes -->
-    <div class="video-container">
-        <video autoplay loop muted playsinline id="bg-video">
-            <source src="background.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
-
-    <header class="main-header" style="z-index: 1;">
-        <div class="header-spacer"></div>
-        <h1>Les Petits Enquêteurs</h1>
-        <div></div>
-    </header>
-
-    <main class="content-section" style="padding-top: 50px; z-index: 1;">
-        <div class="login-card">
-            <div id="feedback-alert" class="alert-box"></div>
-
-            <h2 class="login-title">Connexion Administration</h2>
-
-            <form id="admin-login-form" class="form-container" onsubmit="handleAdminLogin(event)">
-                <div class="input-group">
-                    <label for="admin-username">Identifiant Privé *</label>
-                    <input type="text" id="admin-username" placeholder="Entrez votre identifiant" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="admin-password">Mot de passe *</label>
-                    <input type="password" id="admin-password" placeholder="••••••••" required>
-                </div>
-
-                <button type="submit" class="btn-submit-pill">Accéder au Panel</button>
-            </form>
-
-            <div class="bottom-links" style="justify-content: center;">
-                <a href="connexion.html" style="color: #f39c12; font-weight: bold;">← Retour connexion standard</a>
-            </div>
-        </div>
-
-        <div class="back-home-container">
-            <a href="index.html" class="back-home-link">← Retour à l'accueil</a>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
-
-    <script>
-        const alertBox = document.getElementById('feedback-alert');
-
-        function showAlert(message, type) {
-            alertBox.style.display = 'block';
-            alertBox.innerText = message;
-            alertBox.className = `alert-box alert-${type}`;
-            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
-        }
-
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('admin-username').value.trim();
-            const password = document.getElementById('admin-password').value;
-
-            // Simple English comment: Fetch authentication using the secure login route
-            fetch('http://127.0.0.1:5000/api/v1/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            })
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(err => { throw new Error(err.message || "Identifiants incorrects."); });
-                }
-                return res.json();
-            })
-            .then(data => {
-                if (data.status === 'success') {
-                    // Check if the user has administrative privileges
-                    if (data.is_admin) {
-                        localStorage.setItem('username', data.username);
-                        localStorage.setItem('is_admin', data.is_admin);
-                        showAlert("Accès autorisé ! Redirection vers le tableau de bord...", "success");
-                        setTimeout(() => { window.location.href = "./admin-dashboard.html"; }, 1500);
-                    } else {
-                        showAlert("Accès refusé. Cette zone est réservée exclusivement aux administrateurs.", "error");
-                    }
-                } else {
-                    showAlert(data.message, "error");
-                }
-            })
-            .catch(error => {
-                showAlert(error.message || "Impossible de joindre le serveur d'authentification.", "error");
-            });
-        }
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Connexion administrateur — Les Petits Enquêteurs</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<header class="header">
+			<div class="top">
+				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
+				<a class="outline" href="connexion.html">Connexion</a>
+			</div>
+			<nav class="nav" aria-label="Navigation principale">
+				<a href="index.html">Accueil</a>
+				<a href="histoires.html">Histoires</a>
+				<a href="coldcases.html">Cold Cases</a>
+				<a href="theories.html">Analyse & Théories</a>
+				<a href="proposer-histoire.html">Proposer une histoire</a>
+			</nav>
+		</header>
+		<main>
+			<section class="section narrow">
+				<div class="panel">
+					<p class="eyebrow">ADMINISTRATION</p>
+					<h1>Connexion administrateur</h1>
+					<p>Maquette uniquement : ce formulaire ne vérifie aucun identifiant.</p>
+					<form class="demo-form">
+						<label for="email">Adresse e-mail</label>
+						<input id="email" type="email" required>
+						<label for="password">Mot de passe</label>
+						<input id="password" type="password" required>
+						<button class="btn" type="submit">Connexion (démo)</button>
+						<p class="feedback" aria-live="polite"></p>
+					</form>
+					<p><a href="admin-dashboard.html">Voir la maquette du tableau de bord →</a></p>
+				</div>
+			</section>
+		</main>
+		<footer>
+			Les Petits Enquêteurs · Projet frontend de démonstration · Aucune connexion à une base de données
+			<a href="admin-connexion.html">Administration</a>
+		</footer>
+		<script src="donnees.js"></script>
+		<script src="app.js"></script>
+	</body>
 </html>

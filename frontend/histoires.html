@@ -1,344 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Histoires — Les Petits Enquêteurs</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-    <header class="main-header">
-        <h1>Les Petits Enquêteurs</h1>
-        <div id="auth-buttons-container">
-            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
-        </div>
-    </header>
-
-    <nav>
-        <ul class="navbar">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="histoires.html" class="active">Les Histoires</a></li>
-            <li><a href="coldscases.html">Les Colds Cases</a></li>
-            <li><a href="updates.html">Les Updates</a></li>
-            <li><a href="theories.html">Les Théories</a></li>
-            <li><a href="top-dossiers.html">Top Dossiers</a></li>
-        </ul>
-    </nav>
-
-    <main class="content-section">
-        <div id="navigation-context">
-            <h2>Affaires Criminelles Résolues</h2>
-            <p>Plongez au cœur des rapports complets et découvrez comment la justice et la science ont fini par faire éclater la vérité sur de grands dossiers récents.</p>
-        </div>
-        
-        <div id="stories-container"></div>
-    </main>
-
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
-
-    <script>
-        const container = document.getElementById('stories-container');
-        const navContext = document.getElementById('navigation-context');
-        const currentUser = localStorage.getItem('username') || 'Anonyme';
-        
-        // Simple English comment: Database updated with stable, local image file paths
-        const storiesData = [
-            {
-                id: "h1",
-                title: "Chapitre I : L'Ombre du Golden State Killer (1976 - 2018)",
-                summary: "L'analyse complète de la traque de Joseph James DeAngelo : de ses traumatismes d'enfance à sa chute finale par la généalogie génétique.",
-                image: "images/deangelo_main.jpg",
-                gallery: [
-                    { url: "images/deangelo_mugshot.jpg", label: "Cliché officiel d'identité judiciaire de DeAngelo" },
-                    { url: "images/deangelo_composite.jpg", label: "Portrait-robot officiel de recherche du FBI" },
-                    { url: "images/deangelo_wanted.jpg", label: "Affiche de recherche officielle publiée en Californie" }
-                ],
-                content: `
-                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 L'ENFANCE ET LA JEUNESSE DE JOSEPH DEANGELO</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Né en 1945 dans l'État de New York, Joseph James DeAngelo Jr. grandit dans une famille marquée par l'instabilité et la violence. Son père, un militaire sévère et violent, abuse régulièrement de son autorité. À l'adolescence, suite au divorce de ses parents, il s'installe en Californie avec sa maman. Sa scolarité à la Folsom High School se déroule sans éclat majeur ; il y est décrit comme un garçon solitaire, renfermé, accumulant une rancœur silencieuse. En 1964, il s'engage dans la Navy et sert durant la guerre du Vietnam à bord du destroyer USS Canberra, un milieu où il perfectionne son sang-froid et sa maîtrise des situations de stress intense. À son retour, il s'inscrit en criminologie à l'université d'État de Sacramento et obtient son diplôme, avant de décrocher un poste d'officier de police à Exeter en 1973.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🕒 AVANT LE DRAME : LA DOUBLE VIE ET LES REpÉRAGES</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">DeAngelo se marie en 1973 avec Sharon Huddle, une avocate. Ses proches le décrivent alors comme un voisin exigeant, sujet à de violents accès de colère pour des futilités, mais personne ne soupçonne son obsession nocturne. Utilisant son badge de policier comme couverture idéale, il arpente les nouveaux lotissements de Sacramento. Il s'introduit en secret dans les maisons pendant la journée, déverrouille des loquets de fenêtres, cache des cordes ou des armes sous les lits, et étudie les habitudes quotidiennes des résidents grâce aux lignes téléphoniques qu'il coupe parfois au préalable.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">💀 LE DÉROULEMENT DU RITUEL ET LES MEURTRES</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Son mode opératoire frise la folie clinique. Cagoulé, une lampe torche aveuglante à la main, il réveille ses victimes en murmurant des menaces de mort. Pour neutraliser les couples, il ligote l'homme avec une méthode de nœud unique apprise dans la Navy. Il pose ensuite des assiettes en équilibre sur le dos de l'homme, le menaçant de tuer tout le monde s'il entend le moindre bruit de vaisselle brisée pendant qu'il agresse sa compagne dans la pièce voisine. En migrant vers le sud de la Californie à la fin des années 70, il franchit un cap : il supprime systématiquement tous les témoins. Ses victimes sont abattues par arme à feu ou sauvagement battues à mort à l'aide d'outils trouvés sur place.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🎙️ INTERROGATOIRE ET CHUTE</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Pendant des décennies, le dossier piétine. C'est en 2018 que l'inspecteur Paul Holes utilise pour la première fois la généalogie génétique en comparant l'ADN inconnu des scènes de crime avec les profils d'utilisateurs sur le site public GEDmatch. La découverte d'un cousin éloigné permet de reconstituer l'arbre généalogique jusqu'à Joseph DeAngelo. Arrêté à son domicile de Citrus Heights alors qu'il s'apprêtait à faire cuire un rôti, il est placé en salle d'interrogatoire. Face aux preuves ADN irréfutables prélevées discrètement sur sa voiture, il feint la confusion mentale, murmurant qu'une force interne nommée 'Jerry' l'a poussé à agir durant sa jeunesse. Les enquêteurs ne croient pas à cette défense de dissociation psychologique.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">⚖️ LE PROCÈS ET LE VERDICT HISTORIQUE</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">En août 2020, pour s'éviter une condamnation à la peine de mort, DeAngelo plaide coupable de 13 meurtres et admet des dizaines d'agressions prescrites. Le procès offre une tribune bouleversante aux survivants et aux familles des victimes qui défilent à la barre pour exprimer leur douleur face à ce vieillard affalé dans un fauteuil roulant. Il est condamné à <strong>11 peines consécutives de prison à perpétuité, sans aucune possibilité de libération conditionnelle</strong>.</p>
-                `,
-                sources: [
-                    { label: "Squeezie — Ce tueur a nargué la police pendant 40 ans (Golden State Killer)", url: "https://www.youtube.com/watch?v=yYfG79q7t_0" },
-                    { label: "Mcskyz — L'Affaire du Golden State Killer (Le policier sadique)", url: "https://www.youtube.com/watch?v=hO3XpM882N0" },
-                    { label: "Rapport d'enquête officiel et dépositions - Archives du FBI", url: "https://www.fbi.gov/history/famous-cases/golden-state-killer" }
-                ],
-                testimonies: [
-                    { role: "Gay Hardwick (Survivante de l'attaque de 1978)", text: "« Il nous a répété pendant des heures que si les assiettes sur le dos de mon mari bougeaient, il nous couperait la gorge. Cette vaisselle est restée gravée dans mes cauchemars pendant quarante ans. »" },
-                    { role: "Sharon Huddle (Ex-épouse, lors des auditions préliminaires)", text: "« J'ai vécu avec un homme qui semblait juste maniaque et colérique. Découvrir que le monstre recherché par tout le pays dormait à mes côtés a détruit ma perception de la réalité. »" }
-                ]
-            },
-            {
-                id: "h2",
-                title: "Chapitre II : Le Masque de Chris Watts (L'Infanticide du Colorado)",
-                summary: "L'analyse chirurgicale du triple meurtre commis par Chris Watts sur sa femme Shanann et ses enfants Bella et Celeste en août 2018.",
-                image: "images/watts_main.jpg",
-                gallery: [
-                    { url: "images/watts_mugshot.jpg", label: "Cliché d'identité judiciaire officiel de Chris Watts" },
-                    { url: "images/watts_family.jpg", label: "Shanann, Bella et Celeste Watts (Photo de famille)" },
-                    { url: "images/watts_site.jpg", label: "Le site pétrolier Anadarko où les corps ont été retrouvés" }
-                ],
-                content: `
-                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 RENCONTRE ET APPARENCE DE BONHEUR</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Chris Watts rencontre Shanann Rzucek en 2010 sur Facebook alors qu'elle traverse une phase difficile, luttant contre un lupus agressif. Shanann, une femme dynamique originaire de Caroline du Nord, trouve en Chris un homme calme, attentionné, presque timide, qui l'aide à surmonter sa maladie. Ils se marient en 2012 et déménagent dans une immense maison à Frederick, dans le Colorado. Shanann travaille dans la vente directe et documente chaque instant de leur vie de famille parfaite sur les réseaux sociaux. Derrière les sourires virtuels se cache pourtant une crise financière aiguë : le couple accumule des dettes massives et frôle la faillite.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🕒 LA GLISSADE : LA RENCONTRE DE NICHOL KESSINGER</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Au cours de l'été 2018, alors que Shanann est partie en vacances pendant six semaines chez ses parents avec leurs filles Bella (4 ans) et Celeste (3 ans), Chris reste seul pour travailler chez Anadarko Petroleum. Il y entame une liaison passionnée avec Nichol Kessinger, une collègue géologue. Nichol le croit en instance de divorce. Pour la première fois de sa vie, Chris expérimente une liberté totale et commence à voir sa propre famille comme un fardeau financier et émotionnel insupportable dont il doit se libérer pour réinventer sa vie.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">💀 LE DÉROULEMENT DU DRAME DU 13 AOÛT 2018</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Shanann rentre d'un voyage d'affaires à 2h00 du matin. Une explication houleuse éclate dans leur chambre conjugale. Chris refuse d'assumer la confrontation et étrangle Shanann à mains nues alors qu'elle est enceinte de 15 semaines. Le drame prend une tournure encore plus horrible lorsque Bella et Celeste se réveillent. Chris charge le corps inanimé de Shanann à l'arrière de son pick-up professionnel et force les deux fillettes, terrorisées, à monter à bord. Il conduit pendant 45 minutes vers un site pétrolier isolé de son entreprise. Sur place, il étouffe Celeste sous les yeux de sa sœur aînée avant de jeter son corps dans une cuve de pétrole brut. Il s'en prend ensuite à Bella qui le supplie d'épargner sa vie, avant de l'enterrer sommairement à proximité.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🎙️ UN INTERROGATOIRE SOUS HAUTE TENSION PSYCHOLOGIQUE</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Signalée disparue par son amie d'enfance Nickole Atkinson, Shanann est recherchée dès le lundi après-midi. Chris Watts joue l'époux dévasté devant les caméras locales, mais son manque flagrant d'émotions alerte le FBI. Convoqué au poste le 15 août, l'agent Tammy Lee lui fait passer un test de détecteur de mensonges (polygraphe). Ses résultats révèlent un stress hors norme. Tammy Lee emploie alors une technique de manipulation habile : elle suggère à Chris que Shanann a peut-être fait du mal aux enfants et qu'il a agi sous le coup de la colère pour se venger. Cédant à la pression, Chris s'empare de ce scénario fictif pour formuler ses premiers aveux.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">⚖️ LE PROCÈS ET LE DESTIN DU TUEUR</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Confronté aux conclusions scientifiques de l'autopsie des petites filles, Chris Watts abandonne rapidement son mensonge de défense. En novembre 2018, afin d'éviter la peine de mort à la demande expresse de la famille de Shanann, il plaide coupable de tous les chefs d'accusation. Il est condamné à <strong>cinq peines de prison à perpétuité consécutives, sans aucune possibilité d'aménagement de peine</strong>.</p>
-                `,
-                sources: [
-                    { label: "Mcskyz — L'Affaire Chris Watts (Le pire père de famille)", url: "https://www.youtube.com/watch?v=2n-wM0vS3_I" },
-                    { label: "Sondage Criminel — Analyse complète du polygraphe de Chris Watts", url: "https://www.youtube.com/watch?v=F_YwZ2ZzX6Y" },
-                    { label: "Rapports de perquisition et transcriptions - Colorado Bureau of Investigation", url: "https://www.youtube.com/watch?v=bL8b6mO9Aks" }
-                ],
-                testimonies: [
-                    { role: "Nickole Atkinson (Amie proche, lors de l'appel d'urgence)", text: "« Elle ne manquait jamais un rendez-vous médical pour son bébé, et sa voiture était encore dans l'allée avec tous ses effets personnels à l'intérieur. J'ai tout de suite compris que Chris lui avait fait du mal. »" },
-                    { role: "Frank Rzucek (Père de Shanann, à la barre du tribunal)", text: "« Je t'ai fait confiance pour protéger ma fille et mes petites-filles. Tu les as jetées comme des ordures ménagères. Tu es un lâche dénué de toute trace d'humanité. »" }
-                ]
-            },
-            {
-                id: "h3",
-                title: "Chapitre III : Les Mots Mortels de Michelle Carter",
-                summary: "L'analyse juridique de l'affaire Conrad Roy : comment de simples SMS ont conduit à la mort d'un adolescent et à un procès historique.",
-                image: "images/carter_main.jpg",
-                gallery: [
-                    { url: "images/carter_mugshot.jpg", label: "Cliché d'identité judiciaire de Michelle Carter" },
-                    { url: "images/conrad_roy.jpg", label: "Portrait officiel de la victime Conrad Roy III" },
-                    { url: "images/carter_parking.jpg", label: "Le parking Kmart de Fairhaven où le véhicule a été stationné" }
-                ],
-                content: `
-                    <h4 style="color:#e67e22; margin-top:20px; font-size:1.4rem;">👥 LA RENCONTRE ET LES FRAGILITÉS COMMUNES</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Conrad Roy III et Michelle Carter se rencontrent en 2012 lors de vacances familiales en Floride. Tous deux originaires du Massachusetts, ils habitent à une cinquantaine de kilomètres l'un de l'autre mais entretiennent une relation presque exclusivement virtuelle. Conrad est un adolescent sensible, qui souffre d'anxiété chronique et de dépression depuis le deuil conflictuel de ses parents. Michelle combat de son côté des troubles sévères de l'alimentation et souffre d'un profond manque de reconnaissance sociale dans son lycée de Plainville.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">🕒 AVANT LE DRAME : LA QUÊTE OBSESSIONNELLE D'ATTENTION</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Au fil des mois, alors que Conrad partage ouvertement ses pulsions d'autolyse, Michelle bascule d'une attitude d'écoute à une incitation toxique. Souhaitant jouer le rôle de la 'petite amie en deuil' auprès de ses camarades pour susciter la pitié et l'attention, elle commence à planifier activement la fin de l'adolescent, lui suggérant des méthodes, balayant ses doutes et lui reprochant de ne pas tenir sa parole.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">💀 LE CRIME TEXTUEL DU 12 JUILLET 2014</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">Conrad gare sa camionnette sur le parking d'un supermarché Kmart de Fairhaven et active un nettoyeur à pression thermique dégageant du monoxyde de carbone. Pris de panique face aux premiers effets d'asphyxie, l'adolescent sort de l'habitacle pour respirer de l'air frais. Il appelle Michelle Carter au téléphone. C'est à ce moment précis qu'elle formule l'ordre fatal par SMS et de vive voix : 'Remonte dans le foutu camion'. Conrad obéit. Michelle reste en ligne, écoutant ses derniers râles d'agonie sans jamais alerter les secours ou sa famille.</p>
-
-                    <h4 style="color:#e67e22; font-size:1.4rem; margin-top:25px;">⚖️ UN PROCÈS JURIDIQUE SANS PRÉCÉDENT</h4>
-                    <p style="line-height:1.8; color:#ccc; margin-bottom:15px;">L'affaire éclate lorsque la police extrait les données du téléphone de Conrad Roy. Les enquêteurs découvrent plus de 4 000 messages d'incitation. Lors du procès de 2017, la défense soutient que des SMS ne peuvent pas physiquement tuer un être humain et invoque la liberté d'expression. Le parquet démontre au contraire que la présence virtuelle et autoritaire de Michelle Carter a neutralisé l'instinct de survie de Conrad. Elle est déclarée coupable d'homicide involontaire et condamnée à <strong>15 mois de prison ferme</strong>.</p>
-                `,
-                sources: [
-                    { label: "Sondage Criminel — Condamnée à cause de ses SMS : L'Affaire Michelle Carter", url: "https://www.youtube.com/watch?v=68m7wW-p1C8" },
-                    { label: "L'Heure du Crime — Le cas de la manipulation par écrans", url: "https://www.youtube.com/results?search_query=michelle+carter+francais" },
-                    { label: "Rapport d'audience et attendu de jugement - Cour du Massachusetts", url: "https://www.youtube.com/results?search_query=Commonwealth+v+Michelle+Carter+Full+Trial" }
-                ],
-                testimonies: [
-                    { role: "Lynn Roy (Mère de Conrad, lors du procès)", text: "« Mon fils avait des projets, il venait de décrocher son brevet de capitaine. Elle a exploité sa vulnérabilité psychologique la plus intime pour s'offrir un rôle de deuil éploré. »" },
-                    { role: "Juge Lawrence Moniz (Lors de l'énoncé du verdict)", text: "« Ses directives ont scellé le destin de cet adolescent. En lui ordonnant de remonter dans ce véhicule mortel alors qu'il manifestait la volonté d'en sortir, elle a causé sa perte de manière active. »" }
-                ]
-            }
-        ];
-
-        function renderListView() {
-            navContext.innerHTML = `
-                <h2>Affaires Criminelles Résolues</h2>
-                <p>Plongez au cœur des rapports complets et découvrez comment la justice et la science ont fini par faire éclater la vérité sur de grands dossiers récents.</p>
-            `;
-            
-            container.innerHTML = '';
-            storiesData.forEach(story => {
-                const caseLikes = JSON.parse(localStorage.getItem(`likes_resolved_${story.id}`)) || [];
-                const hasLiked = caseLikes.includes(currentUser);
-
-                const article = document.createElement('article');
-                article.className = 'story-card';
-                article.style.marginBottom = '40px';
-
-                article.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:15px; width: 100%;">
-                        <img src="${story.image}" alt="Photo de l'affaire" style="width:100%; max-height:280px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="renderDetailView('${story.id}')">
-                        <div style="text-align: left; width: 100%;">
-                            <h3 style="font-size:1.6rem; margin-bottom:10px; cursor:pointer; color: #f39c12;" onclick="renderDetailView('${story.id}')">${story.title}</h3>
-                            <p style="color:#aaa; margin-bottom:20px; line-height:1.5;">${story.summary}</p>
-                            
-                            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:15px;">
-                                <button onclick="renderDetailView('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px;">Ouvrir le volume d'analyse</button>
-                                <button onclick="toggleLike('${story.id}')" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; background-color: ${hasLiked ? '#c0392b' : '#333'};">
-                                    ❤️ ${caseLikes.length} ${hasLiked ? 'Aimé' : 'Like'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(article);
-            });
-        }
-
-        function renderDetailView(id) {
-            const story = storiesData.find(s => s.id === id);
-            if (!story) return;
-
-            navContext.innerHTML = `
-                <button onclick="renderListView()" class="submit-form-button" style="width:auto; display:inline-block; margin-bottom:15px; padding: 8px 15px; font-size: 0.9rem; background:#444;">← Retour aux volumes d'analyses</button>
-                <h2>Analyse de Pièces à Conviction</h2>
-            `;
-            
-            let testimoniesHTML = "";
-            story.testimonies.forEach(t => {
-                testimoniesHTML += `
-                    <div style="background: rgba(255,255,255,0.02); padding: 15px; border-left: 3px solid #e67e22; margin-bottom: 12px; border-radius: 4px;">
-                        <span style="display:block; font-size:0.85rem; color:#e67e22; font-weight:bold; margin-bottom:5px;">${t.role} :</span>
-                        <p style="margin:0; font-style:italic; font-size:0.95rem; line-height:1.4; color:#ddd;">${t.text}</p>
-                    </div>
-                `;
-            });
-
-            let galleryHTML = "";
-            story.gallery.forEach(img => {
-                galleryHTML += `
-                    <div style="display:flex; flex-direction:column; gap:5px;">
-                        <img src="${img.url}" alt="${img.label}" class="evidence-img">
-                        <span style="font-size:0.8rem; color:#777; font-style:italic; text-align:center;">${img.label}</span>
-                    </div>
-                `;
-            });
-
-            let sourcesHTML = "";
-            story.sources.forEach(src => {
-                sourcesHTML += `
-                    <li style="margin-bottom:10px;"><a href="${src.url}" target="_blank" style="color:#f39c12; text-decoration:underline; font-size:1.1rem; display:block;">🎥 ${src.label}</a></li>
-                `;
-            });
-
-            container.innerHTML = `
-                <article class="story-card" style="padding:30px; text-align: left; width: 100%; box-sizing: border-box;">
-                    <img src="${story.image}" alt="Photo principale de l'affaire" style="width:100%; max-height:450px; object-fit:cover; border-radius:6px; margin-bottom:20px;">
-                    <h3 style="font-size:2.2rem; margin-bottom:15px; color:#f39c12;">${story.title}</h3>
-                    
-                    <div style="line-height:1.8; font-size:1.1rem; margin-bottom:35px; color:#dddbd3;">${story.content}</div>
-                    
-                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">📁 Archives visuelles et Scènes de crime</h4>
-                    <div class="evidence-gallery">${galleryHTML}</div>
-
-                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">📁 Sources Judiciaires & Vidéos</h4>
-                    <ul style="list-style:none; padding-left:0; margin-bottom:35px;">${sourcesHTML}</ul>
-
-                    <h4 style="color:#e67e22; font-size:1.3rem; margin-top:30px; margin-bottom:15px;">Dépositions Judiciaires & Auditions Officielles</h4>
-                    <div style="margin-bottom: 40px;">${testimoniesHTML}</div>
-
-                    <div style="border-top: 1px solid #2d2d35; padding-top: 30px; margin-top: 40px;">
-                        <h4 style="color:#fff; font-size:1.4rem; margin-bottom:6px;">Espace de Discussion</h4>
-                        <p style="color:#777; font-size:0.9rem; margin-bottom:20px; margin-top:0;">Partagez vos analyses de pièces à conviction et vos indices avec les autres membres.</p>
-                        
-                        <div id="comments-list-${story.id}" style="max-height: 400px; overflow-y: auto; margin-bottom: 25px; padding-right: 5px;"></div>
-                        
-                        <div class="comment-input-area">
-                            <input type="text" id="comment-input-${story.id}" class="comment-field" placeholder="Rédiger votre analyse...">
-                            <button onclick="postComment('${story.id}')" class="submit-form-button" style="width: auto; margin: 0; padding: 0 25px; height: auto;">Envoyer</button>
-                        </div>
-                    </div>
-                </article>
-            `;
-            
-            loadComments(story.id);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function toggleLike(storyId) {
-            let caseLikes = JSON.parse(localStorage.getItem(`likes_resolved_${storyId}`)) || [];
-            if (caseLikes.includes(currentUser)) {
-                caseLikes = caseLikes.filter(u => u !== currentUser); 
-            } else {
-                caseLikes.push(currentUser); 
-            }
-            localStorage.setItem(`likes_resolved_${storyId}`, JSON.stringify(caseLikes));
-            renderListView();
-        }
-
-        function loadComments(storyId) {
-            const commentsBox = document.getElementById(`comments-list-${storyId}`);
-            fetch(`http://127.0.0.1:5000/api/v1/stories/${storyId}/comments`)
-                .then(res => res.json())
-                .then(comments => {
-                    commentsBox.innerHTML = '';
-                    if (!comments || comments.length === 0) {
-                        commentsBox.innerHTML = '<p style="color:#666; font-style:italic; padding: 15px; text-align: center;">Aucun avis enregistré pour le moment. Ouvrez la discussion !</p>';
-                        return;
-                    }
-                    comments.forEach(c => {
-                        commentsBox.innerHTML += `
-                            <div class="comment-card">
-                                <div class="comment-header">
-                                    <span class="comment-user-badge">🕵️‍♂️ ${c.username}</span>
-                                    <div class="comment-actions">
-                                        <button class="action-btn like" onclick="likeComment(${c.id}, '${storyId}')">
-                                            👍 <span>${c.likes || 0}</span>
-                                        </button>
-                                        <button class="action-btn report" onclick="reportComment(${c.id}, '${storyId}')" title="Signaler ce commentaire">
-                                            ⚠️ <span>${c.reports > 0 ? c.reports : ''}</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <p style="margin:8px 0 0 0; color:#dddbd3; line-height:1.5; font-size:1rem;">${c.text}</p>
-                            </div>`;
-                    });
-                })
-                .catch(() => {
-                    commentsBox.innerHTML = '<p style="color:#666; font-style:italic; text-align:center; padding:15px;">Aucun avis partagé pour le moment sur cette affaire. Initiez la discussion !</p>';
-                });
-        }
-
-        function postComment(storyId) {
-            const input = document.getElementById(`comment-input-${storyId}`);
-            const text = input.value.trim();
-            if (!text) return;
-
-            fetch(`http://127.0.0.1:5000/api/v1/stories/${storyId}/comments`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser, text: text })
-            })
-            .then(res => res.json())
-            .then(() => {
-                input.value = '';
-                loadComments(storyId);
-            });
-        }
-
-        function likeComment(commentId, storyId) {
-            fetch(`http://127.0.0.1:5000/api/v1/comments/${commentId}/like`, { method: 'POST' })
-                .then(res => res.json())
-                .then(() => loadComments(storyId))
-                .catch(() => alert("Erreur lors de l'enregistrement de votre mention J'aime."));
-        }
-
-        function reportComment(commentId, storyId) {
-            if (confirm("Voulez-vous vraiment signaler ce commentaire pour modération ?")) {
-                fetch(`http://127.0.0.1:5000/api/v1/comments/${commentId}/report`, { method: 'POST' })
-                    .then(res => res.json())
-                    .then(() => {
-                        alert("Le commentaire a été transmis aux modérateurs.");
-                        loadComments(storyId);
-                    })
-                    .catch(() => alert("Erreur lors du signalement."));
-            }
-        }
-
-        renderListView();
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Histoires — Les Petits Enquêteurs</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<header class="header">
+			<div class="top">
+				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
+				<a class="outline" href="connexion.html">Connexion</a>
+			</div>
+			<nav class="nav" aria-label="Navigation principale">
+				<a href="index.html">Accueil</a>
+				<a href="histoires.html" aria-current="page">Histoires</a>
+				<a href="coldcases.html">Cold Cases</a>
+				<a href="theories.html">Analyse & Théories</a>
+				<a href="proposer-histoire.html">Proposer une histoire</a>
+			</nav>
+		</header>
+		<main>
+			<section class="page-title">
+				<p class="eyebrow">DOSSIERS</p>
+				<h1>Les histoires</h1>
+				<p>Retrouvez les affaires présentes dans le projet d'origine.</p>
+			</section>
+			<section class="section">
+				<label for="recherche">Rechercher une histoire</label>
+				<input id="recherche" type="search" placeholder="Rechercher par titre ou mot-clé...">
+				<div id="histoires-cartes" class="cards"></div>
+				<p id="aucun-resultat" hidden>Aucun dossier ne correspond à cette recherche.</p>
+			</section>
+		</main>
+		<footer>
+			Les Petits Enquêteurs · Projet frontend de démonstration · Aucune connexion à une base de données
+			<a href="admin-connexion.html">Administration</a>
+		</footer>
+		<script src="donnees.js"></script>
+		<script src="app.js"></script>
+	</body>
 </html>
