@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Dossier — Les Petits Enquêteurs</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<header class="header">
+			<div class="top">
+				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
+				<a class="outline" href="connexion.html">Connexion</a>
+			</div>
+			<nav class="nav" aria-label="Navigation principale">
+				<a href="index.html">Accueil</a>
+				<a href="histoires.html">Histoires</a>
+				<a href="coldcases.html">Cold Cases</a>
+				<a href="theories.html">Analyse & Théories</a>
+				<a href="proposer-histoire.html">Proposer une histoire</a>
+			</nav>
+		</header>
+		<main>
+			<section class="section">
+				<a href="index.html" id="retour-dossier">← Retour aux dossiers</a>
+				<article class="detail">
+					<p id="detail-categorie" class="eyebrow"></p>
+					<h1 id="detail-titre"></h1>
+					<div id="detail-image" class="detail-media" hidden></div>
+					<p id="detail-resume"></p>
+					<div id="detail-contenu"></div>
+					<p id="detail-feedback" class="feedback" aria-live="polite"></p>
+				</article>
+			</section>
+		</main>
+		<footer>
+			Les Petits Enquêteurs · Projet étudiant
+			<a href="admin-connexion.html">Administration</a>
+		</footer>
+		<script src="api.js"></script>
+		<script src="app.js"></script>
+	</body>
+</html>

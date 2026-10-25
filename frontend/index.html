@@ -1,83 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Accueil</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-    <div class="video-container">
-        <video autoplay loop muted playsinline id="bg-video">
-            <source src="background.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
-
-    <header class="main-header">
-        <div class="header-spacer"></div> <h1>Les Petits Enquêteurs</h1>
-        <div id="auth-buttons-container">
-            <a href="connexion.html" class="submit-form-button">Connexion / Inscription</a>
-        </div>
-    </header>
-
-    <nav>
-        <ul class="navbar">
-            <li><a href="index.html" class="active">Accueil</a></li>
-            <li><a href="histoires.html">Les Histoires</a></li>
-            <li><a href="coldscases.html">Les Colds Cases</a></li>
-            <li><a href="updates.html">Les Updates</a></li>
-            <li><a href="theories.html">Les Théories</a></li>
-            <li><a href="top-dossiers.html">Top Dossiers</a></li>
-        </ul>
-    </nav>
-
-    <main class="content-section">
-        <div class="content-card-wrapper">
-            <h2>Bienvenue sur la plateforme des Enquêteurs</h2>
-            <div class="divider"></div>
-            
-            <p class="intro-heading"><strong>Plongez au cœur des affaires criminelles les plus mystérieuses. Décryptez les indices, analysez les rapports et traquez la vérité.</strong></p>
-            
-            <p class="intro-text">Rejoignez la communauté, analysez les indices, découvrez de nouvelles histoires et soumettez vos propres théories criminelles.</p>
-        
-            <div class="cta-container">
-                <a href="histoires.html" class="cta-button">Histoires Résolues</a>
-                <a href="coldscases.html" class="cta-button">Les Cold Cases</a>
-            </div>
-
-            <p class="visit-counter-text" style="margin-top: 30px; opacity: 0.5; font-size: 0.85rem;">
-                Visiteurs de la plateforme : <span id="visit-count">...</span>
-            </p>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
-
-    <button onclick="window.location.href='proposer-histoire.html'" class="floating-add-button" title="Proposer une histoire">+</button>
-
-    <script>
-        const currentUser = localStorage.getItem('username');
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser && authContainer) {
-            authContainer.innerHTML = `
-                <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
-            `;
-        }
-
-        // Increments and displays the global visit counter
-        fetch('http://127.0.0.1:5000/api/visit', { method: 'POST' })
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('visit-count').textContent = data.visits;
-            })
-            .catch(err => {
-                console.error("Erreur compteur de visites :", err);
-                document.getElementById('visit-count').textContent = "indisponible";
-            });
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Accueil — Les Petits Enquêteurs</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<header class="header">
+			<div class="top">
+				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
+				<div id="session-controls">
+					<a class="outline" href="connexion.html">Connexion</a>
+				</div>
+			</div>
+			<nav class="nav" aria-label="Navigation principale">
+				<a href="index.html" aria-current="page">Accueil</a>
+				<a href="histoires.html">Histoires</a>
+				<a href="coldcases.html">Cold Cases</a>
+				<a href="theories.html">Analyse & Théories</a>
+				<a href="proposer-histoire.html">Proposer une histoire</a>
+			</nav>
+		</header>
+		<main>
+			<p id="session-feedback" class="feedback" aria-live="polite"></p>
+			<section class="hero">
+				<p class="eyebrow">LES PETITS ENQUÊTEURS</p>
+				<h1>Découvrez les histoires qui ont marqué les enquêtes.</h1>
+				<p>Explorez des dossiers, découvrez des affaires non résolues et partagez vos analyses.</p>
+				<div class="actions">
+					<a class="btn" href="histoires.html">Découvrir les histoires →</a>
+					<a class="outline" href="coldcases.html">Explorer les Cold Cases</a>
+				</div>
+			</section>
+			<section class="section">
+				<div class="section-head">
+					<h2>À découvrir</h2>
+					<a href="histoires.html">Voir tous les dossiers →</a>
+				</div>
+				<p id="stories-feedback" class="feedback" aria-live="polite"></p>
+				<div id="accueil-cartes" class="cards" data-story-type="all"></div>
+			</section>
+			<section class="section intro">
+				<h2>Un projet de découverte</h2>
+				<p>Une interface simple en HTML, CSS et JavaScript. Les histoires sont chargées depuis notre API.</p>
+			</section>
+		</main>
+		<footer>
+			Les Petits Enquêteurs · Projet étudiant
+			<a href="admin-connexion.html">Administration</a>
+		</footer>
+		<script src="api.js"></script>
+		<script src="app.js"></script>
+	</body>
 </html>

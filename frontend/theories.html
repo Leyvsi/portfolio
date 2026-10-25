@@ -1,172 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Théories — Les Petits Enquêteurs</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-    <header class="main-header">
-        <h1>Les Petits Enquêteurs</h1>
-        <div id="auth-buttons-container">
-            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
-        </div>
-    </header>
-
-    <nav>
-        <ul class="navbar">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="histoires.html">Les Histoires</a></li>
-            <li><a href="coldscases.html">Les Colds Cases</a></li>
-            <li><a href="updates.html">Les Updates</a></li>
-            <li><a href="theories.html" class="active">Les Théories</a></li>
-            <li><a href="top-dossiers.html">Top Dossiers</a></li>
-        </ul>
-    </nav>
-
-    <main class="content-section">
-        <h2>Espace Analyse & Théories de la Communauté</h2>
-        <p class="intro-text">Sélectionnez un dossier en cours pour consulter les hypothèses des autres enquêteurs ou soumettre votre propre piste d'analyse.</p>
-        
-        <div class="form-group" style="margin-bottom: 30px;">
-            <label for="case-selector" style="display:block; margin-bottom:10px; font-size:1.2rem; text-align: left;">Sélectionnez une affaire :</label>
-            <select id="case-selector" style="width:100%; padding:12px; background:#151518; color:#fff; border:1px solid #444; border-radius:4px; font-size:1.1rem; outline: none;">
-                <option value="cc1">Le Mystère d'Anthonioz : Les Empreintes de la Nuit</option>
-                <option value="cc2">L'Inconnue de la Plage de Noirval</option>
-                <option value="cc3">Le Secret du Manoir de l'Ombre</option>
-            </select>
-        </div>
-
-        <h3 style="text-align: left; color:#f39c12;">Hypothèses de la Communauté</h3>
-        <div id="theories-list" style="margin-bottom:40px;"></div>
-
-        <hr style="border-color:#2d2d35; margin-bottom:40px;">
-
-        <h3 style="text-align: left;">Proposer votre propre théorie</h3>
-        <form id="theory-form" class="submission-form" style="text-align: left;">
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label for="theory-title" style="display:block; margin-bottom: 5px;">Titre de votre hypothèse</label>
-                <input type="text" id="theory-title" placeholder="Ex: Hypothèse du complice externe" required style="width:100%; padding:12px; background:#151518; color:#fff; border:1px solid #444; border-radius:4px; box-sizing: border-box;">
-            </div>
-            <div class="form-group" style="margin-bottom: 20px;">
-                <label for="theory-text" style="display:block; margin-bottom: 5px;">Votre piste d'analyse</label>
-                <textarea id="theory-text" rows="5" placeholder="Décrivez votre piste d'analyse, vos indices clés..." required style="width:100%; background:#151518; color:#fff; border:1px solid #444; padding:12px; border-radius: 4px; box-sizing: border-box; font-family: inherit; resize: vertical;"></textarea>
-            </div>
-            <button type="submit" class="submit-form-button" style="width:auto; padding:10px 30px;">Soumettre la Théorie</button>
-        </form>
-    </main>
-
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
-
-    <script>
-        const caseSelector = document.getElementById('case-selector');
-        const theoriesList = document.getElementById('theories-list');
-        const theoryForm = document.getElementById('theory-form');
-        const currentUser = localStorage.getItem('username') || 'Anonyme';
-
-        // Simple English comment: Parse parameters from URL to load relevant cold case automatically
-        const urlParams = new URLSearchParams(window.location.search);
-        const caseParam = urlParams.get('case');
-        if (caseParam) {
-            caseSelector.value = caseParam;
-        }
-
-        function loadTheories(caseId) {
-            theoriesList.innerHTML = '';
-            // Fetch comments associated with the selected cold case ID
-            fetch(`http://127.0.0.1:5000/api/v1/theories/${caseId}/comments`)
-                .then(res => res.json())
-                .then(apiTheories => {
-                    displayTheories(apiTheories, caseId);
-                })
-                .catch(() => {
-                    theoriesList.innerHTML = '<p style="color:#666; font-style:italic; padding: 20px; text-align: left;">Aucune théorie n\'a été enregistrée pour le moment. Soyez le premier !</p>';
-                });
-        }
-
-        function displayTheories(list, caseId) {
-            theoriesList.innerHTML = '';
-            if (!list || list.length === 0) {
-                theoriesList.innerHTML = '<p style="color:#666; font-style:italic; padding: 20px; text-align: left;">Aucune théorie n\'a été enregistrée pour le moment. Soyez le premier !</p>';
-                return;
-            }
-            list.forEach(theory => {
-                const div = document.createElement('div');
-                div.className = 'story-card';
-                div.style.padding = '25px';
-                div.style.marginBottom = '20px';
-                div.style.textAlign = 'left';
-
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2d2d35; padding-bottom:10px;">
-                        <strong style="color:#f39c12; font-size:1.1rem;">🕵️‍♂️ Enquêteur : ${theory.username}</strong>
-                        <span style="color:#555; font-size:0.85rem;">Rapport #${theory.id}</span>
-                    </div>
-                    <p style="line-height:1.6; color:#dddbd3; margin-top:15px; font-size:1rem;">${theory.text}</p>
-                    <div style="margin-top:20px; display:flex; gap:10px;">
-                        <button onclick="likeTheory(${theory.id}, '${caseId}')" class="submit-form-button" style="width:auto; margin-top:0; background:#1c1c22; font-size:0.85rem; padding:8px 15px;">
-                            👍 Utile (${theory.likes || 0})
-                        </button>
-                        <button onclick="reportTheory(${theory.id}, '${caseId}')" class="submit-form-button" style="width:auto; margin-top:0; background:#c0392b; font-size:0.85rem; padding:8px 15px;">
-                            ⚠️ Signaler
-                        </button>
-                    </div>
-                `;
-                theoriesList.appendChild(div);
-            });
-        }
-
-        function likeTheory(theoryId, caseId) {
-            fetch(`http://127.0.0.1:5000/api/v1/theories/${caseId}/${theoryId}/like`, { method: 'POST' })
-                .then(res => res.json())
-                .then(() => loadTheories(caseId));
-        }
-
-        function reportTheory(theoryId, caseId) {
-            if (confirm("Voulez-vous signaler cette piste pour modération ?")) {
-                fetch(`http://127.0.0.1:5000/api/v1/theories/${caseId}/${theoryId}/report`, { method: 'POST' })
-                    .then(res => res.json())
-                    .then(() => {
-                        alert("Théorie signalée avec succès.");
-                        loadTheories(caseId);
-                    });
-            }
-        }
-
-        theoryForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const titleInput = document.getElementById('theory-title');
-            const textInput = document.getElementById('theory-text');
-            const caseId = caseSelector.value;
-            
-            // Concat title and analysis text for structured comments
-            const fullComment = `[${titleInput.value.trim()}] — ${textInput.value.trim()}`;
-
-            fetch(`http://127.0.0.1:5000/api/v1/theories/${caseId}/comments`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: currentUser, text: fullComment })
-            })
-            .then(res => res.json())
-            .then(() => {
-                titleInput.value = '';
-                textInput.value = '';
-                loadTheories(caseId);
-            }).catch(() => alert("Impossible de poster la théorie. Le serveur API est-il lancé ?"));
-        });
-
-        caseSelector.addEventListener('change', (e) => loadTheories(e.target.value));
-        loadTheories(caseSelector.value);
-
-        const currentUserCheck = localStorage.getItem('username');
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUserCheck && authContainer) {
-            authContainer.innerHTML = `<a href="mon-compte.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">👤 Mon Compte (${currentUserCheck})</a>`;
-        }
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Analyse &amp; Théories — Les Petits Enquêteurs</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<header class="header">
+			<div class="top">
+				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
+				<a class="outline" href="connexion.html">Connexion</a>
+			</div>
+			<nav class="nav" aria-label="Navigation principale">
+				<a href="index.html">Accueil</a>
+				<a href="histoires.html">Histoires</a>
+				<a href="coldcases.html">Cold Cases</a>
+				<a href="theories.html" aria-current="page">Analyse & Théories</a>
+				<a href="proposer-histoire.html">Proposer une histoire</a>
+			</nav>
+		</header>
+		<main>
+			<section class="page-title">
+				<p class="eyebrow">COMMUNAUTÉ</p>
+				<h1>Analyse & Théories</h1>
+				<p>Choisissez un dossier et partagez votre théorie avec la communauté.</p>
+			</section>
+			<section class="section">
+				<div class="panel">
+					<h2>Partager une analyse</h2>
+					<form id="theory-form" class="demo-form" method="post" aria-busy="true">
+						<label for="sujet">Dossier</label>
+						<select id="sujet" name="story_id" required disabled>
+							<option value="">Choisir un dossier</option>
+						</select>
+						<label for="theory-title">Titre de votre théorie</label>
+						<input id="theory-title" name="title" maxlength="200" required placeholder="Titre de votre théorie">
+						<label for="avis">Votre avis</label>
+						<textarea id="avis" name="content" rows="5" required placeholder="Votre analyse..."></textarea>
+						<button class="btn" type="submit" disabled>Envoyer</button>
+						<p class="feedback" aria-live="polite">Chargement des dossiers...</p>
+					</form>
+				</div>
+			</section>
+			<section id="published-theories" class="section" aria-labelledby="published-theories-title" aria-busy="true">
+				<h2 id="published-theories-title">Théories publiées</h2>
+				<div class="panel">
+					<label for="theories-story-select">Dossier à consulter</label>
+					<select id="theories-story-select" disabled>
+						<option value="">Choisir un dossier</option>
+					</select>
+					<button id="theories-refresh" class="btn" type="button" disabled>Actualiser</button>
+					<p id="theories-list-feedback" class="feedback" role="status" aria-live="polite">Chargement des dossiers...</p>
+				</div>
+				<div id="published-theories-list"></div>
+			</section>
+		</main>
+		<footer>
+			Les Petits Enquêteurs · Projet étudiant
+			<a href="admin-connexion.html">Administration</a>
+		</footer>
+		<script src="donnees.js"></script>
+		<script src="api.js"></script>
+		<script src="app.js"></script>
+		<script src="theories-list.js"></script>
+	</body>
 </html>

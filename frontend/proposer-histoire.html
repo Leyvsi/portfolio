@@ -1,130 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Petits Enquêteurs - Proposer une Histoire</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-    <div class="video-container">
-        <video autoplay loop muted playsinline id="bg-video">
-            <source src="background.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
-
-    <header class="main-header">
-        <h1>Les Petits Enquêteurs</h1>
-        <div id="auth-buttons-container">
-            <a href="connexion.html" class="submit-form-button" style="width:auto; font-size:0.9rem; padding:8px 15px; text-decoration:none;">Connexion / Inscription</a>
-        </div>
-    </header>
-
-    <nav>
-        <ul class="navbar">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="histoires.html">Les Histoires</a></li>
-            <li><a href="coldscases.html">Les Colds Cases</a></li>
-            <li><a href="updates.html">Les Updates</a></li>
-            <li><a href="theories.html">Les Théories</a></li>
-            <li><a href="top-dossiers.html">Top Dossiers</a></li>
-        </ul>
-    </nav>
-
-    <main class="content-section">
-        <h2>Soumettre une Enquête</h2>
-        <p>Vous connaissez une affaire criminelle locale méconnue, un cold case fascinant ou une mise à jour récente ? Partagez-la avec la communauté.</p>
-        
-        <div class="warning-box" style="background: rgba(192, 57, 43, 0.1); border: 1px solid #c0392b; padding: 15px; border-radius: 4px; margin-bottom: 30px; color: #eceff1;">
-            <strong>⚠️ Charte de Modération :</strong> Les propositions à caractère diffamatoire, non documentées ou irrespectueuses envers les familles des victimes seront immédiatement rejetées.
-        </div>
-
-        <form class="submission-form" id="story-proposal-form">
-            <div class="form-group">
-                <label for="story-title">Intitulé de l'Affaire / Titre du Dossier</label>
-                <input type="text" id="story-title" name="title" placeholder="Ex: Le Mystère de la Lande Rouge" required>
-            </div>
-
-            <div class="form-group">
-                <label for="story-summary">Résumé global condensé (Pour affichage sur la page d'accueil)</label>
-                <input type="text" id="story-summary" name="summary" placeholder="Ex: En octobre 1994, un véhicule est retrouvé moteur tournant..." required>
-            </div>
-
-            <div class="form-group">
-                <label for="story-category">Typologie de la proposition</label>
-                <select id="story-category" name="category" required style="width: 100%; padding: 10px; background: #1a1a1c; color: #fff; border: 1px solid #444; border-radius: 4px;">
-                    <option value="resolu">Affaire Résolue (Histoire complète)</option>
-                    <option value="coldcase">Cold Case (Affaire non résolue)</option>
-                    <option value="update">Mise à jour (Update)</option>
-                    <option value="theorie">Théorie / Hypothèse</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="story-content">Le récit détaillé des faits</label>
-                <textarea id="story-content" name="content" rows="10" placeholder="Racontez l'histoire chronologiquement..." required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="story-images">Ajouter des images, preuves ou indices (Optionnel)</label>
-                <input type="file" id="story-images" name="images" accept="image/png, image/jpeg, image/webp" multiple class="file-input">
-                <p class="file-help">Formats acceptés : PNG, JPEG, WEBP. Vous pouvez sélectionner plusieurs images d'un coup.</p>
-            </div>
-
-            <div class="form-group">
-                <label for="story-sources">Sources et liens (Optionnel)</label>
-                <input type="text" id="story-sources" name="sources" placeholder="Ex: Articles de presse, rapports de police...">
-            </div>
-
-            <button type="submit" class="submit-form-button">Envoyer pour vérification</button>
-        </form>
-    </main>
-
-    <footer>
-        <p>&copy; Les Petits Enquêteurs. 2026 - Tous droits réservés.</p>
-    </footer>
-
-    <script>
-        const currentUser = localStorage.getItem('username');
-        const authContainer = document.getElementById('auth-buttons-container');
-        if (currentUser && authContainer) {
-            authContainer.innerHTML = `
-                <a href="mon-compte.html" class="account-button">👤 Mon Compte (${currentUser})</a>
-            `;
-        }
-
-        document.getElementById('story-proposal-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('title', document.getElementById('story-title').value);
-            formData.append('summary', document.getElementById('story-summary').value);
-            formData.append('category', document.getElementById('story-category').value);
-            formData.append('content', document.getElementById('story-content').value);
-            formData.append('sources', document.getElementById('story-sources').value);
-            formData.append('author', currentUser || 'Anonyme');
-
-            const files = document.getElementById('story-images').files;
-            for(let i = 0; i < files.length; i++) {
-                formData.append('images', files[i]);
-            }
-
-            fetch('http://127.0.0.1:5000/api/stories/propose', {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message);
-                if (data.status === 'success') {
-                    document.getElementById('story-proposal-form').reset();
-                    window.location.href = 'histoires.html';
-                }
-            })
-            .catch(err => alert("Erreur d'envoi de la proposition"));
-        });
-    </script>
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Proposer une histoire — Les Petits Enquêteurs</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<header class="header">
+			<div class="top">
+				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
+				<a class="outline" href="connexion.html">Connexion</a>
+			</div>
+			<nav class="nav" aria-label="Navigation principale">
+				<a href="index.html">Accueil</a>
+				<a href="histoires.html">Histoires</a>
+				<a href="coldcases.html">Cold Cases</a>
+				<a href="theories.html">Analyse & Théories</a>
+				<a href="proposer-histoire.html" aria-current="page">Proposer une histoire</a>
+			</nav>
+		</header>
+		<main>
+			<section class="page-title">
+				<p class="eyebrow">PARTICIPER</p>
+				<h1>Proposer une histoire</h1>
+				<p>Proposez un dossier à l’équipe. Votre proposition sera examinée avant publication.</p>
+			</section>
+			<section class="section">
+				<form id="proposal-form" class="panel demo-form" method="post">
+					<label for="titre">Titre</label>
+					<input id="titre" name="title" maxlength="200" required placeholder="Titre de votre histoire">
+					<label for="categorie">Catégorie</label>
+					<select id="categorie" name="category" required>
+						<option>Histoire</option>
+						<option>Cold case</option>
+					</select>
+					<label for="contenu">Présentation</label>
+					<textarea id="contenu" name="content" rows="7" required placeholder="Présentez votre dossier..."></textarea>
+					<button class="btn" type="submit">Proposer</button>
+					<p class="feedback" aria-live="polite"></p>
+				</form>
+			</section>
+		</main>
+		<footer>
+			Les Petits Enquêteurs · Projet étudiant
+			<a href="admin-connexion.html">Administration</a>
+		</footer>
+		<script src="donnees.js"></script>
+		<script src="api.js"></script>
+		<script src="app.js"></script>
+	</body>
 </html>
