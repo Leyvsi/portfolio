@@ -180,19 +180,193 @@ async function loadStory() {
 }
 if (detailTitle) loadStory();
 
-// La page Théories conserve sa démonstration locale, hors du périmètre F3.
-const select = document.getElementById('sujet');
-if (select) histoiresOriginales.forEach(item => {
-  const opt = document.createElement('option');
-  opt.value = item.id;
-  opt.textContent = item.title;
-  select.append(opt);
-});
-
-document.querySelectorAll('.demo-form:not(#login-form):not(#signup-form)').forEach(form => form.addEventListener('submit', event => {
+document.querySelectorAll('.demo-form:not(#login-form):not(#signup-form):not(#proposal-form):not(#theory-form)').forEach(form => form.addEventListener('submit', event => {
   event.preventDefault();
   form.querySelector('.feedback').textContent = 'Ceci est une démonstration : aucune information n’a été envoyée ou enregistrée.';
 }));
+
+const theoryForm = document.getElementById('theory-form');
+if (theoryForm) {
+  const storySelect = theoryForm.elements.story_id;
+  const titleField = theoryForm.elements.title;
+  const contentField = theoryForm.elements.content;
+  const feedback = theoryForm.querySelector('.feedback');
+  const button = theoryForm.querySelector('button');
+  const fields = [storySelect, titleField, contentField];
+  let storyIds = new Set();
+  let sending = false;
+
+  async function loadTheoryStories() {
+    storySelect.disabled = true;
+    button.disabled = true;
+    theoryForm.setAttribute('aria-busy', 'true');
+    feedback.textContent = 'Chargement des dossiers...';
+    try {
+      const stories = await getStories();
+      if (stories.some(story => !Number.isInteger(story.id) ||
+          story.id < 1 || story.id > 2147483647) ||
+          new Set(stories.map(story => story.id)).size !== stories.length) {
+        throw new Error('La liste des dossiers contient des identifiants invalides.');
+      }
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = 'Choisir un dossier';
+      const options = stories.map(story => {
+        const option = document.createElement('option');
+        option.value = String(story.id);
+        option.textContent = story.title;
+        return option;
+      });
+      storySelect.replaceChildren(placeholder, ...options);
+      storyIds = new Set(stories.map(story => story.id));
+      storySelect.disabled = storyIds.size === 0;
+      button.disabled = storyIds.size === 0;
+      feedback.textContent = storyIds.size ? '' : 'Aucun dossier n’est disponible pour le moment.';
+    } catch (error) {
+      feedback.textContent = 'Impossible de charger les dossiers. ' +
+        (error.message || 'Réessayez.') + ' Rechargez la page.';
+    } finally {
+      theoryForm.setAttribute('aria-busy', 'false');
+    }
+  }
+
+  theoryForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (sending) return;
+    if (storyIds.size === 0) {
+      feedback.textContent = 'Les dossiers ne sont pas disponibles. Attendez la fin du chargement ou rechargez la page.';
+      return;
+    }
+    sending = true;
+    button.disabled = true;
+    theoryForm.setAttribute('aria-busy', 'true');
+    feedback.textContent = '';
+    const disabledBefore = fields.map(field => field.disabled);
+
+    try {
+      const selected = storySelect.value;
+      const storyId = Number(selected);
+      const title = titleField.value.trim();
+      const content = contentField.value.trim();
+      if (!/^[1-9]\d*$/.test(selected) || !storyIds.has(storyId)) {
+        throw new Error('Choisissez un dossier disponible dans la liste.');
+      }
+      if (!title || !content) {
+        throw new Error('Renseignez un titre et une analyse non vides.');
+      }
+      if ([...title].length > 200) {
+        throw new Error('Le titre ne doit pas dépasser 200 caractères.');
+      }
+      try {
+        encodeURIComponent(title);
+        encodeURIComponent(content);
+      } catch {
+        throw new Error('Le texte contient des caractères invalides.');
+      }
+      if (new TextEncoder().encode(content).length > 65535) {
+        throw new Error('Votre analyse est trop longue. Raccourcissez-la avant l’envoi.');
+      }
+
+      fields.forEach(field => { field.disabled = true; });
+      const current = await getCurrentUser();
+      if (!current || typeof current.csrf_token !== 'string' ||
+          !/^[\x21-\x7e]+$/.test(current.csrf_token)) {
+        throw new Error('Impossible de vérifier votre session. Reconnectez-vous puis réessayez.');
+      }
+      await createTheory(storyId, title, content);
+      theoryForm.reset();
+      feedback.textContent = 'Votre théorie a été publiée.';
+    } catch (error) {
+      if (error.status === 401) {
+        feedback.textContent = 'Votre session est absente ou a expiré. Connectez-vous pour proposer une théorie ; votre saisie est conservée.';
+      } else if (error.status === 403) {
+        feedback.textContent = 'Envoi refusé. ' + error.message + ' Rechargez la page ou reconnectez-vous.';
+      } else if (error.status === 404) {
+        feedback.textContent = 'Ce dossier n’est plus disponible. Votre saisie est conservée.';
+      } else {
+        feedback.textContent = error.message || 'Impossible d’envoyer votre théorie. Réessayez.';
+      }
+    } finally {
+      fields.forEach((field, index) => { field.disabled = disabledBefore[index]; });
+      button.disabled = false;
+      theoryForm.setAttribute('aria-busy', 'false');
+      sending = false;
+    }
+  });
+
+  loadTheoryStories();
+}
+
+const proposalForm = document.getElementById('proposal-form');
+if (proposalForm) {
+  const feedback = proposalForm.querySelector('.feedback');
+  const button = proposalForm.querySelector('button');
+  const fields = [
+    proposalForm.elements.title,
+    proposalForm.elements.category,
+    proposalForm.elements.content
+  ];
+  let sending = false;
+
+  proposalForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (sending) return;
+    sending = true;
+    button.disabled = true;
+    proposalForm.setAttribute('aria-busy', 'true');
+    feedback.textContent = '';
+    const disabledBefore = fields.map(field => field.disabled);
+
+    try {
+      const title = proposalForm.elements.title.value.trim();
+      const text = proposalForm.elements.content.value.trim();
+      const category = proposalForm.elements.category.value;
+
+      if (!title || !text) {
+        throw new Error('Renseignez un titre et une présentation non vides.');
+      }
+      if ([...title].length > 200) {
+        throw new Error('Le titre ne doit pas dépasser 200 caractères.');
+      }
+      if (!['Histoire', 'Cold case'].includes(category)) {
+        throw new Error('Choisissez une catégorie proposée dans la liste.');
+      }
+      const content = 'Catégorie proposée : ' + category + '\n\n' + text;
+      try {
+        encodeURIComponent(title);
+        encodeURIComponent(content);
+      } catch {
+        throw new Error('Le texte contient des caractères invalides.');
+      }
+      if (new TextEncoder().encode(content).length > 65535) {
+        throw new Error('La présentation est trop longue. Raccourcissez-la avant l’envoi.');
+      }
+
+      fields.forEach(field => { field.disabled = true; });
+      const current = await getCurrentUser();
+      if (!current || typeof current.csrf_token !== 'string' ||
+          !/^[\x21-\x7e]+$/.test(current.csrf_token)) {
+        throw new Error('Impossible de vérifier votre session. Reconnectez-vous puis réessayez.');
+      }
+      await createProposal(title, content);
+      proposalForm.reset();
+      feedback.textContent = 'Votre proposition a été envoyée pour examen.';
+    } catch (error) {
+      if (error.status === 401) {
+        feedback.textContent = 'Votre session est absente ou a expiré. Connectez-vous pour proposer une histoire ; votre saisie est conservée.';
+      } else if (error.status === 403) {
+        feedback.textContent = 'Envoi refusé. ' + error.message + ' Rechargez la page ou reconnectez-vous.';
+      } else {
+        feedback.textContent = error.message || 'Impossible d’envoyer votre proposition. Réessayez.';
+      }
+    } finally {
+      fields.forEach((field, index) => { field.disabled = disabledBefore[index]; });
+      button.disabled = false;
+      proposalForm.setAttribute('aria-busy', 'false');
+      sending = false;
+    }
+  });
+}
 
 const signupForm = document.getElementById('signup-form');
 if (signupForm) {

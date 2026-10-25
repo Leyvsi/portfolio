@@ -12,3 +12,44 @@ backend/*.db
 instance/
 certs/
 portfolio_db_backup.sql
+
+# Environnements et fichiers de session locaux
+.env.*
+!.env.example
+!.env.sample
+cookies.txt
+cookies-*.txt
+/.venv/
+
+# Cles privees et conteneurs locaux
+*.key
+*.p12
+*.pfx
+
+# Bases locales et journaux SQLite
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Sauvegardes : conserver les migrations SQL visibles
+/backups/
+/sauvegardes/
+*_backup.sql
+*_backup.sql.gz
+backup_*.sql
+backup_*.sql.gz
+*.sql.bak
+*.bak
+
+# Telechargement identifie pendant l'audit
+/frontend/images/Reprendre projet portfolio_files/
+
+# Metadonnees locales : apres accord de retrait du suivi
+.DS_Store
+/.vscode/settings.json
+
+# Ancienne application : seulement si retrait du suivi autorise
+/backend/ancien_app.py

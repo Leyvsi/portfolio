@@ -1,0 +1,38 @@
+const histoiresOriginales = [
+  {
+    "id": "h1",
+    "title": "Chapitre I : L'Ombre du Golden State Killer (1976 - 2018)",
+    "summary": "L'analyse complète de la traque de Joseph James DeAngelo : de ses traumatismes d'enfance à sa chute finale par la généalogie génétique.",
+    "category": "Résolue"
+  },
+  {
+    "id": "h2",
+    "title": "Chapitre II : Le Masque de Chris Watts (L'Infanticide du Colorado)",
+    "summary": "L'analyse chirurgicale du triple meurtre commis par Chris Watts sur sa femme Shanann et ses enfants Bella et Celeste en août 2018.",
+    "category": "Résolue"
+  },
+  {
+    "id": "h3",
+    "title": "Chapitre III : Les Mots Mortels de Michelle Carter",
+    "summary": "L'analyse juridique de l'affaire Conrad Roy : comment de simples SMS ont conduit à la mort d'un adolescent et à un procès historique.",
+    "category": "Résolue"
+  },
+  {
+    "id": "cc1",
+    "title": "Dossier I : Le Mystère d'Anthonioz (Les Empreintes de la Nuit)",
+    "summary": "Une disparition inexpliquée lors d'une nuit de tempête, ne laissant que des traces de pas interrompues au milieu de nulle part.",
+    "category": "Cold case"
+  },
+  {
+    "id": "cc2",
+    "title": "Dossier II : L'Inconnue de la Plage de Noirval",
+    "summary": "Retrouvée sur le sable sans aucune pièce d'identité, personne ne sait qui elle est ni comment elle est arrivée là.",
+    "category": "Cold case"
+  },
+  {
+    "id": "cc3",
+    "title": "Dossier III : Le Secret du Manoir de l'Ombre",
+    "summary": "Quatre membres d'une même famille se sont volatilisés pendant un dîner, laissant leurs assiettes encore pleines.",
+    "category": "Cold case"
+  }
+];
