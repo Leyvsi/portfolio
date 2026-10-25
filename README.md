@@ -117,6 +117,18 @@ flowchart TB
   ORM -.->|"Si le groupe Aiven est incomplet"| ALT[("Base via DATABASE_URL - sinon SQLite local")]
 ```
 
+### Explication simple du diagramme d’architecture
+
+**Type : diagramme d’architecture générale** (schéma montrant les grandes parties du site web et leurs échanges).
+
+> **À dire au jury :** « Ce diagramme montre comment fonctionne notre site web. Le frontend (partie visible dans le navigateur) envoie les demandes au backend (partie qui traite les demandes). Flask (outil Python qui reçoit et traite les requêtes web) utilise SQLAlchemy (outil Python permettant de manipuler les données) pour accéder à la base. La réponse revient ensuite vers le navigateur. »
+
+**Modèle d’architecture : trois couches logiques** (présentation, traitement et données). « Trois couches » décrit leurs rôles différents : cela ne signifie pas trois serveurs séparés. En local, `run_local.py` sert le site et l’interface de programmation dans un seul processus Python. Selon la configuration, le stockage utilise MySQL sur Aiven ou une solution de repli prévue dans le code. **La présence de la configuration Aiven ne prouve pas qu’une connexion distante a été testée avec succès.**
+
+**MVP — Minimum Viable Product (produit minimum viable)** : première version utilisable d’un produit, limitée aux fonctionnalités essentielles pour présenter et tester l’idée. Notre site est un **MVP pédagogique à architecture simplifiée** (une première version fonctionnelle réalisée dans le cadre du projet scolaire). Il n’existe pas de catégorie technique officielle appelée « MVP normal ». Les fonctionnalités disponibles et les limites sont détaillées plus haut dans ce README.
+
+**À retenir :** le navigateur demande, Flask traite, SQLAlchemy accède aux données.
+
 Le lanceur écoute sur `http://127.0.0.1:5000/`, sans debug ni reloader. Il n’applique aucune migration et ne crée aucune donnée.
 
 Organisation principale :
@@ -251,6 +263,16 @@ erDiagram
   stories ||..o{ cold_case_updates : "story_id : CASCADE"
 ```
 
+### Explication simple du diagramme relationnel
+
+**Type : diagramme entité-relation** (schéma représentant les tables d’une base de données et les liens entre elles).
+
+> **À dire au jury :** « Chaque rectangle représente une table (un ensemble de données organisées). Les lignes montrent les relations entre les tables. Par exemple, un utilisateur peut être associé à plusieurs histoires ou commentaires, et une histoire peut recevoir plusieurs commentaires. Une clé primaire (identifiant unique d’une ligne) permet de reconnaître un enregistrement ; une clé étrangère (colonne qui fait référence à une autre table) permet de relier les informations. »
+
+Ce schéma présente les **neuf tables** du projet et seulement certaines colonnes pour rester lisible. La cardinalité (nombre d’enregistrements pouvant être associés) est indiquée par les symboles au bout des liens. `CASCADE` (suppression automatique des enregistrements dépendants dans les cas configurés) et `SET NULL` (conservation de l’enregistrement en effaçant sa référence) décrivent des règles de suppression déclarées dans les relations concernées. Ces règles ne doivent pas être généralisées à toutes les tables.
+
+**À retenir :** les tables conservent les données ; leurs relations évitent de recopier inutilement les informations.
+
 | Référence | Relation | `ON DELETE` déclaré |
 |---|---|---|
 | `stories.category_id → categories.id` | Une catégorie par histoire ; plusieurs histoires possibles | Aucune règle explicite |
@@ -357,6 +379,16 @@ sequenceDiagram
   end
   Note over F,A: Aucun rechargement automatique du lecteur après le POST
 ```
+
+### Explication simple du diagramme de séquence
+
+**Type : diagramme de séquence** (schéma montrant dans quel ordre les acteurs et les parties du site échangent des messages).
+
+> **À dire au jury :** « Le diagramme suit le parcours d’une théorie. Un visiteur peut d’abord consulter les théories d’un dossier. Pour en créer une, le membre renseigne le formulaire. Le frontend (partie visible du site) transmet la demande à Flask (serveur Python). Flask vérifie le compte, les autorisations et les informations saisies. Si tout est correct, SQLAlchemy enregistre la théorie dans la base, puis le site affiche le résultat. En cas d’erreur, l’enregistrement n’est pas validé. »
+
+**Quelques mots du schéma :** `GET` (demande de lecture), `POST` (demande d’envoi de données), `commit()` (validation d’une transaction, c’est-à-dire d’un ensemble de modifications), `rollback()` (annulation des modifications non validées après une erreur), `CSRF` (protection contre des requêtes frauduleuses faites à l’insu de l’utilisateur). Les réponses `400`, `401`, `403`, `404` et `500` indiquent différents types d’erreurs HTTP (messages normalisés entre navigateur et serveur).
+
+**À retenir :** ce diagramme montre le déroulement des échanges, depuis l’action de l’utilisateur jusqu’à la réponse du site. Il indique aussi qu’une actualisation manuelle est nécessaire pour rafraîchir la liste des théories après une création.
 
 Les lectures SQL de contrôle sont regroupées dans ce schéma. Les erreurs réseau ou réponses illisibles ne sont pas développées en branches supplémentaires ; elles ne déclenchent pas de répétition automatique du POST.
 
