@@ -281,7 +281,7 @@ Pour les votes et inscriptions, le code distingue certains conflits uniques conn
 
 ### 9. Tests, Swagger et limites
 
-**Preuve historique**, consignée dans le [README principal](../../README.md#L563) :
+**Preuve historique**, consignée dans le [README principal](../../README.md#tests-et-validation) :
 
 | Suite | Résultat rapporté |
 |---|---:|
@@ -746,7 +746,7 @@ Le résultat mentionné est historique et concerne un environnement isolé, sans
 
 **Référence technique**
 
-[README.md](../../README.md#L574)
+[README.md](../../README.md#tests-et-validation)
 
 **Statut de validation**
 

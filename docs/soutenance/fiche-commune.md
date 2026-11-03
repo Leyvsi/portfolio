@@ -308,7 +308,7 @@ Lire un dossier, puis proposer une théorie.
 
 **Référence technique**
 
-[README.md](../../README.md#L3)
+[README.md](../../README.md#les-petits-enqu%C3%AAteurs)
 
 **Statut de validation**
 
@@ -334,7 +334,7 @@ Visiteur : lecture ; administrateur : consultation des propositions.
 
 **Référence technique**
 
-[README.md](../../README.md#L5)
+[README.md](../../README.md#fonctionnalit%C3%A9s-disponibles)
 
 **Statut de validation**
 
@@ -698,7 +698,7 @@ Le nombre de réussites est rapporté par le README, et non observé par une nou
 
 **Référence technique**
 
-[README.md](../../README.md#L574)
+[README.md](../../README.md#tests-et-validation)
 
 **Statut de validation**
 
@@ -724,7 +724,7 @@ La connexion Aiven et les migrations déployées restent non vérifiées.
 
 **Référence technique**
 
-[README.md](../../README.md#L578)
+[README.md](../../README.md#limites-techniques)
 
 **Statut de validation**
 
@@ -802,7 +802,7 @@ Préparer séparément une base de démonstration isolée.
 
 **Référence technique**
 
-[README.md](../../README.md#L535)
+[README.md](../../README.md#installation-locale)
 
 **Statut de validation**
 
@@ -828,7 +828,7 @@ Priorité suggérée : rendre l’installation reproductible avant d’étendre 
 
 **Référence technique**
 
-[README.md](../../README.md#L619)
+[README.md](../../README.md#limites-techniques)
 
 **Statut de validation**
 
@@ -854,7 +854,7 @@ Chacun doit expliquer et confirmer ses contributions personnelles.
 
 **Référence technique**
 
-[README.md](../../README.md#L9)
+[README.md](../../README.md#%C3%A9quipe)
 
 **Statut de validation**
 

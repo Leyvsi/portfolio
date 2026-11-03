@@ -809,7 +809,7 @@ Il faut préparer séparément des données fictives.
 
 **Référence technique**
 
-[README.md](../../README.md#L535)
+[README.md](../../README.md#installation-locale)
 
 **Statut de validation**
 
