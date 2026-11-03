@@ -10,4 +10,6 @@ backend_dir = os.path.abspath(
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
+# Réexporter l'application déjà configurée évite un second ensemble de routes
+# ou de paramètres de session ; cette compatibilité ne démarre aucun serveur.
 from index import app

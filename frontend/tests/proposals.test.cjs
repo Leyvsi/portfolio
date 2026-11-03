@@ -117,7 +117,11 @@ function assertFailure(page, before) {
 }
 
 test('local page keeps existing presentation hooks and loads API before app', () => {
-  assert.match(html, /<form id="proposal-form" class="panel demo-form" method="post">/);
+  // Une description accessible ne doit pas faire disparaitre les contraintes existantes.
+  const formTag = html.match(/<form\b[^>]*\bid="proposal-form"[^>]*>/)?.[0];
+  assert.ok(formTag);
+  assert.match(formTag, /\bclass="panel demo-form"/);
+  assert.match(formTag, /\bmethod="post"/);
   assert.match(html, /id="titre" name="title" maxlength="200" required/);
   assert.match(html, /id="categorie" name="category" required/);
   assert.match(html, /id="contenu" name="content"/);

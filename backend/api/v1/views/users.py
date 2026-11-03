@@ -6,8 +6,11 @@ from api.v1.views.permissions import admin_required, get_authenticated_user
 from models import db, User
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from api.v1.views.write_support import api_error, json_object, required_text, is_unique_conflict
+from api.v1.views.admin_users_support import admin_user_to_dict
 
 
+# Cette règle de saisie impose longueur et composition avant le hachage ;
+# elle ne remplace pas le hachage salé ni une protection contre la force brute.
 def is_valid_password(password):
     """Check password security requirements."""
     if not (8 <= len(password) <= 50):
@@ -30,13 +33,20 @@ def is_valid_password(password):
 
 @app_views.route('/users', methods=['GET'])
 @admin_required
+# GET réservé aux administrateurs : la liste contient notamment les emails.
 def get_users():
     """Return all users."""
-    users = User.query.all()
-    return jsonify([user.to_dict() for user in users]), 200
+    try:
+        users = User.query.order_by(User.id.asc()).all()
+        return jsonify([admin_user_to_dict(user) for user in users]), 200
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error("Impossible de charger les utilisateurs.", 500)
 
 
 @app_views.route('/users', methods=['POST'])
+# POST crée un compte classique ; ignorer un rôle client empêche une inscription
+# administrateur. Une session déjà présente est vérifiée, sinon la route est publique.
 def register_user():
     """Create a new user; passwords are preserved exactly as supplied."""
     if session.get("user_id") is not None:
@@ -75,6 +85,8 @@ def register_user():
     if not is_valid_password(password):
         return api_error("Le mot de passe ne respecte pas les criteres de securite.")
 
+    # Le précontrôle produit une erreur lisible ; les contraintes UNIQUE restent
+    # nécessaires si un doublon apparaît entre cette lecture et le commit.
     if User.query.filter_by(username=username).first():
         return api_error("Cet utilisateur existe deja.")
     if User.query.filter_by(email=email).first():
@@ -83,6 +95,9 @@ def register_user():
     new_user = User(username=username, email=email)
     new_user.set_password(password)
 
+    # add prépare l'objet ; commit déclenche le flush puis valide la transaction.
+    # En cas d'erreur SQL, rollback annule les écritures non validées et rétablit
+    # une session utilisable avant de renvoyer la réponse d’échec.
     try:
         db.session.add(new_user)
         db.session.commit()

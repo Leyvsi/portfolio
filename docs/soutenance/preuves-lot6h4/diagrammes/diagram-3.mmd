@@ -1,0 +1,47 @@
+sequenceDiagram
+  participant U as Utilisateur
+  participant D as DOM et app.js
+  participant C as api.js
+  participant F as Flask
+  participant O as SQLAlchemy
+  participant B as Base configurée
+  U->>D: Choisir un dossier et saisir titre/contenu
+  D->>D: submit, validation et blocage du double envoi
+  D->>C: Vérifier le compte courant
+  C->>F: GET /api/v1/me avec cookie
+  F->>O: Relire le compte et son état
+  O->>B: SELECT utilisateur
+  alt Session absente ou compte interdit
+    F-->>C: 401 ou 403
+    C-->>D: Erreur, saisie conservée
+  else Compte autorisé
+    F-->>C: 200, compte et CSRF de session
+    D->>C: createTheory avec identifiant, titre et contenu
+    C->>F: POST JSON, cookie et X-CSRF-Token
+    F->>F: CSRF, compte, dossier et validation des champs
+    alt Contrôle refusé
+      F-->>C: 400, 401, 403 ou 404 selon le refus
+      C-->>D: Erreur, saisie conservée
+    else Requête valide
+      F->>O: add(Theory) puis commit()
+      O->>B: INSERT lors du flush, puis COMMIT
+      alt Transaction réussie
+        B-->>O: Écriture validée
+        F-->>C: 201 et théorie créée
+        C-->>D: Succès confirmé, formulaire réinitialisé
+      else Exception SQL gérée
+        F->>O: rollback()
+        O->>B: ROLLBACK
+        F-->>C: 500
+        C-->>D: Erreur, saisie conservée
+      end
+    end
+  end
+  opt Lecture publique, même sans session
+    U->>D: Choisir le dossier du lecteur ou Actualiser
+    D->>C: Demander les théories
+    C->>F: GET /api/v1/stories/{id}/theories
+    F-->>C: 200 et liste, ou 404
+    C-->>D: textContent, état vide ou erreur
+  end
+  Note over D,C: Pas de répétition automatique du POST.<br/>Après création, actualiser le lecteur.<br/>Aucun rechargement automatique.

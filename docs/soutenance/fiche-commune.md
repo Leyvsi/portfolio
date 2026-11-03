@@ -1,5 +1,33 @@
 # Fiche commune — Soutenance
 
+> Etat de diffusion scolaire du 3 novembre 2026 : suivre le [guide actuel](../../LIVRAISON_SCOLAIRE.md) et la [validation scolaire](VALIDATION_SCOLAIRE.md). Les sections de campagnes anterieures et leurs commandes sont historiques ; elles ne remplacent pas la procedure actuelle. Les chemins sous `C:\chemin\utilisateur` sont des exemples anonymises. Les archives internes signalees sont conservees localement.
+
+## État courant — 2 novembre 2026
+
+Lire d’abord les [supports 6H.1](SUPPORT_JURY_LOT6H1.md), l’[index courant](INDEX_CODE_LOT6H1.md) et la [procédure sur un autre PC](../../LIVRAISON_SCOLAIRE.md). Le bilan actuel distingue **854 tests historiques**, recette Edge réussie en SQLite fictif et contrôles documentaires de ce lot. Le modèle actuel contient dix tables et treize FK ; le compte est partagé sur dix pages, les signalements sont contextualisés, les likes de dossier/commentaire sont individuels.
+
+Les compléments et questions ci-dessous conservent leur contexte historique. Les anciennes mentions de fonctions absentes, de neuf tables ou de recette non exécutée ne constituent pas l’état courant. Les 76 questions/réponses historiques restent conservées. Aucun résultat MySQL ou de déploiement n’est ajouté.
+
+
+## Complément courant 6G.2 — likes et limites
+
+Bilan 6G.2 (archive interne non livree) : likes d'histoires/Cold Cases via Vote et de commentaires compatibles via CommentLike, avec retrait personnel. Les réponses historiques qui décrivent les commentaires comme compteur de clics ne décrivent plus le contrat courant ; les théories gardent ce mécanisme. **803 PASS exécutés**, sans prétendre à une recette Edge ou MySQL. Les historiques non attribuables restent protégés et attendent une décision avant toute reprise réelle.
+
+## Complément courant 6C.2 — réponse devant le jury
+
+« L’archivage conserve les données ; la suppression définitive retire seulement le dossier déjà archivé et ses contributions dans une transaction. Une FK rattache les signalements aux commentaires. L’administrateur confirme le titre et les conséquences ; le serveur vérifie encore rôle, CSRF et état frais. Après timeout, on relit sans recommencer la suppression. Il n’y a pas de journal persistant. »
+
+657 tests isolés réussis : 285 backend, 364 frontend, 8 lanceur. Les chiffres précédents et les 76 réponses courtes restent historiques ; cette section donne l’état actuel. Aucune purge réelle, migration MySQL ou recette navigateur n’est revendiquée ; lot 6E non commencé. Bilan courant (archive interne non livree).
+
+
+> **Actualisation du 29 octobre 2026 — étape 5.** Les questions et réponses courtes historiques ci-dessous sont conservées. Les affirmations « non relancé ici » décrivent leur préparation antérieure : les campagnes ultérieures sont présentées dans [Tests et validation](TESTS_ET_VALIDATION.md), avec 439 réussites automatiques, la recette Edge et les dix BDD PASS. La recette Edge est automatisée, pas entièrement manuelle humaine ; Aiven et migrations restent non validés. Les repères actuels (archive interne non livree) tiennent compte des commentaires ajoutés au code. Les diagrammes révisés ont leur contrôle local dans le bilan (archive interne non livree).
+
+## Complément lot 6C phase 1 — formulation commune
+
+« L'archivage masque un dossier du site public tout en conservant ses données pour une restauration éventuelle. Il ne constitue pas une suppression définitive. »
+
+Mahamadou explique la date nullable, la migration non déployée et la conservation des relations. Sylvie explique permissions, CSRF, transactions, blocage public et restauration. Mélissa montre confirmation, filtres, états et relecture après réponse incertaine. C-05 reste PARTIEL : la suppression définitive demandée par le jury n’est pas terminée. Aucune conformité RGPD ni preuve navigateur/MySQL n’est ajoutée. Voir le bilan 6C phase 1 (archive interne non livree).
+
 [Retour au sommaire de soutenance](README.md)
 
 Questions-réponses historiques récupérées de la réponse Codex de l’étape 15.1 du **25 octobre 2026**, fondée sur le commit `dec5c7ef4c753970bd94014b37b59b035e1877f1`. Audit de référence : étape 15.8.1 ; préparation documentaire : étape 15.8.2, au commit `857190654457b15d7324adde8c920d9fdd3db0c8`.
@@ -9,6 +37,14 @@ Les formulations des questions et des réponses courtes originales sont conserv�
 Empreinte SHA-256 du texte historique complet : `218cf13b814a1f20a4258f1f6b24ab600b296bc62baab1c23610a36905ace4cd`.
 
 **Portée des preuves :** les résultats de tests et de rendu Mermaid sont historiques. Aucun test fonctionnel, rendu de diagramme, serveur, migration ou accès Aiven n’est exécuté pendant cette préparation. Les droits des illustrations restent à confirmer.
+
+> **Complément 5.1 autorisé.** La liaison de lecture des fichiers et la note du flux sont ajustées dans les sources. Aucun nouveau rendu ne confirme encore la disparition des deux défauts ; le diagramme BDD reste inchangé. Réviser aussi les réponses 16 à 18 et la répartition des sujets. Voir les [réponses orales](ORAL_JURY.md), le [suivi du jury](SUIVI_REMARQUES_JURY.md) et le bilan 5.1 (archive interne non livree).
+
+> **Actualisation fonctionnelle 6A — 30 octobre 2026.** Les 76 questions/réponses courtes historiques sont conservées : leurs anciennes limites d’administration décrivent l’état d’avant ce lot. Le tableau dispose maintenant de la liste des utilisateurs et du bannissement des comptes ordinaires, avec confirmation, relecture serveur et refus de tous les administrateurs en 409. Le contrat compte désormais 25 opérations. Voir la [réponse orale sur le bannissement](ORAL_JURY.md#19-comment-fonctionne-le-bannissement-administrateur-), les preuves 487 tests (archive interne non livree) et l’index actuel (archive interne non livree). Aucun navigateur réel exécuté pour 6A.
+
+> **Complément 6B — 30 octobre 2026.** La consultation administrative des dossiers est livrée : recherche par titre, filtres, catégories inconnues et fiche existante, sans modifier les données ni le bannissement 6A. Préparer la [réponse orale 20](ORAL_JURY.md#20-comment-consultez-vous-les-dossiers-dans-ladministration-), les preuves 533 tests (archive interne non livree) et les repères actuels (archive interne non livree). Les questions et réponses historiques restent conservées. Les API de lecture restent publiques ; aucun navigateur réel exécuté.
+
+> **Complément 6D — 30 octobre 2026.** Le tableau possède sept compteurs : le nouveau total compte uniquement le statut exact `pending` de la liste administrative existante. Préparer la [réponse orale 21](ORAL_JURY.md#21-comment-comptez-vous-les-propositions-en-attente-), le bilan 6D et ses 561 tests (archive interne non livree) et les repères actuels (archive interne non livree). Mélissa explique le DOM, le chargement et le nettoyage ; Sylvie les permissions et le JSON inchangés ; Mahamadou le statut texte, les catégories et l'invariance des neuf tables après lecture. Les 76 réponses historiques sont conservées. La recette navigateur reste reportée et le verdict VM NO-GO est maintenu.
 
 ## Sommaire
 
@@ -76,39 +112,39 @@ Il ne crée pas de données et n’applique pas de migrations.
 
 #### Diagramme d’architecture existant
 
-Diagramme repris de la variante approuvée du [README principal](../../README.md). Sa syntaxe, son rendu dans un navigateur local et la validité XML de son SVG ont été validés le 25 octobre 2026 avec Mermaid 11.16.0 lors de la campagne antérieure. Il s’agit d’une **preuve historique** ; aucun rendu n’est relancé ici. L’affichage sur GitHub reste **non vérifié**.
+Diagramme synchronisé avec le [README principal](../../README.md) et révisé le 29 octobre 2026. La validation du 25 octobre concernait la variante antérieure ; le bilan de l’étape 5 (archive interne non livree) précise le contrôle local actuel. Le rendu GitHub reste non attesté.
 
 ```mermaid
 flowchart TB
   subgraph NAV["Navigateur"]
-    PAGE["Pages HTML / CSS"]
-    APP["app.js : vues, formulaires et session"]
-    TL["theories-list.js : lecture publique des théories"]
-    AD["admin-dashboard.js : consultation administrateur"]
-    CLIENT["api.js : fetch, cookies, CSRF et erreurs HTTP"]
-    PAGE --> APP
-    PAGE --> TL
-    PAGE --> AD
-    APP --> CLIENT
-    TL --> CLIENT
-    AD --> CLIENT
+    HTML["HTML et CSS"]
+    DOM["DOM : page en mémoire"]
+    JS["app.js, theories-list.js et admin-dashboard.js"]
+    APIJS["api.js : fetch, JSON, cookies et CSRF"]
+    HTML --> DOM
+    JS -->|"lit et modifie"| DOM
+    JS --> APIJS
   end
-  subgraph LOCAL["Un seul processus Python local"]
-    RUN["run_local.py : 127.0.0.1:5000"]
-    STATIC["SharedDataMiddleware : fichiers frontend/"]
-    FLASK["Flask : backend/index.py - Routes directes et Blueprint app_views"]
-    SEC["Selon la route : session signée, CSRF et permissions"]
-    ORM["SQLAlchemy : models.py - Requêtes et transactions"]
-    RUN -->|"GET des ressources"| STATIC
-    RUN -->|"/api/v1"| FLASK
-    FLASK --> SEC
-    SEC --> ORM
+  subgraph MACHINE["Machine qui héberge le site local"]
+    subgraph PROCESSUS["Un processus Python : 127.0.0.1:5000"]
+      RUN["run_local.py : répartiteur WSGI"]
+      STATIC["SharedDataMiddleware"]
+      FLASK["Flask : routes et contrôles selon la requête"]
+      ORM["SQLAlchemy : requêtes et transactions"]
+      RUN -->|"GET et HEAD de ressources"| STATIC
+      RUN -->|"API et autres méthodes"| FLASK
+      FLASK --> ORM
+    end
+    subgraph DISQUE["Système de fichiers"]
+      FRONT["frontend/ : HTML, CSS, JS, images"]
+      SQLITE[("Fichier SQLite : moteur embarqué")]
+    end
+    STATIC -->|"lit les fichiers publics"| FRONT
+    ORM -->|"si une URL SQLite est choisie"| SQLITE
   end
-  STATIC -->|"HTML, CSS et scripts"| PAGE
-  CLIENT -->|"Requêtes HTTP JSON"| RUN
-  CONF["Variables locales : groupe Aiven complet et certificat CA"] -.-> FLASK
-  ORM -->|"PyMySQL, TLS avec CA"| MYSQL[("MySQL Aiven")]
-  ORM -.->|"Si le groupe Aiven est incomplet"| ALT[("Base via DATABASE_URL - sinon SQLite local")]
+  APIJS -->|"HTTP : JSON et statuts"| RUN
+  STATIC -->|"ressources publiques"| HTML
+  ORM -.->|"groupe Aiven complet : PyMySQL et TLS"| MYSQL[("Serveur MySQL Aiven")]
 ```
 
 ### 4. Rôle de chaque membre
@@ -164,74 +200,56 @@ Pour montrer la conservation d’une saisie, une démonstration complémentaire 
 
 Le diagramme existant rassemble la lecture publique, la création et les principaux refus. Certains contrôles sont regroupés pour la lisibilité.
 
-Diagramme repris de la variante approuvée du [README principal](../../README.md). Sa syntaxe, son rendu dans un navigateur local et la validité XML de son SVG ont été validés le 25 octobre 2026 avec Mermaid 11.16.0 lors de la campagne antérieure. Il s’agit d’une **preuve historique** ; aucun rendu n’est relancé ici. L’affichage sur GitHub reste **non vérifié**.
+Diagramme synchronisé avec le [README principal](../../README.md) et révisé le 29 octobre 2026. La validation du 25 octobre concernait la variante antérieure ; le bilan de l’étape 5 (archive interne non livree) précise le contrôle local actuel. Le rendu GitHub reste non attesté.
 
 ```mermaid
 sequenceDiagram
   participant U as Utilisateur
-  participant F as Frontend et api.js
-  participant A as Flask et Blueprint app_views
+  participant D as DOM et app.js
+  participant C as api.js
+  participant F as Flask
   participant O as SQLAlchemy
-  participant D as MySQL
-  U->>F: Ouvrir theories.html
-  Note over F: app.js gère la création, theories-list.js gère la lecture
-  F->>A: GET /api/v1/stories pour chaque sélecteur
-  A-->>F: 200, identifiants numériques réels
-  U->>F: Choisir un dossier dans le lecteur
-  F->>A: GET /api/v1/stories/{story_id}/theories, lecture publique
-  A->>O: Vérifier le dossier et lire ses théories
-  O->>D: SELECT stories et theories
-  D-->>O: Résultats
-  O-->>A: Objets
-  A-->>F: 200, liste éventuellement vide, ou 404 si dossier absent
-  F->>F: Afficher avec textContent, ignorer les anciennes réponses
-  U->>F: Choisir le dossier de contribution, saisir titre et contenu
-  F->>F: Validation locale et blocage des doubles soumissions
-  F->>A: GET /api/v1/me avec cookie
-  A->>A: Vérifier la session et relire le compte
+  participant B as Base configurée
+  U->>D: Choisir un dossier et saisir titre/contenu
+  D->>D: submit, validation et blocage du double envoi
+  D->>C: Vérifier le compte courant
+  C->>F: GET /api/v1/me avec cookie
+  F->>O: Relire le compte et son état
+  O->>B: SELECT utilisateur
   alt Session absente ou compte interdit
-    A-->>F: 401 ou 403
-    F->>F: Conserver la saisie, aucun POST
-  else Erreur serveur pendant la vérification
-    A-->>F: 500
-    F->>F: Conserver la saisie, aucun POST
-  else Session autorisée
-    A-->>F: 200, compte et csrf_token
-    F->>A: POST /api/v1/stories/{story_id}/theories, title, content, cookie et X-CSRF-Token
-    A->>A: Contrôler CSRF avant la vue, puis compte, dossier et données
-    alt Session devenue invalide ou contrôle de sécurité refusé
-      A-->>F: 401 ou 403
-      F->>F: Afficher l'erreur, conserver la saisie
-    else Dossier devenu introuvable
-      A-->>F: 404
-      F->>F: Conserver la saisie
-    else Corps JSON ou champs invalides
-      A-->>F: 400
-      F->>F: Conserver la saisie
-    else Requête autorisée et valide
-      A->>O: add(Theory) puis commit()
+    F-->>C: 401 ou 403
+    C-->>D: Erreur, saisie conservée
+  else Compte autorisé
+    F-->>C: 200, compte et CSRF de session
+    D->>C: createTheory avec identifiant, titre et contenu
+    C->>F: POST JSON, cookie et X-CSRF-Token
+    F->>F: CSRF, compte, dossier et validation des champs
+    alt Contrôle refusé
+      F-->>C: 400, 401, 403 ou 404 selon le refus
+      C-->>D: Erreur, saisie conservée
+    else Requête valide
+      F->>O: add(Theory) puis commit()
+      O->>B: INSERT lors du flush, puis COMMIT
       alt Transaction réussie
-        O->>D: INSERT theories lors du flush
-        O->>D: COMMIT
-        D-->>O: Transaction validée
-        O-->>A: Théorie persistée
-        A-->>F: 201, théorie et identifiant
-        F->>F: Réinitialiser le formulaire, afficher le succès
-      else Exception SQL pendant l'écriture ou la validation
-        A->>O: rollback()
-        O->>D: ROLLBACK
-        A-->>F: 500
-        F->>F: Afficher l'erreur, conserver la saisie
+        B-->>O: Écriture validée
+        F-->>C: 201 et théorie créée
+        C-->>D: Succès confirmé, formulaire réinitialisé
+      else Exception SQL gérée
+        F->>O: rollback()
+        O->>B: ROLLBACK
+        F-->>C: 500
+        C-->>D: Erreur, saisie conservée
       end
     end
   end
-  opt Actualisation manuelle
-    U->>F: Cliquer sur Actualiser dans le lecteur
-    F->>A: GET /api/v1/stories/{story_id}/theories
-    A-->>F: 200, liste actualisée
-    F->>F: Remplacer la liste avec textContent
+  opt Lecture publique, même sans session
+    U->>D: Choisir le dossier du lecteur ou Actualiser
+    D->>C: Demander les théories
+    C->>F: GET /api/v1/stories/{id}/theories
+    F-->>C: 200 et liste, ou 404
+    C-->>D: textContent, état vide ou erreur
   end
-  Note over F,A: Aucun rechargement automatique du lecteur après le POST
+  Note over D,C: Pas de répétition automatique du POST.<br/>Après création, actualiser le lecteur.<br/>Aucun rechargement automatique.
 ```
 
 ### 7. Difficultés techniques et réponses observables
@@ -342,7 +360,7 @@ Ouvrir dossier.html?slug=..., puis consulter ses théories.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L139)
+[frontend/app.js](../../frontend/app.js#L154)
 
 **Statut de validation**
 
@@ -368,7 +386,7 @@ Navigateur vers Flask, puis requête SQLAlchemy.
 
 **Référence technique**
 
-[frontend/api.js](../../frontend/api.js#L31)
+[frontend/api.js](../../frontend/api.js#L46)
 
 **Statut de validation**
 
@@ -394,7 +412,7 @@ Les contrôles serveur restent actifs sans bouton visible.
 
 **Référence technique**
 
-[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L47)
+[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L49)
 
 **Statut de validation**
 
@@ -420,7 +438,7 @@ getStories() sert aux listes et aux sélecteurs.
 
 **Référence technique**
 
-[frontend/api.js](../../frontend/api.js#L146)
+[frontend/api.js](../../frontend/api.js#L178)
 
 **Statut de validation**
 
@@ -446,7 +464,7 @@ User, Story, Theory et six autres modèles.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L10)
+[backend/models.py](../../backend/models.py#L18)
 
 **Statut de validation**
 
@@ -472,7 +490,7 @@ La création fixe status='pending'.
 
 **Référence technique**
 
-[backend/api/v1/views/proposals.py](../../backend/api/v1/views/proposals.py#L47)
+[backend/api/v1/views/proposals.py](../../backend/api/v1/views/proposals.py#L52)
 
 **Statut de validation**
 
@@ -498,7 +516,7 @@ GET public sans filtre de statut de modération.
 
 **Référence technique**
 
-[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L31)
+[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L36)
 
 **Statut de validation**
 
@@ -524,7 +542,7 @@ Un utilisateur anonyme reçoit 401.
 
 **Référence technique**
 
-[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L57)
+[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L64)
 
 **Statut de validation**
 
@@ -550,7 +568,7 @@ Le modèle utilise Werkzeug.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L29)
+[backend/models.py](../../backend/models.py#L43)
 
 **Statut de validation**
 
@@ -576,7 +594,7 @@ Le JSON client ne permet pas de définir is_admin.
 
 **Référence technique**
 
-[backend/api/v1/views/users.py](../../backend/api/v1/views/users.py#L39)
+[backend/api/v1/views/users.py](../../backend/api/v1/views/users.py#L47)
 
 **Statut de validation**
 
@@ -602,7 +620,7 @@ La lecture des signalements exige admin_required.
 
 **Référence technique**
 
-[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L47)
+[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L49)
 
 **Statut de validation**
 
@@ -628,7 +646,7 @@ L’erreur est affichée ; la saisie des contributions reste dans la page.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L108)
+[frontend/app.js](../../frontend/app.js#L121)
 
 **Statut de validation**
 
@@ -654,7 +672,7 @@ sending bloque les soumissions simultanées du formulaire.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L313)
+[frontend/app.js](../../frontend/app.js#L337)
 
 **Statut de validation**
 
@@ -680,7 +698,7 @@ Le nombre de réussites est rapporté par le README, et non observé par une nou
 
 **Référence technique**
 
-[README.md](../../README.md#L546)
+[README.md](../../README.md#L574)
 
 **Statut de validation**
 
@@ -706,7 +724,7 @@ La connexion Aiven et les migrations déployées restent non vérifiées.
 
 **Référence technique**
 
-[README.md](../../README.md#L553)
+[README.md](../../README.md#L578)
 
 **Statut de validation**
 
@@ -732,7 +750,7 @@ L’API de bannissement existe ; le tableau ne propose aucune action de bannisse
 
 **Référence technique**
 
-[frontend/admin-dashboard.js](../../frontend/admin-dashboard.js#L127)
+[frontend/admin-dashboard.js](../../frontend/admin-dashboard.js#L158)
 
 **Statut de validation**
 
@@ -758,7 +776,7 @@ Un second vote est refusé ; un autre like est accepté.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L362)
+[backend/models.py](../../backend/models.py#L425)
 
 **Statut de validation**
 
@@ -784,7 +802,7 @@ Préparer séparément une base de démonstration isolée.
 
 **Référence technique**
 
-[README.md](../../README.md#L512)
+[README.md](../../README.md#L535)
 
 **Statut de validation**
 
@@ -810,7 +828,7 @@ Priorité suggérée : rendre l’installation reproductible avant d’étendre 
 
 **Référence technique**
 
-[README.md](../../README.md#L605)
+[README.md](../../README.md#L619)
 
 **Statut de validation**
 

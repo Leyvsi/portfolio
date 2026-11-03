@@ -1,5 +1,33 @@
 # Fiche Mélissa — Frontend
 
+> Etat de diffusion scolaire du 3 novembre 2026 : suivre le [guide actuel](../../LIVRAISON_SCOLAIRE.md) et la [validation scolaire](VALIDATION_SCOLAIRE.md). Les sections de campagnes anterieures et leurs commandes sont historiques ; elles ne remplacent pas la procedure actuelle. Les chemins sous `C:\chemin\utilisateur` sont des exemples anonymises. Les archives internes signalees sont conservees localement.
+
+## État courant — 2 novembre 2026
+
+Lire d’abord les [supports 6H.1](SUPPORT_JURY_LOT6H1.md), l’[index courant](INDEX_CODE_LOT6H1.md) et la [procédure sur un autre PC](../../LIVRAISON_SCOLAIRE.md). Le bilan actuel distingue **854 tests historiques**, recette Edge réussie en SQLite fictif et contrôles documentaires de ce lot. Le modèle actuel contient dix tables et treize FK ; le compte est partagé sur dix pages, les signalements sont contextualisés, les likes de dossier/commentaire sont individuels.
+
+Les compléments et questions ci-dessous conservent leur contexte historique. Les anciennes mentions de fonctions absentes, de neuf tables ou de recette non exécutée ne constituent pas l’état courant. Les 76 questions/réponses historiques restent conservées. Aucun résultat MySQL ou de déploiement n’est ajouté.
+
+
+## Complément courant 6G.2 — J’aime réversible
+
+Bilan 6G.2 (archive interne non livree) : bouton natif et aria-pressed, compteurs/états relus sur le serveur, ajout/retrait avec verrou et aucun renvoi après résultat incertain. Les brouillons de commentaire/signalement sont conservés. Les anciens paragraphes sur les clics répétés concernent les théories ou l'état historique, pas les nouveaux likes de commentaires. Preuves DOM/API simulés et WSGI/SQLite ; navigateur réel non exécuté.
+
+## Complément courant 6C.2 — dialogue et état incertain
+
+L’action définitive n’apparaît que sur les archives. Le dialogue natif montre le titre et les nombres de dépendances, exige une saisie exacte et une case d’accord ; Annuler/Échap n’envoient aucune confirmation destructive. Le verrou couvre aperçu, confirmation, DELETE et relecture. Les textes restent du textContent et les en-têtes autorisés ne peuvent pas remplacer le CSRF.
+
+Après timeout, relire l’état puis les listes/compteurs sans répéter DELETE. Distinguer succès reconnu, présence/absence sans attribution et lecture indisponible. L’absence de reçu/journal est volontaire. Les 22 nouveaux cas DOM ne prouvent pas le clavier/mobile réels, dont la recette reste séparée. Bilan courant (archive interne non livree).
+
+
+> **Actualisation du 29 octobre 2026 — étape 5.** Les questions et réponses courtes historiques ci-dessous sont conservées. Les affirmations « non relancé ici » décrivent leur préparation antérieure : les campagnes ultérieures sont présentées dans [Tests et validation](TESTS_ET_VALIDATION.md), avec 439 réussites automatiques, la recette Edge et les dix BDD PASS. La recette Edge est automatisée, pas entièrement manuelle humaine ; Aiven et migrations restent non validés. Les repères actuels (archive interne non livree) tiennent compte des commentaires ajoutés au code. Les diagrammes révisés ont leur contrôle local dans le bilan (archive interne non livree).
+
+## Complément lot 6C phase 1 — interface des archives
+
+Le panneau des dossiers ajoute Archiver, une confirmation native explicite, un filtre d’état, une consultation privée et Restaurer. Les libellés et contenus sont insérés avec `textContent`. Le verrou de soumission couvre aussi la relecture des listes et statistiques ; annuler n’envoie aucune requête. Les anciennes réponses succès/403 ne remplacent pas un chargement récent.
+
+Après timeout ou réponse illisible, je relis le serveur sans répéter le POST et j’affiche l’état constaté. Si cette lecture échoue, je masque les actions et remets `—`. Les sept compteurs sont conservés ; les trois liés aux dossiers excluent les archives et le nombre d’archives est séparé. Le focus revient sur Actualiser. Les tests DOM ne remplacent pas la recette clavier/responsive réelle, encore non exécutée. Voir le bilan 6C phase 1 (archive interne non livree).
+
 [Retour au sommaire de soutenance](README.md)
 
 Questions-réponses historiques récupérées de la réponse Codex de l’étape 15.1 du **25 octobre 2026**, fondée sur le commit `dec5c7ef4c753970bd94014b37b59b035e1877f1`. Audit de référence : étape 15.8.1 ; préparation documentaire : étape 15.8.2, au commit `857190654457b15d7324adde8c920d9fdd3db0c8`.
@@ -9,6 +37,14 @@ Les formulations des questions et des réponses courtes originales sont conserv�
 Empreinte SHA-256 du texte historique complet : `218cf13b814a1f20a4258f1f6b24ab600b296bc62baab1c23610a36905ace4cd`.
 
 **Portée des preuves :** les résultats de tests et de rendu Mermaid sont historiques. Aucun test fonctionnel, rendu de diagramme, serveur, migration ou accès Aiven n’est exécuté pendant cette préparation. Les droits des illustrations restent à confirmer.
+
+> **Complément 5.1 autorisé.** Réviser aussi les réponses 16 (images) et 17 (requêtes tardives). Les compléments sont dans les vrais scripts : annulation/délai, contrôles de réponses, repli des images, dates et retour depuis le cache de navigation. Voir les [réponses orales](ORAL_JURY.md), le [suivi du jury](SUIVI_REMARQUES_JURY.md) et le bilan 5.1 (archive interne non livree).
+
+> **Actualisation fonctionnelle 6A — 30 octobre 2026.** Les 76 questions/réponses courtes historiques sont conservées : leurs anciennes limites d’administration décrivent l’état d’avant ce lot. Le tableau dispose maintenant de la liste des utilisateurs et du bannissement des comptes ordinaires, avec confirmation, relecture serveur et refus de tous les administrateurs en 409. Le contrat compte désormais 25 opérations. Voir la [réponse orale sur le bannissement](ORAL_JURY.md#19-comment-fonctionne-le-bannissement-administrateur-), les preuves 487 tests (archive interne non livree) et l’index actuel (archive interne non livree). Aucun navigateur réel exécuté pour 6A.
+
+> **Complément 6B — 30 octobre 2026.** La consultation administrative des dossiers est livrée : recherche par titre, filtres, catégories inconnues et fiche existante, sans modifier les données ni le bannissement 6A. Préparer la [réponse orale 20](ORAL_JURY.md#20-comment-consultez-vous-les-dossiers-dans-ladministration-), les preuves 533 tests (archive interne non livree) et les repères actuels (archive interne non livree). Les questions et réponses historiques restent conservées. Les API de lecture restent publiques ; aucun navigateur réel exécuté.
+
+> **Complément 6D — 30 octobre 2026.** Le tableau possède sept compteurs : le nouveau total compte uniquement le statut exact `pending` de la liste administrative existante. Préparer la [réponse orale 21](ORAL_JURY.md#21-comment-comptez-vous-les-propositions-en-attente-), le bilan 6D et ses 561 tests (archive interne non livree) et les repères actuels (archive interne non livree). Mélissa explique le DOM, le chargement et le nettoyage ; Sylvie les permissions et le JSON inchangés ; Mahamadou le statut texte, les catégories et l'invariance des neuf tables après lecture. Les 76 réponses historiques sont conservées. La recette navigateur reste reportée et le verdict VM NO-GO est maintenu.
 
 ## Sommaire
 
@@ -225,7 +261,7 @@ Ces règles sont **vérifiées dans les sources**. Leur rendu sur de vrais appar
 ### 10. Limites actuelles
 
 - Aucun écran pour commenter, voter, liker ou signaler.
-- Aucun bouton de bannissement.
+- Bannissement des comptes ordinaires disponible, administrateurs protégés.
 - Administration limitée à la consultation.
 - Aucune acceptation ou publication des propositions.
 - Aucun téléchargement d’image.
@@ -310,7 +346,7 @@ submit lance une création de théorie.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L233)
+[frontend/app.js](../../frontend/app.js#L255)
 
 **Statut de validation**
 
@@ -336,7 +372,7 @@ apiRequest() gère le délai et les erreurs HTTP.
 
 **Référence technique**
 
-[frontend/api.js](../../frontend/api.js#L6)
+[frontend/api.js](../../frontend/api.js#L8)
 
 **Statut de validation**
 
@@ -362,7 +398,7 @@ loadStories() remplit les cartes depuis getStories().
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L108)
+[frontend/app.js](../../frontend/app.js#L121)
 
 **Statut de validation**
 
@@ -388,7 +424,7 @@ Le lecteur possède son propre sélecteur et un bouton Actualiser.
 
 **Référence technique**
 
-[frontend/theories-list.js](../../frontend/theories-list.js#L75)
+[frontend/theories-list.js](../../frontend/theories-list.js#L87)
 
 **Statut de validation**
 
@@ -414,7 +450,7 @@ makeCard() crée un article et lui ajoute un titre.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L73)
+[frontend/app.js](../../frontend/app.js#L82)
 
 **Statut de validation**
 
@@ -440,7 +476,7 @@ La validation précède createTheory().
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L233)
+[frontend/app.js](../../frontend/app.js#L255)
 
 **Statut de validation**
 
@@ -466,7 +502,7 @@ Le script attend fetch(), puis la lecture du JSON.
 
 **Référence technique**
 
-[frontend/api.js](../../frontend/api.js#L31)
+[frontend/api.js](../../frontend/api.js#L46)
 
 **Statut de validation**
 
@@ -492,7 +528,7 @@ Une réponse 403 devient une erreur affichée.
 
 **Référence technique**
 
-[frontend/api.js](../../frontend/api.js#L64)
+[frontend/api.js](../../frontend/api.js#L81)
 
 **Statut de validation**
 
@@ -518,7 +554,7 @@ credentials: 'include' accompagne les requêtes.
 
 **Référence technique**
 
-[frontend/api.js](../../frontend/api.js#L36)
+[frontend/api.js](../../frontend/api.js#L51)
 
 **Statut de validation**
 
@@ -544,7 +580,7 @@ Le client envoie X-CSRF-Token.
 
 **Référence technique**
 
-[backend/index.py](../../backend/index.py#L152)
+[backend/index.py](../../backend/index.py#L171)
 
 **Statut de validation**
 
@@ -570,7 +606,7 @@ Le titre et le contenu sont également contrôlés par Flask.
 
 **Référence technique**
 
-[backend/api/v1/views/write_support.py](../../backend/api/v1/views/write_support.py#L27)
+[backend/api/v1/views/write_support.py](../../backend/api/v1/views/write_support.py#L32)
 
 **Statut de validation**
 
@@ -596,7 +632,7 @@ reset() n’intervient qu’après la création réussie.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L276)
+[frontend/app.js](../../frontend/app.js#L298)
 
 **Statut de validation**
 
@@ -622,7 +658,7 @@ Recharger ou quitter la page peut faire perdre la saisie.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L296)
+[frontend/app.js](../../frontend/app.js#L318)
 
 **Statut de validation**
 
@@ -648,7 +684,7 @@ sending est remis à false à la fin de l’envoi.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L313)
+[frontend/app.js](../../frontend/app.js#L337)
 
 **Statut de validation**
 
@@ -674,7 +710,7 @@ API, illustration locale, SVG, puis message texte.
 
 **Référence technique**
 
-[frontend/app.js](../../frontend/app.js#L37)
+[frontend/app.js](../../frontend/app.js#L43)
 
 **Statut de validation**
 
@@ -700,10 +736,16 @@ Flask exige admin_required pour les propositions et signalements.
 
 **Référence technique**
 
-[frontend/admin-dashboard.js](../../frontend/admin-dashboard.js#L143)
+[frontend/admin-dashboard.js](../../frontend/admin-dashboard.js#L175)
 
 **Statut de validation**
 
 **VALIDÉE — conforme aux sources.**
 
 [Retour au sommaire de soutenance](README.md)
+
+## Complément oral 6E.2 — hors des réponses historiques
+
+« J'ai ajouté une information courte avant l'inscription, la théorie et la proposition. Les champs et les envois restent les mêmes. Une théorie est publique ; une proposition va aux administrateurs sans publication automatique. Les notices sont reliées aux formulaires et boutons par aria-describedby.
+
+La page de confidentialité reprend le design, mais reste un brouillon dans la documentation : les informations essentielles et le contact ne sont pas validés. Je n'ajoute pas de lien cassé ni de case “J'accepte le RGPD”. Les liens natifs et leur focus sont contrôlés statiquement ; je ne prétends pas avoir réalisé une recette clavier ou lecteur d'écran dans Edge pour ce lot. »

@@ -76,19 +76,17 @@ function page(options = {}) {
 }
 async function settle() { await Promise.resolve(); await Promise.resolve(); }
 
-test('API image has priority, then local file, then default', () => {
+test('API image has priority, followed by the delivered default', () => {
   const p = page();
   assert.deepEqual(Array.from(p.context.getStoryImageSources({ ...rows[0], image_url: ' https://images.example.test/custom.webp ' })), [
-    'https://images.example.test/custom.webp', 'images/tableau-salle-bleue.webp', 'images/default-story.svg'
+    'https://images.example.test/custom.webp', 'images/default-story.svg'
   ]);
   assert.equal(p.context.getStoryImageSources({ ...rows[0], image_url: '/images/custom.webp' })[0], '/images/custom.webp');
 });
 
-test('four NULL-image demo slugs select the four expected local files', () => {
+test('all demo slugs without an API image select the delivered default', () => {
   const p = page();
-  rows.forEach((row, i) => assert.deepEqual(Array.from(p.context.getStoryImageSources(row)), [
-    'images/' + names[i] + '.webp', 'images/default-story.svg'
-  ]));
+  rows.forEach(row => assert.deepEqual(Array.from(p.context.getStoryImageSources(row)), ['images/default-story.svg']));
 });
 
 test('unknown slug and blank API value select only the default', () => {
@@ -96,22 +94,19 @@ test('unknown slug and blank API value select only the default', () => {
   assert.deepEqual(Array.from(p.context.getStoryImageSources({ slug: 'unknown', image_url: ' ' })), ['images/default-story.svg']);
 });
 
-test('non-web image schemes are ignored and identical sources are deduplicated', () => {
+test('non-web schemes are ignored and identical sources are deduplicated', () => {
   const p = page();
   for (const image_url of ['javascript:alert(1)', 'data:image/svg+xml,test', 'file:///private.jpg']) {
-    assert.equal(p.context.getStoryImageSources({ ...rows[0], image_url })[0], 'images/tableau-salle-bleue.webp');
+    assert.deepEqual(Array.from(p.context.getStoryImageSources({ ...rows[0], image_url })), ['images/default-story.svg']);
   }
-  assert.deepEqual(Array.from(p.context.getStoryImageSources({ ...rows[0], image_url: 'images/tableau-salle-bleue.webp' })), [
-    'images/tableau-salle-bleue.webp', 'images/default-story.svg'
-  ]);
+  assert.deepEqual(Array.from(p.context.getStoryImageSources({ ...rows[0], image_url: 'images/default-story.svg' })), ['images/default-story.svg']);
 });
 
-test('error chain tries API, local, default, then stops with readable text', () => {
+test('error chain tries API then default and stops with readable text', () => {
   const p = page();
   const frame = p.context.createStoryImage({ ...rows[0], image_url: '/images/missing.webp' });
   const image = frame.querySelector('img'), fail = image.events.get('error');
   assert.equal(image.src, '/images/missing.webp');
-  fail(); assert.equal(image.src, 'images/tableau-salle-bleue.webp');
   fail(); assert.equal(image.src, 'images/default-story.svg');
   assert.match(image.alt, /Image à venir/);
   fail(); assert.equal(image.hidden, true);
@@ -140,7 +135,7 @@ for (const [type, category] of [['resolved', 1], ['coldcase', 2]]) {
     const expected = rows.filter(r => r.category_id === category);
     p.list.children.forEach((card, i) => {
       assert.equal(card.querySelector('h3').textContent, expected[i].title);
-      assert.equal(card.querySelector('img').src, 'images/' + names[expected[i].id - 1] + '.webp');
+      assert.equal(card.querySelector('img').src, 'images/default-story.svg');
       assert.equal(card.querySelector('a').href, 'dossier.html?slug=' + expected[i].slug);
     });
     assert.equal(p.nodes.get('stories-feedback').textContent, '');

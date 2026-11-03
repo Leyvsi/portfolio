@@ -5,12 +5,15 @@ from api.v1.views.permissions import get_authenticated_user
 from models import db, Story, Vote, ColdCaseUpdate
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from api.v1.views.write_support import api_error, get_resource, is_unique_conflict
+from api.v1.views.story_visibility import get_active_story
 
 
 @app_views.route('/stories', methods=['GET'])
+# GET public : lire les dossiers triés et calculer leurs votes. Le comptage
+# par dossier est simple, mais multiplie les requêtes quand la liste grandit.
 def get_stories():
     """Return all stories."""
-    stories = Story.query.order_by(Story.created_at.desc()).all()
+    stories = Story.query.filter_by(archived_at=None).order_by(Story.created_at.desc()).all()
 
     result = []
 
@@ -37,9 +40,10 @@ def get_stories():
 
 
 @app_views.route('/stories/slug/<string:slug>', methods=['GET'])
+# Un slug absent donne 404 ; il ne faut pas fabriquer un dossier de remplacement.
 def get_story_by_slug(slug):
     """Return one story using its slug."""
-    story = Story.query.filter_by(slug=slug).first()
+    story = Story.query.filter_by(slug=slug, archived_at=None).first()
 
     if not story:
         return jsonify({
@@ -57,6 +61,8 @@ def get_story_by_slug(slug):
 
 
 @app_views.route('/votes/<int:story_id>', methods=['POST'])
+# POST lie le vote au compte authentifié. Le précontrôle et la contrainte
+# composite garantissent le même objectif ; un vote déjà présent donne 409.
 def post_story_vote(story_id):
     """Add one vote to a story for the authenticated user."""
     user, error_response = get_authenticated_user()
@@ -64,7 +70,7 @@ def post_story_vote(story_id):
     if error_response:
         return error_response
 
-    story = get_resource(Story, story_id)
+    story = get_active_story(story_id, lock=True)
 
     if not story:
         return jsonify({
@@ -86,8 +92,13 @@ def post_story_vote(story_id):
         user_id=user.id
     )
 
+    # add prépare l'objet ; commit déclenche le flush puis valide la transaction.
+    # En cas d'erreur SQL, rollback annule les écritures non validées et rétablit
+    # une session utilisable avant de renvoyer la réponse d’échec.
     try:
         db.session.add(new_vote)
+        db.session.flush()
+        vote_count = Vote.query.filter_by(story_id=story_id).count()
         db.session.commit()
     except IntegrityError as error:
         db.session.rollback()
@@ -101,10 +112,6 @@ def post_story_vote(story_id):
         db.session.rollback()
         return api_error("Impossible d'enregistrer le vote.", 500)
 
-    vote_count = Vote.query.filter_by(
-        story_id=story_id
-    ).count()
-
     return jsonify({
         "message": "Vote pris en compte !",
         "votes": vote_count
@@ -112,9 +119,11 @@ def post_story_vote(story_id):
 
 
 @app_views.route('/coldcases/<int:case_id>/updates', methods=['GET'])
+# GET public : vérifier le dossier puis lire les mises à jour chronologiques.
+# Cette route ne contrôle pas que la catégorie du dossier soit Cold Case.
 def get_case_updates(case_id):
     """Return updates for a cold case."""
-    story = db.session.get(Story, case_id)
+    story = get_active_story(case_id)
 
     if not story:
         return jsonify({

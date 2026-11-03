@@ -1,6 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
   <title id="title">Image à venir</title>
-  <rect width="1200" height="675" fill="#141316"/>
-  <path d="M480 285h240" stroke="#e4783c" stroke-width="4"/>
-  <text x="600" y="355" text-anchor="middle" fill="#c7beb8" font-family="Arial, sans-serif" font-size="36">Image à venir</text>
+  <desc id="description">Symbole géométrique de dossier et de loupe pour la démonstration scolaire.</desc>
+  <rect width="1200" height="675" rx="24" fill="#17202b"/>
+  <rect x="330" y="190" width="420" height="300" rx="22" fill="#27384a"/>
+  <path d="M330 255v-43q0-22 22-22h128l45 65z" fill="#456078"/>
+  <circle cx="655" cy="310" r="83" fill="#17202b" stroke="#f3b76a" stroke-width="16"/>
+  <path d="M714 369l90 90" fill="none" stroke="#f3b76a" stroke-width="24" stroke-linecap="round"/>
+  <path d="M385 365h140m-140 55h195" fill="none" stroke="#b8cbd8" stroke-width="12" stroke-linecap="round"/>
 </svg>

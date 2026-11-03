@@ -1,5 +1,33 @@
 # Fiche Sylvie — Backend Flask et API REST
 
+> Etat de diffusion scolaire du 3 novembre 2026 : suivre le [guide actuel](../../LIVRAISON_SCOLAIRE.md) et la [validation scolaire](VALIDATION_SCOLAIRE.md). Les sections de campagnes anterieures et leurs commandes sont historiques ; elles ne remplacent pas la procedure actuelle. Les chemins sous `C:\chemin\utilisateur` sont des exemples anonymises. Les archives internes signalees sont conservees localement.
+
+## État courant — 2 novembre 2026
+
+Lire d’abord les [supports 6H.1](SUPPORT_JURY_LOT6H1.md), l’[index courant](INDEX_CODE_LOT6H1.md) et la [procédure sur un autre PC](../../LIVRAISON_SCOLAIRE.md). Le bilan actuel distingue **854 tests historiques**, recette Edge réussie en SQLite fictif et contrôles documentaires de ce lot. Le modèle actuel contient dix tables et treize FK ; le compte est partagé sur dix pages, les signalements sont contextualisés, les likes de dossier/commentaire sont individuels.
+
+Les compléments et questions ci-dessous conservent leur contexte historique. Les anciennes mentions de fonctions absentes, de neuf tables ou de recette non exécutée ne constituent pas l’état courant. Les 76 questions/réponses historiques restent conservées. Aucun résultat MySQL ou de déploiement n’est ajouté.
+
+
+## Complément courant 6G.2 — identité et unicité des likes
+
+Bilan 6G.2 (archive interne non livree) : GET personnel et DELETE ajoutés sur votes et likes de commentaires ; POST existants conservés/adaptés. La session détermine l'auteur, CSRF protège les écritures, l'unicité SQL interdit le doublon. Un compteur historique non attribuable bloque les actions sans conversion. Commit confirme l'écriture ; une réponse perdue impose une vérification, sans renvoi automatique. Aucun MySQL réel ou navigateur validé.
+
+## Complément courant 6C.2 — suppression conditionnelle
+
+Trois routes nouvelles : aperçu GET, confirmation POST avec titre exact/acquittement, DELETE sans corps avec CSRF, If-Match et jeton signé de cinq minutes. Relire l’admin actif, vérifier FK/moteur et archive, verrouiller parent/enfants, comparer révision/empreinte, réserver une révision puis supprimer le graphe dans un seul commit. Un échec avant validation annule aussi les reports et la réservation.
+
+Après accusé de COMMIT perdu, 503 signale une issue à vérifier : rollback local ne prouve pas l’échec du serveur. Sans reçu, une absence relue ne permet pas d’attribuer la suppression ; aucun replay 200 ni DELETE automatique. Montrer les erreurs SQL injectées après de vrais DELETE et les données témoins intactes. Bilan courant (archive interne non livree).
+
+
+> **Actualisation du 29 octobre 2026 — étape 5.** Les questions et réponses courtes historiques ci-dessous sont conservées. Les affirmations « non relancé ici » décrivent leur préparation antérieure : les campagnes ultérieures sont présentées dans [Tests et validation](TESTS_ET_VALIDATION.md), avec 439 réussites automatiques, la recette Edge et les dix BDD PASS. La recette Edge est automatisée, pas entièrement manuelle humaine ; Aiven et migrations restent non validés. Les repères actuels (archive interne non livree) tiennent compte des commentaires ajoutés au code. Les diagrammes révisés ont leur contrôle local dans le bilan (archive interne non livree).
+
+## Complément lot 6C phase 1 — routes et visibilité
+
+Quatre opérations privées sont ajoutées : GET `/admin/stories`, GET `/admin/stories/{story_id}`, POST `archive` et POST `restore`. Le compte et son rôle sont relus en base ; les écritures exigent le CSRF. Les ids sont bornés et une cible absente donne 404. L’état répété donne 200 avec `changed=false`, sans changer la première date d’archivage. Une erreur SQL entraîne rollback et JSON générique, y compris pendant le contrôle du rôle.
+
+Les lectures publiques par slug et les lectures de contributions renvoient 404 pour une archive, même avec une session administrateur. Les sept entrées d’écriture vérifient le parent : théories, commentaires, votes, deux likes et deux signalements. Les écrivains et transitions demandent le même verrou de ligne Story ; les garanties MySQL restent à tester sur une cible autorisée. Aucun DELETE de dossier. Montrer le contrat et les preuves de phase 1 (archive interne non livree).
+
 [Retour au sommaire de soutenance](README.md)
 
 Questions-réponses historiques récupérées de la réponse Codex de l’étape 15.1 du **25 octobre 2026**, fondée sur le commit `dec5c7ef4c753970bd94014b37b59b035e1877f1`. Audit de référence : étape 15.8.1 ; préparation documentaire : étape 15.8.2, au commit `857190654457b15d7324adde8c920d9fdd3db0c8`.
@@ -9,6 +37,14 @@ Les formulations des questions et des réponses courtes originales sont conserv�
 Empreinte SHA-256 du texte historique complet : `218cf13b814a1f20a4258f1f6b24ab600b296bc62baab1c23610a36905ace4cd`.
 
 **Portée des preuves :** les résultats de tests et de rendu Mermaid sont historiques. Aucun test fonctionnel, rendu de diagramme, serveur, migration ou accès Aiven n’est exécuté pendant cette préparation. Les droits des illustrations restent à confirmer.
+
+> **Complément 5.1 autorisé.** Réviser aussi la réponse 18 sur la sérialisation JSON. Les fonctions theory_to_dict et proposal_to_dict sont commentées dans les routes réelles ; elles ne remplacent ni les permissions ni la validation des entrées. Voir les [réponses orales](ORAL_JURY.md), le [suivi du jury](SUIVI_REMARQUES_JURY.md) et le bilan 5.1 (archive interne non livree).
+
+> **Actualisation fonctionnelle 6A — 30 octobre 2026.** Les 76 questions/réponses courtes historiques sont conservées : leurs anciennes limites d’administration décrivent l’état d’avant ce lot. Le tableau dispose maintenant de la liste des utilisateurs et du bannissement des comptes ordinaires, avec confirmation, relecture serveur et refus de tous les administrateurs en 409. Le contrat compte désormais 25 opérations. Voir la [réponse orale sur le bannissement](ORAL_JURY.md#19-comment-fonctionne-le-bannissement-administrateur-), les preuves 487 tests (archive interne non livree) et l’index actuel (archive interne non livree). Aucun navigateur réel exécuté pour 6A.
+
+> **Complément 6B — 30 octobre 2026.** La consultation administrative des dossiers est livrée : recherche par titre, filtres, catégories inconnues et fiche existante, sans modifier les données ni le bannissement 6A. Préparer la [réponse orale 20](ORAL_JURY.md#20-comment-consultez-vous-les-dossiers-dans-ladministration-), les preuves 533 tests (archive interne non livree) et les repères actuels (archive interne non livree). Les questions et réponses historiques restent conservées. Les API de lecture restent publiques ; aucun navigateur réel exécuté.
+
+> **Complément 6D — 30 octobre 2026.** Le tableau possède sept compteurs : le nouveau total compte uniquement le statut exact `pending` de la liste administrative existante. Préparer la [réponse orale 21](ORAL_JURY.md#21-comment-comptez-vous-les-propositions-en-attente-), le bilan 6D et ses 561 tests (archive interne non livree) et les repères actuels (archive interne non livree). Mélissa explique le DOM, le chargement et le nettoyage ; Sylvie les permissions et le JSON inchangés ; Mahamadou le statut texte, les catégories et l'invariance des neuf tables après lecture. Les 76 réponses historiques sont conservées. La recette navigateur reste reportée et le verdict VM NO-GO est maintenu.
 
 ## Sommaire
 
@@ -55,7 +91,7 @@ Les routes `/login`, `/me`, `/logout` et `/stats` sont déclarées directement d
 
 `backend/api/v1/app.py` réexporte l’application configurée dans `index.py`. Ce fichier ne définit pas un second backend indépendant.
 
-### 2. Méthodes HTTP et 24 opérations
+### 2. Méthodes HTTP et 25 opérations
 
 - **GET** demande une lecture.
 - **POST** déclenche ici une création ou une action.
@@ -63,7 +99,7 @@ Les routes `/login`, `/me`, `/logout` et `/stats` sont déclarées directement d
 
 La route de bannissement utilise `DELETE`, mais son implémentation positionne `is_banned = True`. Elle ne supprime pas le compte.
 
-Les **24 opérations** sont vérifiées dans les déclarations de routes et dans OpenAPI. Les méthodes automatiques `HEAD` et `OPTIONS` ne sont pas comptées.
+Les **25 opérations** sont vérifiées dans les déclarations de routes et dans OpenAPI. Les méthodes automatiques `HEAD` et `OPTIONS` ne sont pas comptées.
 
 Tous les chemins ci-dessous commencent par **`/api/v1`**.
 
@@ -245,7 +281,7 @@ Pour les votes et inscriptions, le code distingue certains conflits uniques conn
 
 ### 9. Tests, Swagger et limites
 
-**Preuve historique**, consignée dans le [README principal](../../README.md#L540) :
+**Preuve historique**, consignée dans le [README principal](../../README.md#L563) :
 
 | Suite | Résultat rapporté |
 |---|---:|
@@ -294,7 +330,7 @@ POST /api/v1/login vérifie le mot de passe.
 
 **Référence technique**
 
-[backend/index.py](../../backend/index.py#L241)
+[backend/index.py](../../backend/index.py#L266)
 
 **Statut de validation**
 
@@ -320,7 +356,7 @@ app_views porte le préfixe /api/v1.
 
 **Référence technique**
 
-[backend/api/v1/views/__init__.py](../../backend/api/v1/views/__init__.py#L3)
+[backend/api/v1/views/__init__.py](../../backend/api/v1/views/__init__.py#L5)
 
 **Statut de validation**
 
@@ -372,7 +408,7 @@ GET /users liste ; POST /users inscrit.
 
 **Référence technique**
 
-[backend/api/v1/views/users.py](../../backend/api/v1/views/users.py#L31)
+[backend/api/v1/views/users.py](../../backend/api/v1/views/users.py#L34)
 
 **Statut de validation**
 
@@ -398,7 +434,7 @@ Le compte reçoit is_banned = True.
 
 **Référence technique**
 
-[backend/api/v1/views/index.py](../../backend/api/v1/views/index.py#L104)
+[backend/api/v1/views/index.py](../../backend/api/v1/views/index.py#L113)
 
 **Statut de validation**
 
@@ -424,7 +460,7 @@ set_password() et check_password().
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L29)
+[backend/models.py](../../backend/models.py#L43)
 
 **Statut de validation**
 
@@ -450,7 +486,7 @@ La session contient notamment user_id.
 
 **Référence technique**
 
-[backend/index.py](../../backend/index.py#L289)
+[backend/index.py](../../backend/index.py#L318)
 
 **Statut de validation**
 
@@ -476,7 +512,7 @@ get_authenticated_user() relit User.
 
 **Référence technique**
 
-[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L8)
+[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L10)
 
 **Statut de validation**
 
@@ -502,7 +538,7 @@ admin_required vérifie user.is_admin.
 
 **Référence technique**
 
-[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L47)
+[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L49)
 
 **Statut de validation**
 
@@ -528,7 +564,7 @@ secrets.compare_digest() compare les jetons.
 
 **Référence technique**
 
-[backend/index.py](../../backend/index.py#L152)
+[backend/index.py](../../backend/index.py#L171)
 
 **Statut de validation**
 
@@ -554,7 +590,7 @@ Une inscription anonyme reste possible ; une route membre vérifie aussi le comp
 
 **Référence technique**
 
-[backend/index.py](../../backend/index.py#L152)
+[backend/index.py](../../backend/index.py#L171)
 
 **Statut de validation**
 
@@ -580,7 +616,7 @@ Le code HTTP permet au frontend de distinguer une absence de connexion d’un re
 
 **Référence technique**
 
-[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L8)
+[backend/api/v1/views/permissions.py](../../backend/api/v1/views/permissions.py#L10)
 
 **Statut de validation**
 
@@ -606,7 +642,7 @@ La création de théorie vérifie le dossier, le titre et le contenu.
 
 **Référence technique**
 
-[backend/api/v1/views/write_support.py](../../backend/api/v1/views/write_support.py#L27)
+[backend/api/v1/views/write_support.py](../../backend/api/v1/views/write_support.py#L32)
 
 **Statut de validation**
 
@@ -632,7 +668,7 @@ Un doublon reconnu renvoie 409.
 
 **Référence technique**
 
-[backend/api/v1/views/histoires.py](../../backend/api/v1/views/histoires.py#L59)
+[backend/api/v1/views/histoires.py](../../backend/api/v1/views/histoires.py#L63)
 
 **Statut de validation**
 
@@ -658,7 +694,7 @@ La route incrémente Theory.likes.
 
 **Référence technique**
 
-[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L109)
+[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L121)
 
 **Statut de validation**
 
@@ -684,7 +720,7 @@ Une erreur SQL produit rollback() et une réponse 500.
 
 **Référence technique**
 
-[backend/api/v1/views/proposals.py](../../backend/api/v1/views/proposals.py#L77)
+[backend/api/v1/views/proposals.py](../../backend/api/v1/views/proposals.py#L85)
 
 **Statut de validation**
 
@@ -710,7 +746,7 @@ Le résultat mentionné est historique et concerne un environnement isolé, sans
 
 **Référence technique**
 
-[README.md](../../README.md#L546)
+[README.md](../../README.md#L574)
 
 **Statut de validation**
 
@@ -743,3 +779,11 @@ Swagger décrit les routes ; backend/tests contient les tests.
 **VALIDÉE — conforme aux sources.**
 
 [Retour au sommaire de soutenance](README.md)
+
+## Complément oral 6E.2 — hors des réponses historiques
+
+« Je peux expliquer le cookie signé : HttpOnly empêche sa lecture directe par JavaScript, SameSite=Lax limite certains envois et Secure dépend de la configuration. Je n'ai pas changé ces réglages et je ne prétends pas que HTTPS est vérifié.
+
+La procédure prépare réception, vérification d'identité proportionnée, accès/copie, rectification, effacement et contestation. Je ne demande jamais mot de passe ou jeton CSRF, ni systématiquement une pièce d'identité. Je protège les données des tiers. Le responsable et le contact doivent encore être confirmés ; aucune nouvelle API d'effacement ou d'export n'est développée. »
+
+À montrer : [sessions et limites](ARCHITECTURE_SECURITE_RGPD.md#cookies-vérifiés-dans-les-sources-sans-lire-la-configuration-privée), procédure interne (archive interne non livree), bilan (archive interne non livree). Le backend, les permissions et les migrations restent identiques ; les 285 PASS backend restent historiques pour ce lot.

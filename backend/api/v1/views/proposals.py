@@ -10,6 +10,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from api.v1.views.write_support import api_error, json_object, required_text
 
 
+# Préparer la représentation JSON de la proposition et convertir ses dates.
+# Inclure user_id ne donne aucun droit : les permissions sont contrôlées par la route.
 def proposal_to_dict(proposal):
     return {
         "id": proposal.id,
@@ -30,6 +32,7 @@ def proposal_to_dict(proposal):
 
 @app_views.route("/proposals", methods=["GET"])
 @admin_required
+# GET administrateur : ces textes soumis ne deviennent pas une liste publique.
 def get_proposals():
     proposals = (
         Proposal.query
@@ -44,6 +47,8 @@ def get_proposals():
 
 
 @app_views.route("/proposals", methods=["POST"])
+# POST crée seulement une proposition pending. Le compte vient de la session ;
+# accepter une proposition ou publier un dossier demanderait un autre parcours.
 def create_proposal():
     user, error_response = get_authenticated_user()
 
@@ -71,6 +76,9 @@ def create_proposal():
         status="pending"
     )
 
+    # add prépare l'objet ; commit déclenche le flush puis valide la transaction.
+    # En cas d'erreur SQL, rollback annule les écritures non validées et rétablit
+    # une session utilisable avant de renvoyer la réponse d’échec.
     try:
         db.session.add(new_proposal)
         db.session.commit()

@@ -16,6 +16,8 @@ branch_labels = None
 depends_on = None
 
 
+# Ajouter signalements, mises à jour et état de bannissement. Le défaut SQL
+# temporaire renseigne les comptes existants, puis est retiré du schéma.
 def upgrade():
     op.create_table(
         'reports',
@@ -60,6 +62,8 @@ def upgrade():
     )
 
 
+# Retirer ces éléments du schéma ; les lignes des deux tables supprimées
+# ne sont pas sauvegardées par cette opération inverse.
 def downgrade():
     op.drop_table('cold_case_updates')
     op.drop_table('reports')

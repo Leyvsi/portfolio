@@ -1,4 +1,6 @@
 // IDs des catégories MySQL vérifiées pour le projet Portfolio.
+// L'association aux catégories 1 et 2 est une hypothèse actuelle de l'interface ;
+// une autre base doit préparer ces identifiants ou ce classement sera incomplet.
 const storyCategories = [
   { id: 1, label: 'Histoires résolues', type: 'resolved' },
   { id: 2, label: 'Cold Cases', type: 'coldcase' }
@@ -9,13 +11,9 @@ function getStoryCategory(story) {
 }
 
 const defaultStoryImage = 'images/default-story.svg';
-const demoStoryImages = Object.freeze({
-  'demo-f32-20261024-v1-tableau-salle-bleue': 'images/tableau-salle-bleue.webp',
-  'demo-f32-20261024-v1-medaille-pavillon-ferme': 'images/medaille-pavillon-ferme.webp',
-  'demo-f32-20261024-v1-malle-quai-silencieux': 'images/malle-quai-silencieux.webp',
-  'demo-f32-20261024-v1-carnet-tour-nord': 'images/carnet-tour-nord.webp'
-});
 
+// Essayer l'URL HTTP(S), puis le SVG local permet
+// de garder une carte lisible quand une image manque, sans accepter de schéma actif.
 function getStoryImageSources(story) {
   const sources = [];
   if (typeof story.image_url === 'string' && story.image_url.trim()) {
@@ -27,12 +25,12 @@ function getStoryImageSources(story) {
       // Une URL inutilisable laisse la place au fichier local ou au placeholder.
     }
   }
-  const localImage = demoStoryImages[story.slug];
-  if (typeof localImage === 'string') sources.push(localImage);
   sources.push(defaultStoryImage);
   return [...new Set(sources)];
 }
 
+// Avancer d'une source à la suivante sur l'événement error, puis masquer l'image
+// si toutes échouent. La borne finale empêche une boucle sur le SVG indisponible.
 function createStoryImage(story, detail = false) {
   const frame = document.createElement('div');
   frame.className = 'story-media';
@@ -45,6 +43,7 @@ function createStoryImage(story, detail = false) {
   const sources = getStoryImageSources(story);
   let index = 0;
   let exhausted = false;
+  // Le texte alternatif précise si l'image affichée est le visuel de remplacement.
   function selectSource() {
     image.alt = sources[index] === defaultStoryImage ?
       'Image à venir pour le dossier : ' + story.title :
@@ -70,6 +69,8 @@ function createStoryImage(story, detail = false) {
   return frame;
 }
 
+// Construire les éléments du DOM et utiliser textContent affiche les valeurs API
+// comme du texte, au lieu de les interpréter comme du HTML provenant d’un membre.
 function makeCard(story) {
   const card = document.createElement('article');
   card.className = 'case-card';
@@ -96,6 +97,8 @@ let pageStories = [];
 function showCards(items) {
   storyList.replaceChildren(...items.map(makeCard));
 }
+// La recherche filtre en mémoire les dossiers déjà chargés, sans requête SQL
+// ni appel API à chaque frappe ; elle porte sur le titre et le résumé.
 if (search) search.addEventListener('input', () => {
   const q = search.value.toLocaleLowerCase('fr').trim();
   const found = pageStories.filter(story =>
@@ -105,6 +108,8 @@ if (search) search.addEventListener('input', () => {
     found.length > 0 || pageStories.length === 0;
 });
 
+// Charger l'API puis filtrer selon la page ; l'accueil garde au plus trois dossiers.
+// En cas d'erreur, un message remplace l'attente : donnees.js n'est pas un repli.
 async function loadStories() {
   storyFeedback.textContent = 'Chargement des histoires…';
   storyList.setAttribute('aria-busy', 'true');
@@ -136,6 +141,8 @@ async function loadStories() {
 if (storyList) loadStories();
 
 const detailTitle = document.getElementById('detail-titre');
+// Le slug de l'URL est transmis à l'API ; un 404 affiche un dossier introuvable.
+// Les paragraphes du récit sont créés comme texte dans le DOM.
 async function loadStory() {
   const feedback = document.getElementById('detail-feedback');
   detailTitle.parentElement.style.overflowWrap = 'anywhere';
@@ -171,6 +178,9 @@ async function loadStory() {
     } else {
       feedback.textContent = 'La catégorie de ce dossier n’est pas configurée.';
     }
+    // La même page accueille histoires et Cold Cases ; transmettre l'id de l'API.
+    if (typeof mountStoryComments === 'function') mountStoryComments(story.id);
+    if (typeof mountStoryLike === 'function') mountStoryLike(story);
   } catch (error) {
     detailTitle.textContent = error.status === 404 ?
       'Dossier introuvable' : 'Lecture impossible';
@@ -196,6 +206,8 @@ if (theoryForm) {
   let storyIds = new Set();
   let sending = false;
 
+  // Les options utilisent les vrais id de l'API, et non le rang dans une liste.
+  // Bloquer l'envoi tant qu'ils ne sont pas disponibles évite une mauvaise référence.
   async function loadTheoryStories() {
     storySelect.disabled = true;
     button.disabled = true;
@@ -230,6 +242,8 @@ if (theoryForm) {
     }
   }
 
+  // Intercepter submit pour valider, bloquer le double envoi puis vérifier /me.
+  // Un 201 efface la saisie ; un refus la conserve pour permettre une correction.
   theoryForm.addEventListener('submit', async event => {
     event.preventDefault();
     if (sending) return;
@@ -308,6 +322,8 @@ if (proposalForm) {
   ];
   let sending = false;
 
+  // Même protection contre les doubles soumissions et même vérification de session.
+  // La catégorie est ajoutée au contenu : elle n'est pas envoyée comme category_id.
   proposalForm.addEventListener('submit', async event => {
     event.preventDefault();
     if (sending) return;
@@ -370,6 +386,8 @@ if (proposalForm) {
 
 const signupForm = document.getElementById('signup-form');
 if (signupForm) {
+  // Une inscription peut aussi partir avec une session existante : obtenir son
+  // CSRF avant le POST ; un 401 de /me indique simplement une inscription anonyme.
   signupForm.addEventListener('submit', async event => {
     event.preventDefault();
     const feedback = signupForm.querySelector('.feedback');
@@ -403,6 +421,8 @@ if (signupForm) {
 
 const loginForm = document.getElementById('login-form');
 if (loginForm) {
+  // Les deux écrans utilisent la même connexion API. L’entrée admin vérifie le
+  // rôle avant de rediriger, mais seule l'autorisation Flask protège les données.
   loginForm.addEventListener('submit', async event => {
     event.preventDefault();
     const feedback = loginForm.querySelector('.feedback');
@@ -429,31 +449,147 @@ if (loginForm) {
   });
 }
 
+// La même zone est présente sur toutes les pages. /me décide de l'identité ;
+// ni le nom affiché ni le lien Administration ne donnent un droit côté serveur.
 const sessionControls = document.getElementById('session-controls');
 if (sessionControls) {
   const loginLink = sessionControls.querySelector('a');
   const feedback = document.getElementById('session-feedback');
-  getCurrentUser().then(data => {
+  let currentUser = null;
+  let version = 0;
+  let reading = null;
+  let writing = false;
+  let returnedFromCache = false;
+
+  function sessionData(data) {
+    if (data?.status !== 'success' || !isContributionId(data.user?.id) || typeof data.user.username !== 'string' ||
+        !data.user.username || typeof data.user.is_admin !== 'boolean' ||
+        typeof data.csrf_token !== 'string' || !data.csrf_token) {
+      throw new Error('État de connexion incohérent.');
+    }
+    return data.user;
+  }
+
+  function endDisplayedSession() {
+    if (typeof window.dispatchEvent === 'function' && typeof Event === 'function') {
+      window.dispatchEvent(new Event('session-ended'));
+    }
+  }
+
+  function anonymous(message = '') {
+    if (currentUser) endDisplayedSession();
+    currentUser = null;
+    loginLink.hidden = false;
+    sessionControls.replaceChildren(loginLink);
+    feedback.textContent = message;
+  }
+
+  function unknown() {
+    if (currentUser) endDisplayedSession();
+    currentUser = null;
+    const retry = document.createElement('button');
+    retry.type = 'button'; retry.className = 'outline'; retry.textContent = 'Vérifier la connexion';
+    retry.addEventListener('click', refreshSession);
+    sessionControls.replaceChildren(retry);
+    feedback.textContent = 'État de connexion indisponible. Vérifiez avant de continuer.';
+  }
+
+  function connected(data) {
+    const user = sessionData(data);
+    if (currentUser && (currentUser.id !== user.id || currentUser.is_admin !== user.is_admin)) endDisplayedSession();
+    currentUser = user;
     const username = document.createElement('span');
-    username.textContent = data.user.username + ' ';
+    username.textContent = user.username + (user.is_admin ? ' — Administrateur' : ' — Membre');
     const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'btn';
-    button.textContent = 'Déconnexion';
+    button.type = 'button'; button.className = 'btn'; button.textContent = 'Déconnexion';
     sessionControls.replaceChildren(username, button);
-    button.addEventListener('click', async () => {
-      feedback.textContent = '';
-      button.disabled = true;
-      try {
-        await logout();
-        sessionControls.replaceChildren(loginLink);
-      } catch (error) {
-        feedback.textContent = error.message;
-        button.disabled = false;
+    if (user.is_admin) {
+      const admin = document.createElement('a');
+      admin.href = 'admin-dashboard.html'; admin.className = 'outline'; admin.textContent = 'Administration';
+      sessionControls.append(admin);
+    }
+    button.addEventListener('click', () => disconnect(button, user.id));
+  }
+
+  async function refreshSession() {
+    if (writing) return;
+    const current = ++version;
+    reading?.abort(); reading = new AbortController();
+    sessionControls.setAttribute('aria-busy', 'true');
+    try {
+      const data = await getCurrentUser({ signal: reading.signal });
+      if (current !== version) return;
+      connected(data); feedback.textContent = '';
+    } catch (error) {
+      if (current !== version) return;
+      if ([401, 403].includes(error.status)) anonymous(error.status === 403 ? 'Compte indisponible. Reconnectez-vous.' : '');
+      else unknown();
+    } finally {
+      if (current === version) sessionControls.setAttribute('aria-busy', 'false');
+    }
+  }
+
+  async function disconnect(button, displayedId) {
+    if (writing || button.disabled) return;
+    writing = true; button.disabled = true;
+    const current = ++version;
+    reading?.abort(); reading = new AbortController();
+    let sent = false;
+    sessionControls.setAttribute('aria-busy', 'true');
+    feedback.textContent = 'Vérification de la session…';
+    try {
+      const data = await getCurrentUser({ signal: reading.signal });
+      if (current !== version) return;
+      const user = sessionData(data);
+      if (user.id !== displayedId) {
+        connected(data); feedback.textContent = 'Compte modifié : état relu, aucune déconnexion envoyée.';
+        return;
       }
-    });
-  }).catch(error => {
-    // Sans session, le lien Connexion est déjà affiché.
-    if (error.status !== 401) feedback.textContent = error.message;
+      sent = true;
+      await logout();
+      if (current !== version) return;
+      anonymous('Vous êtes déconnecté.');
+    } catch (error) {
+      if (current !== version) return;
+      if (!sent && [401, 403].includes(error.status)) anonymous('Votre session est absente ou expirée.');
+      else {
+        // Une réponse perdue ne prouve pas la déconnexion. Relire sans renvoyer
+        // le POST et ne jamais annoncer un succès avec un ancien état local.
+        try {
+          const data = await getCurrentUser({ signal: reading.signal });
+          if (current !== version) return;
+          connected(data);
+          feedback.textContent = 'Déconnexion non confirmée. Votre session est encore active.';
+        } catch (readError) {
+          if (current !== version) return;
+          if ([401, 403].includes(readError.status)) anonymous('Session absente après vérification.');
+          else unknown();
+        }
+      }
+    } finally {
+      writing = false;
+      if (current === version) {
+        button.disabled = false;
+        sessionControls.setAttribute('aria-busy', 'false');
+      } else if (returnedFromCache) {
+        returnedFromCache = false;
+        endDisplayedSession();
+        refreshSession();
+      }
+    }
+  }
+
+  window.addEventListener('pagehide', () => {
+    version += 1; reading?.abort(); currentUser = null; returnedFromCache = false;
+    sessionControls.replaceChildren(); feedback.textContent = '';
   });
+  window.addEventListener('pageshow', event => {
+    if (!event.persisted) return;
+    if (writing) {
+      returnedFromCache = true;
+      feedback.textContent = 'Déconnexion en cours : vérification de la session à sa fin.';
+    } else refreshSession();
+  });
+  window.addEventListener('focus', refreshSession);
+  refreshSession();
 }

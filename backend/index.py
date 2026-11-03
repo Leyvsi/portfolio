@@ -14,6 +14,8 @@ from api.v1.views.permissions import get_authenticated_user
 from models import db, User, Comment, Report
 
 
+# Le lancement normal lit la configuration locale ; les harnais hors ligne
+# des campagnes neutralisent cet appel avant tout import de cette application.
 load_dotenv()
 
 app = Flask(__name__)
@@ -26,6 +28,8 @@ if not app.config["SECRET_KEY"]:
     )
 
 
+# Une variable d'environnement est une chaîne : interpréter explicitement
+# ses valeurs évite de considérer la chaîne "false" comme vraie.
 def env_to_bool(name, default=False):
     """Read a boolean value from an environment variable."""
     value = os.getenv(name)
@@ -41,6 +45,8 @@ def env_to_bool(name, default=False):
     }
 
 
+# CORS autorise les échanges navigateur pour les origines configurées.
+# Il ne remplace ni l'authentification, ni les permissions, ni le CSRF.
 # CORS configuration
 cors_origins_env = os.getenv("CORS_ALLOWED_ORIGINS")
 
@@ -86,6 +92,9 @@ AIVEN_DB_NAME = os.getenv("AIVEN_DB_NAME")
 AIVEN_CA_CERT = os.getenv("AIVEN_CA_CERT")
 
 
+# Le groupe Aiven complet a priorité sur DATABASE_URL ; une URL SQLite seule
+# ne garantit donc pas une recette isolée si ces six paramètres restent actifs.
+# Les campagnes de tests vident ce groupe et verrouillent aussi les connexions.
 if all([
     AIVEN_DB_HOST,
     AIVEN_DB_PORT,
@@ -121,6 +130,9 @@ else:
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
+# Le cookie Flask contient une session signée, pas chiffrée. HttpOnly empêche
+# sa lecture directe par JavaScript ; SameSite limite certains envois intersites.
+# Secure réserve son envoi à HTTPS quand l'option est activée.
 # Session cookie configuration
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
@@ -133,10 +145,14 @@ app.config["SESSION_COOKIE_SECURE"] = env_to_bool(
 # Initialize database
 db.init_app(app)
 
+# Migrate expose les commandes Alembic et leur historique. Cette déclaration
+# ne lance aucune migration et ne prouve pas la révision réellement déployée.
 # Initialize database migrations
 migrate = Migrate(app, db)
 
 
+# Le jeton aléatoire est lié à la session. Le frontend le reçoit par login/me
+# et le garde en mémoire pour ses en-têtes ; ne jamais le journaliser.
 def get_csrf_token():
     """Return the current CSRF token, creating one if necessary."""
     csrf_token = session.get("csrf_token")
@@ -149,6 +165,9 @@ def get_csrf_token():
 
 
 @app.before_request
+# Avant la vue, contrôler les écritures qui portent déjà un user_id de session.
+# GET/HEAD/OPTIONS passent ; login est exempté ; une requête anonyme passe aussi
+# ce filtre, mais doit encore satisfaire les permissions propres à la route.
 def protect_session_requests_from_csrf():
     """Require a CSRF token for state-changing authenticated requests."""
     protected_methods = {
@@ -169,6 +188,8 @@ def protect_session_requests_from_csrf():
     if session.get("user_id") is None:
         return None
 
+    # Deux chaînes ASCII non vides sont exigées avant la comparaison à durée
+    # aussi constante que possible ; un jeton absent ou différent donne 403.
     expected_token = session.get("csrf_token")
     received_token = request.headers.get("X-CSRF-Token")
 
@@ -201,6 +222,8 @@ def not_found(error):
 
 
 @app.errorhandler(HTTPException)
+# Garder le statut et les en-têtes HTTP du framework, tout en donnant au
+# frontend un corps JSON cohérent pour les erreurs des chemins API.
 def handle_api_http_error(error):
     """Normalize framework API errors while preserving their HTTP headers."""
     if request.path != "/api/v1" and not request.path.startswith("/api/v1/"):
@@ -217,6 +240,8 @@ def handle_api_http_error(error):
 
 # Application statistics
 @app.route("/api/v1/stats", methods=["GET"])
+# Cette lecture est publique : elle ne renvoie que trois nombres agrégés.
+# L'accès aux propositions, signalements et comptes reste protégé ailleurs.
 def get_stats():
     try:
         user_count = User.query.count()
@@ -239,6 +264,8 @@ def get_stats():
 
 # User login
 @app.route("/api/v1/login", methods=["POST"])
+# Vérifier le mot de passe haché et le bannissement avant de préparer la session.
+# Le rôle renvoyé aide l'affichage ; les routes admin relisent le rôle en base.
 def login_user():
     req_data = request.get_json(silent=True)
     if not isinstance(req_data, dict):
@@ -284,6 +311,8 @@ def login_user():
             "message": "Compte suspendu."
         }), 403
 
+    # Écarter l'ancien état de session et son CSRF avant de retenir le nouveau
+    # compte. Le mot de passe ne doit jamais entrer dans le cookie.
     session.clear()
 
     session["user_id"] = user.id
@@ -308,6 +337,8 @@ def login_user():
 
 # Return the currently authenticated user
 @app.route("/api/v1/me", methods=["GET"])
+# Relire le compte détecte aussi une suppression ou un bannissement depuis
+# la connexion ; le navigateur obtient alors son état actuel et un CSRF valide.
 def get_current_user():
     user, error_response = get_authenticated_user()
 
@@ -330,6 +361,8 @@ def get_current_user():
 
 # User logout
 @app.route("/api/v1/logout", methods=["POST"])
+# Vider la session fait émettre un cookie de suppression au navigateur.
+# Il n'y a pas ici de registre serveur révoquant toutes les copies d'un cookie.
 def logout_user():
     session.clear()
 
@@ -343,6 +376,8 @@ def logout_user():
 app.register_blueprint(app_views)
 
 
+# Entrée historique de développement (debug et écoute large ci-dessous).
+# Pour la démonstration locale, utiliser run_local.py qui borne son écoute.
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",

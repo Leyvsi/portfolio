@@ -1,0 +1,62 @@
+erDiagram
+  users {
+    int id PK
+    string username UK
+    string email UK
+  }
+  categories {
+    int id PK
+    string name UK
+  }
+  stories {
+    int id PK
+    string slug UK
+    string management_revision UK
+    int category_id FK
+    int author_id FK
+  }
+  theories {
+    int id PK
+    int story_id FK
+    int user_id FK "NULL autorisé"
+  }
+  comments {
+    int id PK
+    int story_id FK
+    int user_id FK "NULL autorisé"
+  }
+  votes {
+    int id PK
+    int story_id FK
+    int user_id FK "UNIQUE avec story_id"
+  }
+  comment_likes {
+    int id PK
+    int comment_id FK
+    int user_id FK "UNIQUE avec comment_id"
+  }
+  proposals {
+    int id PK
+    int user_id FK
+  }
+  reports {
+    int id PK
+    int comment_id FK
+  }
+  cold_case_updates {
+    int id PK
+    int story_id FK
+  }
+  users ||..o{ stories : "auteur obligatoire"
+  categories ||..o{ stories : "catégorie obligatoire"
+  stories ||..o{ theories : "CASCADE"
+  users |o..o{ theories : "SET NULL"
+  stories ||..o{ comments : "CASCADE"
+  users |o..o{ comments : "SET NULL"
+  users ||..o{ votes : "CASCADE"
+  stories ||..o{ votes : "CASCADE"
+  users ||..o{ proposals : "CASCADE"
+  stories ||..o{ cold_case_updates : "CASCADE"
+  comments ||..o{ reports : "CASCADE"
+  comments ||..o{ comment_likes : "CASCADE"
+  users ||..o{ comment_likes : "CASCADE"

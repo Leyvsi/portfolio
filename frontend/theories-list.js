@@ -13,6 +13,8 @@
   let requestVersion = 0;
   let activeRequest = null;
 
+  // Une nouvelle sélection invalide les réponses anciennes, même si l'annulation
+  // réseau arrive trop tard : leur numéro de version ne correspondra plus.
   function cancelRequest() {
     requestVersion += 1;
     activeRequest?.abort();
@@ -20,6 +22,8 @@
     return requestVersion;
   }
 
+  // Associer le chargement à une version et vider les anciens résultats ;
+  // aria-busy et le bouton rendent l'attente perceptible dans l'interface.
   function beginRequest() {
     const version = cancelRequest();
     const controller = new AbortController();
@@ -30,6 +34,8 @@
     return { version, controller };
   }
 
+  // Seul le chargement encore courant peut rendre le bouton disponible :
+  // une ancienne réponse ne doit pas terminer l'attente d'une nouvelle sélection.
   function finishRequest(version) {
     if (version !== requestVersion) return;
     activeRequest = null;
@@ -37,11 +43,13 @@
     refresh.disabled = false;
   }
 
+  // Appliquer la convention UTC de cette API aux dates sans suffixe, puis
+  // afficher l'heure de Paris ; conserver un libellé neutre si la date est invalide.
   function publicationDate(value) {
     const time = document.createElement('time');
     if (typeof value === 'string' &&
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})?$/i.test(value)) {
-      // SQLAlchemy emits UTC dates without a timezone suffix in this API.
+      // Dans cette API, les dates SQLAlchemy sont produites en UTC sans suffixe.
       const iso = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value) ? value : value + 'Z';
       const date = new Date(iso);
       if (Number.isFinite(date.getTime())) {
@@ -56,6 +64,8 @@
     return time;
   }
 
+  // Afficher les contributions comme du texte évite d'exécuter un HTML fourni
+  // dans le titre ou le contenu ; les retours à la ligne deviennent des paragraphes.
   function theoryCard(theory) {
     const card = document.createElement('article');
     card.className = 'panel';
@@ -72,6 +82,8 @@
     return card;
   }
 
+  // La lecture est publique ; vérifier l'id sélectionné puis demander les théories.
+  // Le sélecteur du lecteur est distinct de celui du formulaire de création.
   async function loadSelectedTheories() {
     const selected = select.value;
     const storyId = Number(selected);
@@ -104,6 +116,8 @@
     }
   }
 
+  // Alimenter le lecteur avec les dossiers réels et gérer aussi une liste vide.
+  // Après une création, l'actualisation reste volontaire via le bouton ou la sélection.
   async function loadDossiers() {
     const { version } = beginRequest();
     storiesReady = false;

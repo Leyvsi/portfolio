@@ -392,3 +392,110 @@ footer a {
 .detail-media {
     margin:22px 0;
 }
+
+/* Notices lisibles avant l'envoi, sans nouveau champ ni interruption du formulaire. */
+.data-notice {
+    margin:0 0 8px;
+    padding:14px 16px;
+    border-left:3px solid #e4783c;
+    border-radius:6px;
+    background:#262020;
+    color:#f7f3ef;
+    font-size:.94rem;
+    overflow-wrap:anywhere;
+}
+
+/* Ces liens concernent seulement le brouillon HTML conserve hors du site servi. */
+.privacy-draft a:focus-visible {
+    outline:2px solid #f5a579;
+    outline-offset:4px;
+}
+
+.privacy-draft .draft-skip-link {
+    display:inline-block;
+    margin:12px 24px;
+}
+
+/* Les règles restent limitées à la zone publique des commentaires. */
+.story-comments {
+    margin-top:36px;
+    padding-top:24px;
+    border-top:1px solid #514744;
+    overflow-wrap:anywhere;
+}
+
+.story-comments[hidden],.story-comments [hidden] {
+    display:none;
+}
+
+.story-comments .comment-card {
+    padding:18px 0;
+    border-bottom:1px solid #514744;
+}
+
+.story-comments .comment-text {
+    white-space:pre-wrap;
+}
+
+.story-comments form {
+    margin-top:24px;
+}
+
+.story-comments button {
+    align-self:flex-start;
+    max-width:100%;
+    white-space:normal;
+}
+
+/* Les J'aime publics utilisent les contrôles natifs, sans toucher au dashboard. */
+.like-control {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:12px;
+    margin-top:18px;
+    overflow-wrap:anywhere;
+}
+
+.like-control .feedback {
+    flex-basis:100%;
+    margin:0;
+}
+
+.like-control button[aria-pressed="true"] {
+    border-color:#e4783c;
+    background:#38241c;
+}
+
+.like-control button:focus-visible {
+    outline:2px solid #e4783c;
+    outline-offset:3px;
+}
+
+#session-controls {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:12px;
+    overflow-wrap:anywhere;
+}
+
+.session-feedback {
+    max-width:1120px;
+    margin:12px auto;
+    padding:0 24px;
+}
+
+.session-feedback:empty {
+    display:none;
+}
+
+#session-controls button:focus-visible {
+    outline:2px solid #e4783c;
+    outline-offset:3px;
+}
+
+.report-comment-text {
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}

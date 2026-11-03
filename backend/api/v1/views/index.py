@@ -2,12 +2,18 @@ import os
 from flask import jsonify, request, render_template_string
 from api.v1.views import app_views
 from api.v1.views.permissions import admin_required, get_authenticated_user
-from models import db, Report, User, Comment
+from models import db, Report, User, Comment, Story
+from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from api.v1.views.write_support import api_error
+from api.v1.views.admin_users_support import ban_user_account
+from api.v1.views.story_visibility import get_active_story
 
 
 @app_views.route('/reports', methods=['POST'])
+# reports.target_id ne possède pas de clé étrangère : cette validation API
+# doit vérifier un identifiant positif et un commentaire réellement présent.
+# Cette route générique n'accepte actuellement que le type comment.
 def post_report():
     user, error_response = get_authenticated_user()
 
@@ -60,18 +66,21 @@ def post_report():
             "message": "target_id doit etre un entier positif valide."
         }), 400
 
-    if db.session.get(target_model, target_value) is None:
+    target = db.session.get(target_model, target_value)
+    if target is None or not get_active_story(target.story_id, lock=True):
         return jsonify({
             "status": "error",
             "message": "Cible du signalement introuvable."
         }), 404
 
     report = Report(
-        type=values["type"],
-        target_id=str(target_value),
+        comment_id=target_value,
         reason=values["reason"]
     )
 
+    # add prépare l'objet ; commit déclenche le flush puis valide la transaction.
+    # En cas d'erreur SQL, rollback annule les écritures non validées et rétablit
+    # une session utilisable avant de renvoyer la réponse d’échec.
     try:
         db.session.add(report)
         db.session.commit()
@@ -88,44 +97,59 @@ def post_report():
     }), 201
 
 
+@app_views.after_request
+def protect_admin_reports_cache(response):
+    if request.path == '/api/v1/admin/reports':
+        response.headers['Cache-Control'] = 'private, no-store'
+    return response
+
+
 @app_views.route('/admin/reports', methods=['GET'])
 @admin_required
+# La lecture des motifs de signalement exige le rôle administrateur côté serveur.
 def get_admin_reports():
-    reports = Report.query.order_by(
-        Report.created_at.desc()
-    ).all()
-
-    return jsonify([
-        report.to_dict()
-        for report in reports
-    ]), 200
+    try:
+        # Charger le contexte en une lecture sans perdre un signalement si une
+        # ancienne référence est incohérente. Aucune reprise de données ici.
+        reports = Report.query.options(
+            joinedload(Report.comment).joinedload(Comment.story).joinedload(Story.category)
+        ).order_by(Report.created_at.desc(), Report.id.desc()).all()
+        result = []
+        for report in reports:
+            data = report.to_dict()
+            comment = report.comment
+            story = comment.story if comment else None
+            data['comment'] = ({'id': comment.id, 'story_id': comment.story_id,
+                                'text': comment.text} if comment else None)
+            data['story'] = ({'id': story.id, 'slug': story.slug, 'title': story.title,
+                              'category_id': story.category_id,
+                              'category_name': story.category.name if story.category else None,
+                              'is_archived': story.archived_at is not None} if story else None)
+            result.append(data)
+        return jsonify(result), 200
+    except SQLAlchemyError:
+        db.session.rollback()
+        return api_error('Impossible de lire les signalements.', 500)
 
 
 @app_views.route('/admin/users/<string:username>/ban', methods=['DELETE'])
 @admin_required
+# Malgré la méthode HTTP DELETE, ce code conserve le compte : il positionne
+# is_banned à True. Ce n’est ni un effacement RGPD ni une suppression de ligne.
 def ban_user(username):
-    user = User.query.filter_by(
-        username=username
-    ).first()
+    return ban_user_account(username=username)
 
-    if not user:
-        return jsonify({
-            "error": "User not found"
-        }), 404
 
-    try:
-        user.is_banned = True
-        db.session.commit()
-    except SQLAlchemyError:
-        db.session.rollback()
-        return api_error("Impossible de bannir l'utilisateur.", 500)
-
-    return jsonify({
-        "status": "success",
-        "message": f"L'utilisateur {username} a été banni"
-    }), 200
+@app_views.route('/admin/users/<int:user_id>/ban', methods=['POST'])
+@admin_required
+# L'identifiant stable évite d'utiliser le pseudo comme segment d'URL. La règle
+# des comptes protégés reste commune avec l'ancienne route par pseudo.
+def ban_user_by_id(user_id):
+    return ban_user_account(user_id=user_id)
 
 @app_views.route('/swagger.json', methods=['GET'])
+# Le contrat OpenAPI est lu dans le système de fichiers puis renvoyé en JSON ;
+# sa cohérence peut être testée sans exécuter les opérations décrites.
 def get_swagger_json():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     swagger_path = os.path.join(current_dir, '../swagger.json')
@@ -137,6 +161,9 @@ def get_swagger_json():
         return jsonify({"error": "Swagger file not found"}), 404
 
 @app_views.route('/swagger', methods=['GET'])
+# Le nom est historique : cette vue affiche Swagger UI et ne fait pas d'OAuth.
+# Les scripts viennent normalement du CDN ; aucun requestInterceptor n'ajoute
+# ici le CSRF aux POST Try it out. Afficher Swagger ne prouve pas ces écritures.
 def oauth_swagger():
     swagger_ui_html = """
     <!DOCTYPE html>

@@ -1,5 +1,33 @@
 # Fiche Mahamadou — Base de données et intégration
 
+> Etat de diffusion scolaire du 3 novembre 2026 : suivre le [guide actuel](../../LIVRAISON_SCOLAIRE.md) et la [validation scolaire](VALIDATION_SCOLAIRE.md). Les sections de campagnes anterieures et leurs commandes sont historiques ; elles ne remplacent pas la procedure actuelle. Les chemins sous `C:\chemin\utilisateur` sont des exemples anonymises. Les archives internes signalees sont conservees localement.
+
+## État courant — 2 novembre 2026
+
+Lire d’abord les [supports 6H.1](SUPPORT_JURY_LOT6H1.md), l’[index courant](INDEX_CODE_LOT6H1.md) et la [procédure sur un autre PC](../../LIVRAISON_SCOLAIRE.md). Le bilan actuel distingue **854 tests historiques**, recette Edge réussie en SQLite fictif et contrôles documentaires de ce lot. Le modèle actuel contient dix tables et treize FK ; le compte est partagé sur dix pages, les signalements sont contextualisés, les likes de dossier/commentaire sont individuels.
+
+Les compléments et questions ci-dessous conservent leur contexte historique. Les anciennes mentions de fonctions absentes, de neuf tables ou de recette non exécutée ne constituent pas l’état courant. Les 76 questions/réponses historiques restent conservées. Aucun résultat MySQL ou de déploiement n’est ajouté.
+
+
+## Complément courant 6G.2 — Vote et CommentLike
+
+Bilan 6G.2 (archive interne non livree) : Vote historique inchangé ; nouvelle table CommentLike avec FK et couple unique utilisateur/commentaire. COUNT produit le nombre, pas un chiffre ajouté dans l'interface. La candidate refuse les anciens compteurs différents de zéro avant DDL ; aucune attribution inventée. La purge suit ces enfants en interne sans changer les sept indicateurs. Dix modèles et treize FK déclarées ; tests SQLite uniquement, aucune migration réelle.
+
+## Complément courant 6C.2 — relation et migration
+
+Report vise exclusivement Comment : comment_id entier obligatoire, FK CASCADE, relation moderation_reports. Le JSON garde type=comment et target_id calculés, mais plus ces colonnes génériques en SQL. La migration copie le type SQL réel de comments.id et refuse tout ancien type/cible incompatible avant DDL. Le cas other subsiste comme test de reprise refusée. La révision aléatoire de Story invalide les anciens aperçus ; les dix FK précédentes restent inchangées.
+
+Les tests utilisent uniquement SQLite mémoire avec FK ON. La migration réelle, MySQL et la concurrence de production restent à vérifier ; aucun contenu purgé n’est recréé par downgrade. Aucun reçu persistant. Les réponses courtes historiques décrivant Report sans FK concernent l’état antérieur. Bilan courant (archive interne non livree).
+
+
+> **Actualisation du 29 octobre 2026 — étape 5.** Les questions et réponses courtes historiques ci-dessous sont conservées. Les affirmations « non relancé ici » décrivent leur préparation antérieure : les campagnes ultérieures sont présentées dans [Tests et validation](TESTS_ET_VALIDATION.md), avec 439 réussites automatiques, la recette Edge et les dix BDD PASS. La recette Edge est automatisée, pas entièrement manuelle humaine ; Aiven et migrations restent non validés. Les repères actuels (archive interne non livree) tiennent compte des commentaires ajoutés au code. Les diagrammes révisés ont leur contrôle local dans le bilan (archive interne non livree).
+
+## Complément lot 6C phase 1 — archivage réversible
+
+`Story.archived_at` est une date UTC nullable : NULL signifie actif. Ce champ unique évite un booléen redondant, une nouvelle table ou une FK supplémentaire. La migration `c6c100000001` ajoute la colonne sans modifier les dix FK ni les cascades ; les dossiers existants restent actifs. Elle n’est appliquée à aucune base réelle ; son upgrade est testé sur un schéma fictif SQLite mémoire seulement.
+
+Archiver et restaurer ne retirent aucun enfant des relations SQLAlchemy. Les tests comparent les neuf tables et conservent théories, commentaires, votes, mises à jour et signalements. La date donne la trace du retrait courant, sans journal d’acteurs ou d’historique complet. Restaurer remet NULL ; `updated_at` reflète la transition. SQLite ne prouve pas les verrous InnoDB ni le déploiement MySQL. Voir le bilan et les réserves (archive interne non livree).
+
 [Retour au sommaire de soutenance](README.md)
 
 Questions-réponses historiques récupérées de la réponse Codex de l’étape 15.1 du **25 octobre 2026**, fondée sur le commit `dec5c7ef4c753970bd94014b37b59b035e1877f1`. Audit de référence : étape 15.8.1 ; préparation documentaire : étape 15.8.2, au commit `857190654457b15d7324adde8c920d9fdd3db0c8`.
@@ -9,6 +37,14 @@ Les formulations des questions et des réponses courtes originales sont conserv�
 Empreinte SHA-256 du texte historique complet : `218cf13b814a1f20a4258f1f6b24ab600b296bc62baab1c23610a36905ace4cd`.
 
 **Portée des preuves :** les résultats de tests et de rendu Mermaid sont historiques. Aucun test fonctionnel, rendu de diagramme, serveur, migration ou accès Aiven n’est exécuté pendant cette préparation. Les droits des illustrations restent à confirmer.
+
+> **Complément 5.1 autorisé.** Réviser aussi la réponse 18 sur les métadonnées et les modes Alembic. Les scripts existants sont seulement commentés, sans opération SQL changée ni migration exécutée ; un downgrade ne restaure pas les données supprimées. Voir les [réponses orales](ORAL_JURY.md), le [suivi du jury](SUIVI_REMARQUES_JURY.md) et le bilan 5.1 (archive interne non livree).
+
+> **Actualisation fonctionnelle 6A — 30 octobre 2026.** Les 76 questions/réponses courtes historiques sont conservées : leurs anciennes limites d’administration décrivent l’état d’avant ce lot. Le tableau dispose maintenant de la liste des utilisateurs et du bannissement des comptes ordinaires, avec confirmation, relecture serveur et refus de tous les administrateurs en 409. Le contrat compte désormais 25 opérations. Voir la [réponse orale sur le bannissement](ORAL_JURY.md#19-comment-fonctionne-le-bannissement-administrateur-), les preuves 487 tests (archive interne non livree) et l’index actuel (archive interne non livree). Aucun navigateur réel exécuté pour 6A.
+
+> **Complément 6B — 30 octobre 2026.** La consultation administrative des dossiers est livrée : recherche par titre, filtres, catégories inconnues et fiche existante, sans modifier les données ni le bannissement 6A. Préparer la [réponse orale 20](ORAL_JURY.md#20-comment-consultez-vous-les-dossiers-dans-ladministration-), les preuves 533 tests (archive interne non livree) et les repères actuels (archive interne non livree). Les questions et réponses historiques restent conservées. Les API de lecture restent publiques ; aucun navigateur réel exécuté.
+
+> **Complément 6D — 30 octobre 2026.** Le tableau possède sept compteurs : le nouveau total compte uniquement le statut exact `pending` de la liste administrative existante. Préparer la [réponse orale 21](ORAL_JURY.md#21-comment-comptez-vous-les-propositions-en-attente-), le bilan 6D et ses 561 tests (archive interne non livree) et les repères actuels (archive interne non livree). Mélissa explique le DOM, le chargement et le nettoyage ; Sylvie les permissions et le JSON inchangés ; Mahamadou le statut texte, les catégories et l'invariance des neuf tables après lecture. Les 76 réponses historiques sont conservées. La recette navigateur reste reportée et le verdict VM NO-GO est maintenu.
 
 ## Sommaire
 
@@ -126,7 +162,7 @@ Dans le tableau, « plusieurs » signifie **zéro, une ou plusieurs** lignes du 
 
 #### Diagramme relationnel existant
 
-Diagramme repris de la variante approuvée du [README principal](../../README.md). Sa syntaxe, son rendu dans un navigateur local et la validité XML de son SVG ont été validés le 25 octobre 2026 avec Mermaid 11.16.0 lors de la campagne antérieure. Il s’agit d’une **preuve historique** ; aucun rendu n’est relancé ici. L’affichage sur GitHub reste **non vérifié**.
+Diagramme synchronisé avec le [README principal](../../README.md) et révisé le 29 octobre 2026. La validation du 25 octobre concernait la variante antérieure ; le bilan de l’étape 5 (archive interne non livree) précise le contrôle local actuel. Le rendu GitHub reste non attesté.
 
 ```mermaid
 erDiagram
@@ -142,6 +178,7 @@ erDiagram
   stories {
     int id PK
     string slug UK
+    string management_revision UK
     int category_id FK
     int author_id FK
   }
@@ -160,29 +197,36 @@ erDiagram
     int story_id FK
     int user_id FK "UNIQUE avec story_id"
   }
+  comment_likes {
+    int id PK
+    int comment_id FK
+    int user_id FK "UNIQUE avec comment_id"
+  }
   proposals {
     int id PK
     int user_id FK
   }
   reports {
     int id PK
-    string type
-    string target_id "Aucune clé étrangère"
+    int comment_id FK
   }
   cold_case_updates {
     int id PK
     int story_id FK
   }
-  users ||..o{ stories : "author_id : sans règle explicite"
-  categories ||..o{ stories : "category_id : sans règle explicite"
-  stories ||..o{ theories : "story_id : CASCADE"
-  users |o..o{ theories : "user_id : SET NULL"
-  stories ||..o{ comments : "story_id : CASCADE"
-  users |o..o{ comments : "user_id : SET NULL"
-  users ||..o{ votes : "user_id : CASCADE"
-  stories ||..o{ votes : "story_id : CASCADE"
-  users ||..o{ proposals : "user_id : CASCADE"
-  stories ||..o{ cold_case_updates : "story_id : CASCADE"
+  users ||..o{ stories : "auteur obligatoire"
+  categories ||..o{ stories : "catégorie obligatoire"
+  stories ||..o{ theories : "CASCADE"
+  users |o..o{ theories : "SET NULL"
+  stories ||..o{ comments : "CASCADE"
+  users |o..o{ comments : "SET NULL"
+  users ||..o{ votes : "CASCADE"
+  stories ||..o{ votes : "CASCADE"
+  users ||..o{ proposals : "CASCADE"
+  stories ||..o{ cold_case_updates : "CASCADE"
+  comments ||..o{ reports : "CASCADE"
+  comments ||..o{ comment_likes : "CASCADE"
+  users ||..o{ comment_likes : "CASCADE"
 ```
 
 `PK` signifie clé primaire. `FK` signifie clé étrangère. `UK` indique une unicité individuelle.
@@ -261,7 +305,7 @@ Les valeurs `default=` et `onupdate=` des modèles sont appliquées par SQLAlche
 
 ### 7. Connexion Flask, Aiven et TLS
 
-Dans [backend/index.py](../../backend/index.py#L80), le backend lit six paramètres Aiven :
+Dans [backend/index.py](../../backend/index.py#L86), le backend lit six paramètres Aiven :
 
 - hôte ;
 - port ;
@@ -323,7 +367,7 @@ Un dossier peut être relu lors d’une visite suivante.
 
 **Référence technique**
 
-[backend/index.py](../../backend/index.py#L80)
+[backend/index.py](../../backend/index.py#L86)
 
 **Statut de validation**
 
@@ -349,7 +393,7 @@ Une histoire possède plusieurs théories dans une table distincte.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L62)
+[backend/models.py](../../backend/models.py#L83)
 
 **Statut de validation**
 
@@ -375,7 +419,7 @@ stories.id identifie un dossier.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L67)
+[backend/models.py](../../backend/models.py#L88)
 
 **Statut de validation**
 
@@ -401,7 +445,7 @@ Theory.story_id référence stories.id.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L184)
+[backend/models.py](../../backend/models.py#L225)
 
 **Statut de validation**
 
@@ -427,7 +471,7 @@ Une liste de théories vide reste possible.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L184)
+[backend/models.py](../../backend/models.py#L225)
 
 **Statut de validation**
 
@@ -453,7 +497,7 @@ theories.user_id peut devenir NULL si la contrainte est appliquée.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L194)
+[backend/models.py](../../backend/models.py#L235)
 
 **Statut de validation**
 
@@ -479,7 +523,7 @@ Suppression d’histoire : CASCADE ; suppression d’auteur de théorie : SET NU
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L184)
+[backend/models.py](../../backend/models.py#L225)
 
 **Statut de validation**
 
@@ -505,7 +549,7 @@ POST /api/v1/votes/{story_id} renvoie 409 pour un doublon reconnu.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L362)
+[backend/models.py](../../backend/models.py#L425)
 
 **Statut de validation**
 
@@ -531,7 +575,7 @@ La route traite le conflit unique après rollback.
 
 **Référence technique**
 
-[backend/api/v1/views/histoires.py](../../backend/api/v1/views/histoires.py#L90)
+[backend/api/v1/views/histoires.py](../../backend/api/v1/views/histoires.py#L99)
 
 **Statut de validation**
 
@@ -557,7 +601,7 @@ filter_by(story_id=story_id) limite la lecture au dossier choisi.
 
 **Référence technique**
 
-[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L43)
+[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L48)
 
 **Statut de validation**
 
@@ -583,7 +627,7 @@ Création d’une théorie : add(), puis commit().
 
 **Référence technique**
 
-[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L89)
+[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L96)
 
 **Statut de validation**
 
@@ -609,7 +653,7 @@ La route renvoie 500 si l’écriture SQL échoue.
 
 **Référence technique**
 
-[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L93)
+[backend/api/v1/views/theories.py](../../backend/api/v1/views/theories.py#L103)
 
 **Statut de validation**
 
@@ -661,7 +705,7 @@ Report.query.filter_by(type='comment', target_id=...).count().
 
 **Référence technique**
 
-[backend/api/v1/views/comments.py](../../backend/api/v1/views/comments.py#L11)
+[backend/api/v1/views/comments.py](../../backend/api/v1/views/comments.py#L13)
 
 **Statut de validation**
 
@@ -687,7 +731,7 @@ connect_args contient ssl.ca.
 
 **Référence technique**
 
-[backend/index.py](../../backend/index.py#L100)
+[backend/index.py](../../backend/index.py#L109)
 
 **Statut de validation**
 
@@ -739,7 +783,7 @@ La route /reports vérifie le commentaire ciblé.
 
 **Référence technique**
 
-[backend/models.py](../../backend/models.py#L425)
+[backend/models.py](../../backend/models.py#L512)
 
 **Statut de validation**
 
@@ -765,10 +809,18 @@ Il faut préparer séparément des données fictives.
 
 **Référence technique**
 
-[README.md](../../README.md#L512)
+[README.md](../../README.md#L535)
 
 **Statut de validation**
 
 **VALIDÉE — conforme aux sources.**
 
 [Retour au sommaire de soutenance](README.md)
+
+## Complément oral 6E.2 — hors des réponses historiques
+
+« User porte le compte et ses états. Story exige un auteur ; théories et commentaires peuvent perdre leur lien utilisateur, mais leur texte reste. Le commentaire garde aussi un pseudo copié. Votes et propositions ont des FK CASCADE, tandis que le comportement ORM doit être vérifié séparément.
+
+Un signalement vise désormais uniquement un commentaire par une FK entière ; aucun déclarant n'est stocké. Supprimer un compte peut donc concerner plusieurs tables, mais je ne supprime pas les dossiers partagés automatiquement. Les anciens cookies et les copies restent à traiter. Je n'ai changé ni schéma ni migration et je n'ai connecté aucune base réelle dans 6E.2. »
+
+À distinguer devant le jury : bannir le compte, archiver le dossier, purger une archive et traiter l'effacement personnel. Voir les conséquences (archive interne non livree) et la procédure (archive interne non livree). La sauvegarde durable contient des sources sélectionnées, pas les interactions de la base ; elle est conservée sans modification.

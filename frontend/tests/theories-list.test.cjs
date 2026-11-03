@@ -148,10 +148,15 @@ function mount(options = {}) {
 test('HTML preserves the complete creation form and adds an independent reader after it', () => {
   const normalizeLineEndings = value => value.replace(/\r\n/g, '\n');
   const actualForm = html.match(/<form id="theory-form"[\s\S]*?<\/form>/)[0];
-  assert.equal(normalizeLineEndings(actualForm), normalizeLineEndings(originalForm));
+  // Conserver la comparaison integrale de l'ancien formulaire, hors seuls ajouts 6E.2.
+  const historicalForm = value => normalizeLineEndings(value)
+    .replace(/ aria-describedby="theory-data-notice"/g, '')
+    .replace(/\n[\t ]*<p id="theory-data-notice" class="data-notice">[\s\S]*?<\/p>/, '');
+  assert.equal((actualForm.match(/id="theory-data-notice"/g) || []).length, 1);
+  assert.equal(historicalForm(actualForm), normalizeLineEndings(originalForm));
   for (const lineEnding of ['\n', '\r\n']) {
     const formattedForm = normalizeLineEndings(actualForm).replace(/\n/g, lineEnding);
-    assert.equal(normalizeLineEndings(formattedForm), normalizeLineEndings(originalForm));
+    assert.equal(historicalForm(formattedForm), normalizeLineEndings(originalForm));
   }
   const reader = html.indexOf('id="published-theories"');
   assert.ok(reader > html.indexOf('</form>'));

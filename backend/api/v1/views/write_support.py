@@ -15,6 +15,8 @@ def api_error(message, status=400):
     return jsonify({"status": "error", "message": message}), status
 
 
+# Un JSON valide peut être une liste ou un nombre : les routes d'écriture
+# attendent ici un objet contenant des champs nommés.
 def json_object(optional=False):
     if optional and not request.get_data(cache=True):
         return {}, None
@@ -24,6 +26,9 @@ def json_object(optional=False):
     return data, None
 
 
+# Valider côté serveur reste indispensable même si le formulaire fait déjà
+# ses contrôles. Distinguer caractères et octets UTF-8 pour les champs TEXT ;
+# trim=False préserve notamment les espaces significatifs d'un mot de passe.
 def required_text(data, field, *, max_length=None, text_column=False, trim=True):
     value = data.get(field)
     if not isinstance(value, str) or not value.strip():
@@ -40,12 +45,17 @@ def required_text(data, field, *, max_length=None, text_column=False, trim=True)
     return value, None
 
 
+# Borner les identifiants avant la requête évite de transmettre au moteur
+# un entier hors du domaine prévu par les identifiants de cette API.
 def get_resource(model, identifier):
     if not 1 <= identifier <= MAX_RESOURCE_ID:
         return None
     return db.session.get(model, identifier)
 
 
+# Reconnaître seulement les contraintes uniques métier connues, en distinguant
+# les formats MySQL et SQLite. Une autre erreur SQL doit rester une erreur 500,
+# pas devenir à tort un doublon. Les tests MySQL injectent des erreurs sans réseau.
 def is_unique_conflict(error, *, mysql_keys, sqlite_columns):
     original = getattr(error, "orig", error)
     arguments = getattr(original, "args", ())

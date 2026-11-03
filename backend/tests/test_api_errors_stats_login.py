@@ -137,7 +137,10 @@ class ApiErrorsStatsLoginTests(unittest.TestCase):
     def test_single_application_and_route_count_are_preserved(self):
         import api.v1.app as relay
         self.assertIs(self.app, relay.app)
-        self.assertEqual(len(list(self.app.url_map.iter_rules())), 25)
+        # Lot 6A : une route POST par id complète la route DELETE historique.
+        # Les 25 opérations API et la route statique Flask donnent 26 règles.
+        # Quatre routes 6C s'ajoutent aux 26 règles historiques (dont static).
+        self.assertEqual(len(list(self.app.url_map.iter_rules())), 35)
 
 
 

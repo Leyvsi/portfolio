@@ -142,12 +142,20 @@ function assertFailure(page, before) {
 }
 
 test('HTML preserves design hooks, adds required title and loads API before app', () => {
-  assert.match(html, /<form id="theory-form" class="demo-form" method="post" aria-busy="true">/);
+  // Les attributs d'accessibilité peuvent s'ajouter sans changer le contrat du formulaire.
+  const formTag = html.match(/<form\b[^>]*\bid="theory-form"[^>]*>/)?.[0];
+  assert.ok(formTag);
+  assert.match(formTag, /\bclass="demo-form"/);
+  assert.match(formTag, /\bmethod="post"/);
+  assert.match(formTag, /\baria-busy="true"/);
   assert.match(html, /<label for="theory-title">Titre de votre théorie<\/label>/);
   assert.match(html, /id="theory-title" name="title" maxlength="200" required/);
   assert.match(html, /id="sujet" name="story_id" required disabled/);
   assert.match(html, /id="avis" name="content" rows="5" required/);
-  assert.match(html, /<button class="btn" type="submit" disabled>Envoyer<\/button>/);
+  const submitTag = html.match(/<button\b[^>]*\btype="submit"[^>]*>Envoyer<\/button>/)?.[0];
+  assert.ok(submitTag);
+  assert.match(submitTag, /\bclass="btn"/);
+  assert.match(submitTag, /\bdisabled(?=\s|>)/);
   assert.match(html, /class="feedback" aria-live="polite"/);
   const api = html.indexOf('<script src="api.js"></script>');
   assert.ok(api >= 0 && api < html.indexOf('<script src="app.js"></script>'));

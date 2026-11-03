@@ -16,6 +16,8 @@ branch_labels = None
 depends_on = None
 
 
+# Remplacer les FK historiques par des contraintes nommées avec CASCADE ou
+# SET NULL. Leur effet dépend de la base ; il est distinct des cascades ORM.
 def upgrade():
     # Comments:
     # - deleting a story deletes its comments
@@ -123,6 +125,8 @@ def upgrade():
         )
 
 
+# Rétablir les anciennes FK sans règles ON DELETE, sans recréer les données
+# éventuellement supprimées auparavant par une cascade.
 def downgrade():
     # Restore votes constraints without ON DELETE rules
     with op.batch_alter_table("votes", schema=None) as batch_op:

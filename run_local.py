@@ -12,12 +12,29 @@ FRONTEND_ROOT = PROJECT_ROOT / "frontend"
 IMAGE_SUFFIXES = {".svg", ".webp", ".png", ".jpg", ".jpeg", ".gif", ".avif"}
 
 
+# Ce middleware WSGI partage une origine pour les pages et l'API : les cookies
+# accompagnent ainsi les requêtes sans second serveur frontend.
 def create_local_app(api_app, frontend_root=FRONTEND_ROOT):
     """Serve public frontend files; leave every API request to Flask."""
     static_app = SharedDataMiddleware(
         api_app, {"/": str(frontend_root)}, cache=False
     )
 
+    # cache=False désactive les réponses conditionnelles de Werkzeug, mais laisse
+    # Cache-Control: public. Interdire explicitement le stockage évite qu'une
+    # ancienne page masque les nouveaux contrôles de session ou de signalement.
+    def serve_frontend(environ, start_response):
+        def prevent_storage(status, headers, exc_info=None):
+            headers = [(name, value) for name, value in headers
+                       if name.lower() != "cache-control"]
+            headers.append(("Cache-Control", "no-store"))
+            return start_response(status, headers, exc_info)
+
+        return static_app(environ, prevent_storage)
+
+    # La liste autorisée ne publie que les ressources prévues de frontend/.
+    # Les chemins API et les écritures restent traités par Flask ; les fichiers
+    # privés situés ailleurs dans le dépôt ne deviennent pas téléchargeables.
     def application(environ, start_response):
         path = environ.get("PATH_INFO", "")
         if (
@@ -28,7 +45,7 @@ def create_local_app(api_app, frontend_root=FRONTEND_ROOT):
             return api_app(environ, start_response)
 
         if path == "/":
-            return static_app(
+            return serve_frontend(
                 dict(environ, PATH_INFO="/index.html"), start_response
             )
 
@@ -40,12 +57,14 @@ def create_local_app(api_app, frontend_root=FRONTEND_ROOT):
         )
         image_file = path.startswith("/images/") and suffix in IMAGE_SUFFIXES
         if root_file or image_file:
-            return static_app(environ, start_response)
+            return serve_frontend(environ, start_response)
         return api_app(environ, start_response)
 
     return application
 
 
+# Ce point d'entrée charge la configuration locale puis écoute seulement sur
+# 127.0.0.1, sans debug ni reloader ; il ne crée ni tables ni données.
 def main():
     # Keep relative CA paths anchored to the project, even from another cwd.
     from dotenv import load_dotenv

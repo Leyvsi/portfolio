@@ -10,7 +10,9 @@
 		<header class="header">
 			<div class="top">
 				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
-				<a class="outline" href="connexion.html">Connexion</a>
+				<div id="session-controls" role="group" aria-label="Compte utilisateur" aria-busy="true">
+					<a class="outline" href="connexion.html">Connexion</a>
+				</div>
 			</div>
 			<nav class="nav" aria-label="Navigation principale">
 				<a href="index.html">Accueil</a>
@@ -21,6 +23,7 @@
 			</nav>
 		</header>
 		<main>
+			<p id="session-feedback" class="feedback session-feedback" role="status"></p>
 			<section class="section narrow">
 				<div class="panel">
 					<p class="eyebrow">ADMINISTRATION</p>
@@ -42,7 +45,6 @@
 			Les Petits Enquêteurs · Projet étudiant
 			<a href="admin-connexion.html">Administration</a>
 		</footer>
-		<script src="donnees.js"></script>
 		<script src="api.js"></script>
 		<script src="app.js"></script>
 	</body>

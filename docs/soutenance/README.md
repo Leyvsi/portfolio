@@ -1,8 +1,12 @@
 # Soutenance — Les Petits Enquêteurs
 
-Ces quatre fiches permettent de réviser les questions du jury avec des réponses courtes, des explications simples et des exemples tirés du projet. Elles sont destinées à un niveau bac. Le présent README est un index de navigation : **ce n’est pas une cinquième fiche de questions**.
+> Etat de diffusion scolaire du 3 novembre 2026 : suivre le [guide actuel](../../LIVRAISON_SCOLAIRE.md) et la [validation scolaire](VALIDATION_SCOLAIRE.md). Les sections de campagnes anterieures et leurs commandes sont historiques ; elles ne remplacent pas la procedure actuelle. Les chemins sous `C:\chemin\utilisateur` sont des exemples anonymises. Les archives internes signalees sont conservees localement.
+
+Ces quatre fiches conservent les questions historiques de l’équipe. Les supports actualisés du 29 octobre 2026 ci-dessous complètent leur préparation pour une première année Holberton. Le présent README reste un index de navigation.
 
 ## Sommaire
+
+Lot courant du 2 novembre 2026 : bilan 6H.5 (archive interne non livree), [matrice](SUIVI_REMARQUES_JURY.md), [procédure d'accès](PROCEDURE_ACCES_LOT6H5.md), propositions RGPD internes (archive interne non livree), [fiche de provenance](PROVENANCE_RESSOURCES.md), plan de commits locaux (archive interne non livree), inventaire (archive interne non livree) et preuves (archive interne non livree). **19/22 terminées (86,36 %), C-02/C-07/I-02 PARTIELLES. GO scolaire local ; GO pour les trois commits locaux ciblés préparés, à autoriser séparément ; NO-GO push GitHub et ouverture publique.** Aucun commit, lancement ou publication pendant ce lot ; ajout global toujours exclu. Les rendus et clôtures 6H.4 (archive interne non livree), l'audit 6H.3 (archive interne non livree) et la sauvegarde 6H.2 (archive interne non livree) restent des preuves historiques conservées.
 
 - [Choisir sa fiche](#choisir-sa-fiche)
 - [Origine et intégrité](#origine-et-intégrité)
@@ -11,6 +15,30 @@ Ces quatre fiches permettent de réviser les questions du jury avec des réponse
 - [Limites à connaître](#limites-à-connaître)
 - [Petit glossaire Git](#petit-glossaire-git)
 - [Documentation technique](#documentation-technique)
+
+## Supports actualisés du 29 octobre 2026
+
+| Support | Usage |
+|---|---|
+| [Tests et validation](TESTS_ET_VALIDATION.md) | Types, fichiers, assertions, outils/versions, commandes et preuves séparées des étapes 2/3/4. |
+| [Architecture, sécurité et RGPD](ARCHITECTURE_SECURITE_RGPD.md) | DOM, WSGI, flux, données, exceptions CSRF et fonctions manquantes. |
+| Index du code pour le jury (archive interne non livree) | Noms exacts, lignes après commentaires, liens GitHub et explications courtes. |
+| [Fiche de démonstration](DEMONSTRATION.md) | Démarrage, adresses, parcours, limites et modèle de comptes fictifs. |
+| [Réponses orales](ORAL_JURY.md) | Vingt et une questions ciblées, répartition par membre et réponse de Mahamadou sur la persistance. |
+| Bilan de l'étape 5 (archive interne non livree) | Fichiers modifiés, contrôles statiques et réserves. |
+| [Suivi des remarques du jury](SUIVI_REMARQUES_JURY.md) | Matrice exhaustive : membres, fichiers, acquis, corrections restantes et contrôles futurs. |
+| Bilan de l'étape 5.1 (archive interne non livree) | Commentaires complétés, sources Mermaid ajustées et contrôles statiques locaux. |
+| Lot 6A : utilisateurs et bannissement (archive interne non livree) | Parcours livré, deux routes centralisées, comptes protégés et 487 tests isolés réussis. |
+| Lot 6B : consultation des dossiers (archive interne non livree) | Liste, recherche, filtres et fiches ; API réutilisées et 533 tests isolés réussis. |
+| Lot 6D : statistiques administrateur (archive interne non livree) | Sept compteurs, API privée réutilisée, 561 tests isolés réussis ; recette navigateur reportée. |
+| Lot 6C : audit et conception (archive interne non livree) | Relations, signalements, trois stratégies, contrats envisagés et tests à prévoir ; aucun développement ni suppression. |
+| Lot 6C phase 1 : archivage réversible (archive interne non livree) | Archivage/restauration développés et testés hors ligne ; migration non déployée, suppression définitive restante. |
+| Lot 6C.2 : conception finale de la suppression (archive interne non livree) | Audit documentaire uniquement ; algorithme, reports relationnels, confirmation, reçu et plan de tests proposés ; NO-GO actuel avant décisions et autorisation de développement. |
+| Lot 6C.2 : proposition de décisions finales (archive interne non livree) | Dix règles validées ; vérifications ciblées, contrat et reprise précisés, reçu minimal proposé à 30 jours ; deux arbitrages et autorisation d’implémentation encore attendus. |
+| Lot 6C.2 : condition S1 et solution S2 simplifiée (archive interne non livree) | S1 non confirmée au niveau du modèle ; option de restriction aux commentaires à approuver. S2 accepté : aucun reçu persistant. Implémentation arrêtée avant modification applicative. |
+| Lot 6C.2 : implémentation autorisée (archive interne non livree) | S1 désormais validée : Report limité aux commentaires ; purge conditionnelle des archives, sans reçu persistant. 657 tests isolés réussis ; migration réelle et validation MySQL restent non exécutées. |
+
+**État historique 5.1, remplacé pour les rendus par le bilan 6H.4 :** les sources de l'architecture et du flux ont été ajustées, sans nouveau rendu. Les deux défauts visuels restent à confirmer comme corrigés. Le diagramme BDD reste identique à son rendu historique validé. Les repères actualisés complètent les fiches historiques.
 
 ## Choisir sa fiche
 
@@ -32,7 +60,7 @@ Les formulations des questions et des réponses courtes originales sont conserv�
 
 Empreinte SHA-256 du texte historique complet : `218cf13b814a1f20a4258f1f6b24ab600b296bc62baab1c23610a36905ace4cd`.
 
-**Portée des preuves :** les résultats de tests et de rendu Mermaid sont historiques. Aucun test fonctionnel, rendu de diagramme, serveur, migration ou accès Aiven n’est exécuté pendant cette préparation. Les droits des illustrations restent à confirmer.
+**Portée historique :** cette indication concernait la préparation initiale des fiches. Les résultats plus récents sont dans les supports actualisés ci-dessus. L’étape 5 reste documentaire : aucune campagne fonctionnelle, base, migration ni connexion Aiven ; le contrôle des diagrammes est local. Les droits des illustrations restent à confirmer.
 
 La réponse historique est conservée dans le journal local de la conversation Codex. Ce journal privé n’est pas publié avec les fiches. Son texte comporte les quatre fiches ; les deux représentations identiques du même message ont été comptées une seule fois lors de la récupération.
 
@@ -64,15 +92,17 @@ Les liens techniques pointent vers les sources du dépôt. Les numéros de ligne
 
 **75 réponses sont validées.** [COM-21](fiche-commune.md#com-21) conserve une **priorité proposée, à confirmer par l’équipe**. Ce classement ne signale pas une erreur technique ; il distingue une suggestion d’une décision confirmée.
 
-Les **439 tests réussis** — 205 backend, 226 frontend et 8 lanceur — sont une preuve historique rapportée dans le [README principal](../../README.md#tests-et-validation). Ils n’ont pas été relancés. Les tests SQLite et les simulations DOM/API ne valident pas à eux seuls MySQL Aiven, un navigateur réel, les migrations déployées ou une installation vierge complète.
+Les **439 tests réussis** — 205 backend, 226 frontend et 8 lanceur — ont été réexécutés le 29 octobre 2026, après la préparation historique des fiches. La recette Edge (28/2/0/7) et la persistance SQLite (dix BDD PASS ; bilan consolidé 15/1/0/1) restent des campagnes distinctes. Voir [les preuves et commandes](TESTS_ET_VALIDATION.md). Aucun accès Aiven ni migration exécutée ; aucun test fonctionnel relancé pendant l’étape documentaire 5.
 
-Les diagrammes approuvés ont été validés antérieurement avec Mermaid 11.16.0 : syntaxe, navigateur local et XML des SVG. Leur réutilisation dans les fiches ne constitue pas une nouvelle exécution de ces contrôles. L’affichage Mermaid sur GitHub reste non vérifié.
+Les diagrammes ont été simplifiés et synchronisés avec le README le 29 octobre ; le bilan (archive interne non livree) distingue leur contrôle local actuel de la preuve historique du 25 octobre. Le rendu sur GitHub reste non attesté.
 
 La [PR #16](https://github.com/Leyvsi/portfolio/pull/16) était ouverte en Draft et non fusionnée lors de la lecture autorisée de l’étape 15.8.1, le 25 octobre 2026. Son état n’est pas relu pendant la création locale de ces documents.
 
 ## Limites à connaître
 
-- Administration limitée à la consultation : aucune action de publication, suppression ou modération dans le tableau.
+**Liste historique de l’étape 5 : plusieurs fonctions et l’installation ont été livrées ensuite. Pour les limites actuelles, consulter le bilan 6H.4 (archive interne non livree) ; les sections chronologiques ci-dessous conservent les étapes intermédiaires.**
+
+- Administration : consultation, bannissement et archivage/restauration ; publication, suppression définitive et traitement des propositions restent absents.
 - Propositions enregistrées en `pending`, sans transformation automatique en histoire.
 - Pas d’interface pour commenter, voter, liker, signaler ou bannir, même si des routes existent.
 - Actualisation manuelle du lecteur après création d’une théorie.
@@ -107,4 +137,59 @@ Créer une PR ne fusionne pas les branches. Ajouter un commit à sa branche sour
 - [Routes API](../../backend/api/v1/views/)
 - [Lanceur local](../../run_local.py)
 
-L’archive narrative locale `frontend/histoires-originales.json` reste exclue du suivi Git et de ces documents.
+L’archive narrative locale `frontend/histoires-originales.json` reste non suivie et exclue de la sélection proposée ; elle n’est pas ignorée par les règles actuelles. Aucun contenu n’a été ouvert pour ce lot.
+
+## Préparation RGPD — lot 6E.1
+
+**Brouillons internes non publiés sur le site ; aucune conformité déclarée et aucune fonction d'effacement de compte développée.**
+
+- Bilan, sauvegarde vérifiée et limites (archive interne non livree)
+- Décisions à valider avec l'équipe (archive interne non livree)
+- Brouillon de politique de confidentialité (archive interne non livree)
+- Brouillons des notices de collecte et publication (archive interne non livree)
+- Procédures manuelles : identité, accès, rectification, effacement (archive interne non livree)
+- Conséquences d'un éventuel effacement de compte (archive interne non livree)
+
+## Information RGPD — lot 6E.2
+
+Trois notices provisoires sont intégrées aux formulaires existants ; aucun lien public vers la politique inachevée, aucune nouvelle API, bannière, migration ou fonction RGPD du dashboard.
+
+## Vérification technique — lot 6E.3
+
+Bilan 6E.3 : tests, douze décisions et scénario complet (archive interne non livree).
+
+**659 PASS exécutés : 279 backend, 364 frontend, 16 lanceur.** Sept cas de migration volontairement non exécutés, sans changement des tests historiques. Parcours commentaire/signalement/administration prouvé via API et SQLite mémoire ; formulaires publics de commentaire/signalement absents. Aucun code applicatif, donnée réelle ou politique publiée modifié.
+
+## Commentaires et signalements publics — lot 6F.1
+
+Bilan 6F.1 : interface, contrats, protections, tests et limites (archive interne non livree).
+
+**723 PASS exécutés : 279 backend, 428 frontend, 16 lanceur.** Les 659 de 6E.3 restent historiques. Formulaires publics maintenant intégrés dans la fiche commune aux histoires et Cold Cases, avec session, CSRF, cible vérifiée, notices, doubles clics bloqués et résultats incertains explicites. Backend et dashboard inchangés ; aucune migration, donnée réelle ou publication de politique incomplète. Recette navigateur et MySQL/Aiven non exécutées.
+
+## Recette fonctionnelle et soutenance — lot 6F.2
+
+- Bilan : audit, preuves intégrées, limites et autorisations restantes (archive interne non livree).
+- Protocole manuel Edge et kit isolé — lancement soumis à autorisation distincte (archive interne non livree).
+- Scénario de 14 minutes : Mélissa, Sylvie et Mahamadou (archive interne non livree).
+
+**723 PASS réexécutés**, plus une vérification intégrée de 42 requêtes réelles vers Flask/SQLite mémoire depuis les contrôleurs frontend et un DOM simulé. Les sept compteurs affichés correspondent aux requêtes SQL. Kit inspecté READY sans écoute réseau. Aucun code applicatif modifié, serveur ou navigateur lancé. Le script historique donnees.js reste exclu ; aucune couverture de tous les scripts des pages de compte ou recette Edge n'est revendiquée.
+
+## Conception des likes — lot 6G.1
+
+Bilan 6G.1 : routes existantes, modèles, historique et plan 6G.2 (archive interne non livree). Vote convient aux histoires/Cold Cases ; état personnel et retrait à ajouter. Les commentaires nécessitent une relation individuelle et un arbitrage des anciens compteurs non attribuables. Conception uniquement ; **723 PASS de 6F.2 restent historiques**, sans réexécution. Implémentation en attente d'autorisation.
+
+## Likes individuels — lot 6G.2
+
+Bilan 6G.2 : développement, migration candidate, protections et résultats (archive interne non livree). Histoires/Cold Cases via Vote conservé ; commentaires via CommentLike sur compteurs historiques compatibles. Ajout/retrait personnel, unicité, CSRF, état et compteurs serveur, protection des données historiques et purge interne adaptée. **803 PASS exécutés : 303 backend, 484 frontend, 16 lanceur**, plus un parcours intégré sans réseau de 79 requêtes. Aucun navigateur ou MySQL validé, aucune migration réelle ; sept tests de migration historiques toujours exclus.
+
+## Préparation finale de recette — lot 6G.4
+
+Audit 6G.3 (archive interne non livree), bilan des corrections 6G.4 (archive interne non livree) et [nouveau protocole manuel](RECETTE_MANUELLE_LOT6G4.md). Kit isolé actualisé, `likes.js` servi, cinq chargements historiques inutilisés retirés. Le fichier `donnees.js` et le kit 6F.2 sont conservés. Serveur et Edge restent arrêtés ; leur lancement exige une autorisation distincte.
+
+## Recette Edge et corrections autorisées — lot 6G.5
+
+Bilan historique de la recette partielle (archive interne non livree) : vrais échanges Edge/Flask/SQLite temporaire, avec NO-GO initial conservé. Correctifs autorisés et contre-recette finale (archive interne non livree) : affichage partagé du compte, contexte des signalements et cache local explicite. **854 PASS réexécutés**, plus 17 groupes intégrés sans navigateur. Affichages, likes après actualisation, sept compteurs et déconnexion confirmés dans Edge puis rapprochés de SQL. **GO pour la démonstration locale isolée des parcours recettés** ; serveur arrêté, preuves conservées. Les limites de migration et de déploiement restent distinctes.
+
+## Audit final et préparation Git — lot 6H.1
+
+Rapport 6H.1 (archive interne non livree) · [22 remarques et pourcentage](SUIVI_REMARQUES_JURY.md) · [Présentation par étudiant](SUPPORT_JURY_LOT6H1.md) · [Index courant](INDEX_CODE_LOT6H1.md) · [Procédure autre PC](../../LIVRAISON_SCOLAIRE.md) · Plan de commits et sauvegarde (archive interne non livree) · Inventaire CSV (archive interne non livree). Aucun code applicatif ni test fonctionnel modifié ou exécuté.
