@@ -27,6 +27,11 @@ function response(status, body, invalidJson = false) {
   };
 }
 
+function savedTheory(url, request, userId = 5) {
+  return { status: 'success', theory: { id: 1, story_id: Number(url.split('/')[4]),
+    user_id: userId, ...JSON.parse(request.body), likes: 0, created_at: null } };
+}
+
 function deferred() {
   let resolve;
   const promise = new Promise(done => { resolve = done; });
@@ -64,9 +69,13 @@ function mount(options = {}) {
     }
   };
   const calls = [];
+  const timers = new Map();
+  let timerId = 0;
   const csrf = randomBytes(24).toString('hex');
   const context = vm.createContext({
-    AbortController, TextEncoder, setTimeout, clearTimeout,
+    AbortController, TextEncoder,
+    setTimeout: options.fakeTimers ? fn => { timers.set(++timerId, fn); return timerId; } : setTimeout,
+    clearTimeout: options.fakeTimers ? id => timers.delete(id) : clearTimeout,
     document: {
       querySelector: () => null,
       querySelectorAll(selector) {
@@ -100,14 +109,14 @@ function mount(options = {}) {
       }
       if (options.postNetworkError) throw new TypeError('Synthetic offline failure');
       return response(options.postStatus || 201,
-        options.postBody || { status: 'success', theory: { id: 1 } },
+        options.postBody === undefined ? savedTheory(url, request) : options.postBody,
         options.invalidPostJson);
     }
   });
   vm.runInContext(apiSource, context, { filename: 'frontend/api.js', timeout: 1000 });
   vm.runInContext(appSource, context, { filename: 'frontend/app.js', timeout: 1000 });
   return {
-    ready: loaded.promise, calls, csrf, elements, feedback, button, attributes, context,
+    ready: loaded.promise, calls, csrf, elements, feedback, button, attributes, context, timers,
     get resets() { return resets; },
     get listenerCount() { return handlers.length; },
     fill(values = {}) {
@@ -127,27 +136,35 @@ function mount(options = {}) {
   };
 }
 
-function assertReady(page) {
-  assert.equal(page.button.disabled, false);
+function assertReady(page, blocked = false) {
+  assert.equal(page.button.disabled, blocked);
   assert.equal(page.attributes['aria-busy'], 'false');
   assert.ok(Object.values(page.elements).every(field => !field.disabled));
 }
 
-function assertFailure(page, before) {
+function assertFailure(page, before, uncertain = false) {
   assert.deepEqual(page.values(), before);
   assert.equal(page.resets, 0);
   assert.ok(page.feedback.textContent.length > 0);
-  assert.doesNotMatch(page.feedback.textContent, /théorie a été publiée/);
-  assertReady(page);
+  assert.notEqual(page.feedback.textContent, 'Théorie publiée.');
+  assertReady(page, uncertain);
 }
 
 test('HTML preserves design hooks, adds required title and loads API before app', () => {
-  assert.match(html, /<form id="theory-form" class="demo-form" method="post" aria-busy="true">/);
+  // Les attributs d'accessibilité peuvent s'ajouter sans changer le contrat du formulaire.
+  const formTag = html.match(/<form\b[^>]*\bid="theory-form"[^>]*>/)?.[0];
+  assert.ok(formTag);
+  assert.match(formTag, /\bclass="demo-form"/);
+  assert.match(formTag, /\bmethod="post"/);
+  assert.match(formTag, /\baria-busy="true"/);
   assert.match(html, /<label for="theory-title">Titre de votre théorie<\/label>/);
   assert.match(html, /id="theory-title" name="title" maxlength="200" required/);
   assert.match(html, /id="sujet" name="story_id" required disabled/);
   assert.match(html, /id="avis" name="content" rows="5" required/);
-  assert.match(html, /<button class="btn" type="submit" disabled>Envoyer<\/button>/);
+  const submitTag = html.match(/<button\b[^>]*\btype="submit"[^>]*>Envoyer<\/button>/)?.[0];
+  assert.ok(submitTag);
+  assert.match(submitTag, /\bclass="btn"/);
+  assert.match(submitTag, /\bdisabled(?=\s|>)/);
   assert.match(html, /class="feedback" aria-live="polite"/);
   const api = html.indexOf('<script src="api.js"></script>');
   assert.ok(api >= 0 && api < html.indexOf('<script src="app.js"></script>'));
@@ -241,7 +258,7 @@ test('valid theory sends title/content to selected story using refreshed CSRF an
   assert.equal(post.headers['X-CSRF-Token'], page.csrf);
   assert.deepEqual(JSON.parse(post.body), { title: 'Une théorie', content: 'Des indices' });
   assert.equal(page.resets, 1);
-  assert.match(page.feedback.textContent, /théorie a été publiée/);
+  assert.equal(page.feedback.textContent, 'Théorie publiée.');
   assertReady(page);
 });
 
@@ -273,7 +290,7 @@ for (const [name, options, message] of [
   ['banned', { meStatus: 403, meBody: { message: 'Compte suspendu.' } }, /Compte suspendu/],
   ['deleted dossier', { postStatus: 404, postBody: { error: 'Story not found' } }, /dossier n’est plus disponible/],
   ['server validation', { postStatus: 400, postBody: { message: 'Titre invalide.' } }, /Titre invalide/],
-  ['server failure', { postStatus: 500, postBody: { message: 'Service indisponible.' } }, /Service indisponible/]
+  ['server failure', { postStatus: 500, postBody: { message: 'Service indisponible.' } }, /Résultat incertain/]
 ]) {
   test(name + ' preserves title, content and selected dossier', async () => {
     const page = mount(options);
@@ -282,7 +299,7 @@ for (const [name, options, message] of [
     await page.submit();
     assert.match(page.feedback.textContent, message);
     assert.equal(page.calls.length, options.meStatus ? 2 : 3);
-    assertFailure(page, before);
+    assertFailure(page, before, options.postStatus >= 500);
   });
 }
 
@@ -373,8 +390,8 @@ for (const phase of ['me', 'post']) {
     await page.ready;
     page.fill(); const before = page.values();
     await page.submit();
-    assert.match(page.feedback.textContent, /Impossible de contacter/);
-    assertFailure(page, before);
+    assert.match(page.feedback.textContent, phase === 'post' ? /Résultat incertain/ : /Impossible de contacter/);
+    assertFailure(page, before, phase === 'post');
   });
 }
 
@@ -384,7 +401,7 @@ for (const status of [200, 202, 204]) {
     await page.ready;
     page.fill(); const before = page.values();
     await page.submit();
-    assertFailure(page, before);
+    assertFailure(page, before, true);
   });
 }
 
@@ -393,8 +410,8 @@ test('HTTP 201 with unreadable JSON preserves inputs', async () => {
   await page.ready;
   page.fill(); const before = page.values();
   await page.submit();
-  assert.match(page.feedback.textContent, /illisible/);
-  assertFailure(page, before);
+  assert.match(page.feedback.textContent, /Résultat incertain/);
+  assertFailure(page, before, true);
 });
 
 test('double submissions during /me and POST create exactly one theory', async () => {
@@ -407,7 +424,7 @@ test('double submissions during /me and POST create exactly one theory', async (
     }
     postStarted.resolve();
     await postGate.promise;
-    return response(201, { status: 'success' });
+    return response(201, savedTheory(url, request));
   } });
   await page.ready;
   page.fill();
@@ -445,7 +462,7 @@ test('explicit retry refreshes CSRF after failure without automatic resubmission
     if (url.endsWith('/me')) return response(200, { csrf_token: csrf });
     attempts += 1;
     return attempts === 1 ? response(403, { message: 'CSRF refuse.' }) :
-      response(201, { status: 'success' });
+      response(201, savedTheory(url, request));
   } });
   await page.ready;
   page.fill(); const before = page.values();
@@ -471,3 +488,62 @@ test('application does not load stories on pages without the theory form', () =>
   vm.runInContext(appSource, context, { filename: 'frontend/app.js', timeout: 1000 });
   assert.equal(requests, 0);
 });
+
+for (const payload of [
+  null, {}, { status: 'error' }, { status: 'success' },
+  ...[{ id: 0 }, { id: '1' }, { id: 2147483648 }, { story_id: 42 },
+    { title: 'Autre titre' }, { content: 'Autre contenu' }].map(changes => ({
+    status: 'success', theory: { id: 1, story_id: 17, title: 'Une théorie', content: 'Des indices', ...changes }
+  }))
+]) {
+  test('201 incohérent conserve le brouillon et interdit un nouvel envoi : ' + JSON.stringify(payload), async () => {
+    const page = mount({ postBody: payload }); await page.ready;
+    page.fill(); const before = page.values(); await page.submit();
+    assert.match(page.feedback.textContent, /Résultat incertain/);
+    assertFailure(page, before, true);
+    await page.submit();
+    assert.equal(page.calls.filter(call => call.method === 'POST').length, 1);
+  });
+}
+
+for (const failure of ['network', '500', 'unexpected status', 'unreadable JSON', 'timeout']) {
+  test('théorie : ' + failure + ' après enregistrement simulé ne déclenche aucune répétition', async () => {
+    let saved = 0;
+    const page = mount({ fakeTimers: failure === 'timeout', fetch: async (url, request, csrf) => {
+      if (url.endsWith('/stories')) return response(200, stories);
+      if (url.endsWith('/me')) return response(200, { user: { id: 2, is_admin: false }, csrf_token: csrf });
+      saved++;
+      if (failure === 'network') throw Error('offline');
+      if (failure === '500') return response(500, {});
+      if (failure === 'unexpected status') return response(202, savedTheory(url, request));
+      if (failure === 'unreadable JSON') return response(201, {}, true);
+      return new Promise((_, reject) => request.signal.addEventListener('abort', () => reject(Error('abort'))));
+    } });
+    await page.ready; page.fill(); const before = page.values();
+    const pending = page.submit();
+    for (let i = 0; i < 40; i++) await Promise.resolve();
+    if (failure === 'timeout') for (const expire of [...page.timers.values()]) expire();
+    await pending;
+    assert.match(page.feedback.textContent, /Résultat incertain/);
+    assertFailure(page, before, true);
+    await page.submit(); await page.submit();
+    assert.equal(saved, 1);
+    assert.equal(page.calls.filter(call => call.method === 'POST').length, 1);
+  });
+}
+
+for (const user of [{ id: 1, is_admin: true }, { id: 2, is_admin: false }, { id: 3, is_admin: false }]) {
+  test('théorie : contrat de session permanente id ' + user.id, async () => {
+    const page = mount({ fetch: async (url, request, csrf) => {
+      if (url.endsWith('/stories')) return response(200, stories);
+      if (url.endsWith('/me')) return response(200, { user, csrf_token: csrf });
+      return response(201, savedTheory(url, request, user.id));
+    } });
+    await page.ready; page.fill(); await page.submit();
+    assert.equal(page.feedback.textContent, 'Théorie publiée.');
+    const post = page.calls.find(call => call.method === 'POST');
+    assert.equal(post.headers['X-CSRF-Token'], page.csrf);
+    assert.deepEqual(Object.keys(JSON.parse(post.body)).sort(), ['content', 'title']);
+    assert.equal(page.resets, 1); assertReady(page);
+  });
+}

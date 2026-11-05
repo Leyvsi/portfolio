@@ -5,6 +5,8 @@ from flask import jsonify, session
 from models import db, User
 
 
+# La signature du cookie permet de lire user_id, mais le compte est relu en
+# base à chaque contrôle : un compte supprimé ou banni perd ainsi son accès.
 def get_authenticated_user():
     """Return the authenticated user or an API error response."""
     user_id = session.get("user_id")
@@ -45,6 +47,8 @@ def get_authenticated_user():
     return user, None
 
 
+# Le décorateur applique le contrôle commun puis lit user.is_admin en base.
+# Un booléen envoyé par le navigateur ou l'affichage du menu ne donne aucun droit.
 def admin_required(view_function):
     """Allow access only to authenticated administrators."""
     @wraps(view_function)

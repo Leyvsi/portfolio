@@ -16,11 +16,15 @@ branch_labels = None
 depends_on = None
 
 
+# Supprimer le compteur redondant : l'API calcule désormais le nombre de
+# signalements depuis reports, au lieu de maintenir comments.reports.
 def upgrade():
     with op.batch_alter_table("comments", schema=None) as batch_op:
         batch_op.drop_column("reports")
 
 
+# Recréer le compteur avec zéro pour les lignes existantes, puis retirer le
+# défaut SQL ; cela ne reconstitue pas les anciens nombres de signalements.
 def downgrade():
     with op.batch_alter_table("comments", schema=None) as batch_op:
         batch_op.add_column(

@@ -6,8 +6,11 @@ from models import db, Theory, Story
 from sqlalchemy import update
 from sqlalchemy.exc import SQLAlchemyError
 from api.v1.views.write_support import api_error, get_resource, json_object, required_text
+from api.v1.views.story_visibility import get_active_story
 
 
+# Construire les champs JSON attendus par le lecteur, sans exposer l'objet ORM.
+# La date devient du texte ISO ou None ; aucune écriture SQL n'est effectuée ici.
 def theory_to_dict(theory):
     """Convert a Theory object to a dictionary."""
     return {
@@ -28,9 +31,11 @@ def theory_to_dict(theory):
     "/stories/<int:story_id>/theories",
     methods=["GET"]
 )
+# GET public : vérifier le dossier distingue une liste vide (200) d'un dossier
+# inexistant (404), puis le tri chronologique stabilise la lecture.
 def get_theories(story_id):
     """Return theories for one story."""
-    story = db.session.get(Story, story_id)
+    story = get_active_story(story_id)
 
     if not story:
         return jsonify({
@@ -54,6 +59,8 @@ def get_theories(story_id):
     "/stories/<int:story_id>/theories",
     methods=["POST"]
 )
+# POST exige une session autorisée ; le filtre global a déjà vérifié son CSRF.
+# L'auteur vient du compte relu en base, jamais d'un user_id fourni dans le JSON.
 def post_theory(story_id):
     """Create a theory for one story."""
     user, error_response = get_authenticated_user()
@@ -61,7 +68,7 @@ def post_theory(story_id):
     if error_response:
         return error_response
 
-    story = get_resource(Story, story_id)
+    story = get_active_story(story_id, lock=True)
 
     if not story:
         return jsonify({
@@ -89,6 +96,9 @@ def post_theory(story_id):
         content=content
     )
 
+    # add prépare l'objet ; commit déclenche le flush puis valide la transaction.
+    # En cas d'erreur SQL, rollback annule les écritures non validées et rétablit
+    # une session utilisable avant de renvoyer la réponse d’échec.
     try:
         db.session.add(new_theory)
         db.session.commit()
@@ -106,6 +116,8 @@ def post_theory(story_id):
     "/theories/<int:theory_id>/like",
     methods=["POST"]
 )
+# L'incrément est fait par SQL afin de ne pas écraser un like concurrent.
+# Il n'y a pas ici de contrainte imposant un seul like par utilisateur.
 def like_theory(theory_id):
     """Add one like to a theory."""
     user, error_response = get_authenticated_user()
@@ -115,7 +127,7 @@ def like_theory(theory_id):
 
     theory = get_resource(Theory, theory_id)
 
-    if not theory:
+    if not theory or not get_active_story(theory.story_id, lock=True):
         return jsonify({
             "error": "Theory not found"
         }), 404

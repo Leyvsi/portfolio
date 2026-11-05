@@ -48,6 +48,7 @@ class CommentsTheoriesTests(unittest.TestCase):
     def tearDown(self):
         self.db.session.rollback()
         self.models.Report.query.delete()
+        self.models.CommentLike.query.delete()
         self.models.Comment.query.filter(self.models.Comment.id > 1).delete()
         self.models.Theory.query.filter(self.models.Theory.id > 1).delete()
         for model in (self.models.Comment, self.models.Theory):
@@ -293,20 +294,32 @@ class CommentsTheoriesTests(unittest.TestCase):
                 response = self.post(route)
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(self.like_body(route, response)["likes"], 1)
-                self.assertEqual(self.db.session.get(self.model_for(route), 1).likes, 1)
+                if route == 'comment_like':
+                    self.assertEqual(self.models.CommentLike.query.count(), 1)
+                    self.assertEqual(self.db.session.get(self.models.Comment, 1).likes, 0)
+                else:
+                    self.assertEqual(self.db.session.get(self.model_for(route), 1).likes, 1)
 
-    def test_likes_allow_repeated_likes_from_same_user(self):
+    def test_likes_repeat_policy_comment_unique_theory_incremental(self):
         for route in self.LIKES:
             with self.subTest(route=route):
                 first = self.post(route)
                 second = self.post(route)
-                self.assertEqual((first.status_code, second.status_code), (200, 200))
-                self.assertEqual((self.like_body(route, first)["likes"], self.like_body(route, second)["likes"]), (1, 2))
+                if route == 'comment_like':
+                    self.assertEqual((first.status_code, second.status_code), (200, 409))
+                    self.assertEqual(self.like_body(route, first)['likes'], 1)
+                    self.assertEqual(self.models.CommentLike.query.count(), 1)
+                else:
+                    self.assertEqual((first.status_code, second.status_code), (200, 200))
+                    self.assertEqual((self.like_body(route, first)["likes"], self.like_body(route, second)["likes"]), (1, 2))
 
     def test_likes_never_parse_json(self):
         for route in self.LIKES:
             for raw in (None, '["invalid"]', "null", "{"):
                 with self.subTest(route=route, raw=raw):
+                    if route == 'comment_like':
+                        self.models.CommentLike.query.delete()
+                        self.db.session.commit()
                     with patch.object(self.app.request_class, "get_json", side_effect=AssertionError("JSON forbidden")) as get_json:
                         self.assertEqual(self.post(route, raw=raw).status_code, 200)
                         get_json.assert_not_called()
@@ -319,12 +332,17 @@ class CommentsTheoriesTests(unittest.TestCase):
                 response = self.post(route)
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(self.like_body(route, response)["likes"], 1)
-                self.assertEqual(self.db.session.get(self.model_for(route), 1).likes, 1)
+                if route == 'comment_like':
+                    self.assertEqual(self.db.session.get(self.models.Comment, 1).likes, 0)
+                    self.assertEqual(self.models.CommentLike.query.count(), 1)
+                else:
+                    self.assertEqual(self.db.session.get(self.model_for(route), 1).likes, 1)
 
-    def test_likes_roll_back_update_failures(self):
+    def test_likes_roll_back_insert_or_update_failures(self):
         for route in self.LIKES:
             with self.subTest(route=route):
-                with patch.object(self.db.session, "execute", side_effect=SQLAlchemyError("private-sql-detail")):
+                operation = 'flush' if route == 'comment_like' else 'execute'
+                with patch.object(self.db.session, operation, side_effect=SQLAlchemyError("private-sql-detail")):
                     with patch.object(self.db.session, "rollback", wraps=self.db.session.rollback) as rollback:
                         self.assert_error(self.post(route), 500)
                         rollback.assert_called_once_with()
@@ -352,6 +370,12 @@ class CommentsTheoriesTests(unittest.TestCase):
     def test_likes_resource_disappearing_before_update_is_404(self):
         for route in self.LIKES:
             with self.subTest(route=route):
+                if route == 'comment_like':
+                    with patch('api.v1.views.likes.get_resource', return_value=None):
+                        with patch.object(self.db.session, 'commit') as commit:
+                            self.assert_error(self.post(route), 404)
+                            commit.assert_not_called()
+                    continue
                 with patch.object(self.db.session, "execute", return_value=Mock(rowcount=0)):
                     with patch.object(self.db.session, "rollback", wraps=self.db.session.rollback) as rollback:
                         with patch.object(self.db.session, "commit") as commit:

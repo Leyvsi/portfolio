@@ -10,7 +10,9 @@
 		<header class="header">
 			<div class="top">
 				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
-				<a class="outline" href="connexion.html">Connexion</a>
+				<div id="session-controls" role="group" aria-label="Compte utilisateur" aria-busy="true">
+					<a class="outline" href="connexion.html">Connexion</a>
+				</div>
 			</div>
 			<nav class="nav" aria-label="Navigation principale">
 				<a href="index.html">Accueil</a>
@@ -21,14 +23,18 @@
 			</nav>
 		</header>
 		<main>
+			<p id="session-feedback" class="feedback session-feedback" role="status"></p>
 			<section class="page-title">
 				<p class="eyebrow">ENQUÊTES NON RÉSOLUES</p>
 				<h1>Cold Cases</h1>
 				<p>Retrouvez les affaires non résolues disponibles.</p>
 			</section>
 			<section class="section">
+				<label for="recherche">Rechercher un Cold Case</label>
+				<input id="recherche" type="search" placeholder="Rechercher par titre ou mot-clé...">
 				<p id="stories-feedback" class="feedback" aria-live="polite"></p>
 				<div id="coldcases-cartes" class="cards" data-story-type="coldcase"></div>
+				<p id="aucun-resultat" hidden>Aucun dossier ne correspond à cette recherche.</p>
 			</section>
 		</main>
 		<footer>

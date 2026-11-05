@@ -33,6 +33,12 @@ cookies-*.txt
 *.db-journal
 *.db-wal
 *.db-shm
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
 
 # Sauvegardes : conserver les migrations SQL visibles
 /backups/
@@ -53,3 +59,39 @@ backup_*.sql.gz
 
 # Ancienne application : seulement si retrait du suivi autorise
 /backend/ancien_app.py
+
+# Préparation locale et documents internes : sélection publique explicite
+/.codex/
+/.agents/
+/revision_code/
+/logs/
+*.log
+*.pem
+session.json
+sessions.json
+/backend/.venv/
+/docs/soutenance/*BROUILLON*
+/docs/soutenance/LOT6E1_*
+/docs/soutenance/REVUE_LOT6E1_*
+# Documents internes exclus de la candidate publique au lot 6H.22.6
+/docs/soutenance/BILAN_LOT6H17_1.md
+/docs/soutenance/BILAN_LOT6H17_3.md
+/docs/soutenance/BILAN_LOT6H18_2.md
+/docs/soutenance/PROTOCOLE_SOUTENANCE_LOT6H12.md
+/docs/soutenance/preparation-*/
+/docs/soutenance/commits-*/
+
+/docs/soutenance/preuves-*/
+!/docs/soutenance/preuves-lot6h4/
+/docs/soutenance/preuves-lot6h4/*
+!/docs/soutenance/preuves-lot6h4/diagrammes/
+/docs/soutenance/preuves-lot6h4/diagrammes/*
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-1.mmd
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-1.svg
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-1.png
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-2.mmd
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-2.svg
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-2.png
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-3.mmd
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-3.svg
+!/docs/soutenance/preuves-lot6h4/diagrammes/diagram-3.png

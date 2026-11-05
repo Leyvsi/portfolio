@@ -17,6 +17,8 @@ branch_labels = None
 depends_on = None
 
 
+# Créer le schéma de départ de cet historique, avec ses PK, FK et contraintes
+# uniques ; les révisions suivantes le font évoluer vers les modèles actuels.
 def upgrade():
     op.create_table(
         "users",
@@ -168,6 +170,8 @@ def upgrade():
     )
 
 
+# Revenir avant le schéma initial en supprimant les tables dans l'ordre prévu.
+# Ce chemin retire des données ; sa présence ne constitue pas un test de restauration.
 def downgrade():
     op.drop_table("proposals")
     op.drop_table("votes")

@@ -4,7 +4,17 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const crypto = require('node:crypto');
 const source = fs.readFileSync(path.join(__dirname, '../app.js'), 'utf8');
+const originals = JSON.parse(fs.readFileSync(path.join(__dirname, '../../tools/fixtures/dossiers_historiques.json'), 'utf8')).stories;
+const supplied = {
+  'golden-state-killer': ['golden-state-killer.png', 1672, 941, '22a4a7ee470467387899b6d219cb4da176c2ccea5161a386c27d06f2fdcb1b19'],
+  'chris-watts': ['chris-watts.png', 1672, 941, '7f9d22a3fab83a7132a681219090c12ea8baa7b454360ac941a1f13dceebf882'],
+  'michelle-carter': ['michelle-carter.png', 1672, 941, '1422c6c62f8a7ad1c682c31a69bea1b54a290cbd1f2b583ee3cda857641cbd03'],
+  'anthonioz': ['mystere-anthonioz.png', 1671, 941, '0bb8a5acda51b27eb9851b683c2d54aeb11d9a038e99277d79720cac7e969745'],
+  'noirval': ['inconnue-noirval.png', 1671, 941, 'a6c804d070f172121ba1f04397bb6acd590b2eedc527375c7cfa8cd2c502c2b1'],
+  'manoir-de-l-ombre': ['manoir-ombre.png', 1670, 941, '5fdb88f47e82844df2d479c0fbb9e9413c98286a9c992fef5238c614a5e675d2']
+};
 const slugs = [
   'demo-f32-20261024-v1-tableau-salle-bleue',
   'demo-f32-20261024-v1-medaille-pavillon-ferme',
@@ -12,6 +22,13 @@ const slugs = [
   'demo-f32-20261024-v1-carnet-tour-nord'
 ];
 const names = ['tableau-salle-bleue', 'medaille-pavillon-ferme', 'malle-quai-silencieux', 'carnet-tour-nord'];
+test('all four historical demo resources exist as WebP files', () => {
+  for (const name of names) {
+    const bytes = fs.readFileSync(path.join(__dirname, '../images', name + '.webp'));
+    assert.equal(bytes.toString('ascii', 0, 4), 'RIFF');
+    assert.equal(bytes.toString('ascii', 8, 12), 'WEBP');
+  }
+});
 const rows = slugs.map((slug, i) => ({
   id: i + 1, slug, category_id: i < 2 ? 1 : 2,
   title: i === 1 ? 'La médaille' : 'Dossier ' + i,
@@ -190,3 +207,68 @@ test('detail failure keeps the image hidden and preserves the 404 message', asyn
   assert.equal(p.nodes.get('detail-image').hidden, true);
   assert.equal(p.nodes.get('detail-feedback').textContent, 'Ce dossier n’existe pas.');
 });
+
+for (const original of originals) {
+  const [filename, width, height, hash] = supplied[original.slug];
+  test(original.slug + ': supplied bytes remain PNG with the original dimensions and fingerprint', () => {
+    const bytes = fs.readFileSync(path.join(__dirname, '../images', filename));
+    assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+    assert.equal(bytes.readUInt32BE(16), width); assert.equal(bytes.readUInt32BE(20), height);
+    assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), hash);
+  });
+  test(original.slug + ': slug selects its illustration independently of id or list position', () => {
+    const p = page();
+    assert.deepEqual(Array.from(p.context.getStoryImageSources({ ...original, id: 999 })), [
+      'images/' + filename, 'images/default-story.svg'
+    ]);
+    const figure = p.context.createStoryImage(original);
+    const image = figure.querySelector('img'), caption = figure.querySelector('figcaption');
+    assert.equal(figure.tagName, 'figure'); assert.equal(image.src, 'images/' + filename);
+    assert.equal(image.width, width); assert.equal(image.height, height);
+    assert.equal(figure.querySelector('.story-media').style.aspectRatio, width + ' / ' + height);
+    assert.equal(image.loading, 'lazy'); assert.equal(caption.hidden, false);
+    assert.equal(caption.textContent, 'Illustration générée par IA');
+    assert.match(image.alt, /Illustration générée par IA/);
+    const detail = p.context.createStoryImage(original, true);
+    assert.equal(detail.querySelector('img').loading, 'eager');
+    assert.match(detail.querySelector('figcaption').textContent, /sans valeur de photographie ou de preuve authentique/);
+  });
+  test(original.slug + ': unavailable illustration uses the neutral SVG without attributing AI provenance', () => {
+    const p = page(), figure = p.context.createStoryImage(original, true);
+    const image = figure.querySelector('img'), caption = figure.querySelector('figcaption');
+    const fail = image.events.get('error');
+    fail(); assert.equal(image.src, 'images/default-story.svg');
+    assert.equal(image.width, 1200); assert.equal(image.height, 675);
+    assert.equal(caption.hidden, true); assert.match(image.alt, /^Image à venir/);
+    assert.equal(figure.querySelector('.story-media').dataset.illustration, 'false');
+    fail(); assert.equal(image.hidden, true);
+    assert.equal(figure.querySelector('p').textContent, 'Image indisponible');
+    const count = figure.querySelector('.story-media').children.length;
+    fail(); fail(); assert.equal(figure.querySelector('.story-media').children.length, count);
+  });
+}
+
+test('another API source keeps priority without inheriting an AI attribution', () => {
+  const p = page(), figure = p.context.createStoryImage({ ...originals[0], image_url: '/images/other-source.png' });
+  const image = figure.querySelector('img'), caption = figure.querySelector('figcaption');
+  assert.equal(image.src, '/images/other-source.png'); assert.equal(caption.hidden, true);
+  assert.doesNotMatch(image.alt, /générée par IA/);
+  image.events.get('error')();
+  assert.equal(image.src, 'images/golden-state-killer.png'); assert.equal(caption.hidden, false);
+  assert.equal(image.width, 1672);
+});
+
+test('the same known API image in absolute form still gets its exact dimensions and AI notice', () => {
+  const p = page();
+  const figure = p.context.createStoryImage({ ...originals[0], image_url: 'http://portfolio.test/images/golden-state-killer.png' });
+  assert.equal(figure.querySelector('img').width, 1672);
+  assert.equal(figure.querySelector('figcaption').hidden, false);
+});
+
+for (const slug of ['__proto__', 'constructor', 'toString']) {
+  test('an inherited property is never mistaken for an illustration: ' + slug, () => {
+    const p = page(), frame = p.context.createStoryImage({ ...originals[0], slug });
+    assert.equal(frame.querySelector('img').src, 'images/default-story.svg');
+    assert.equal(frame.querySelector('figcaption'), null);
+  });
+}

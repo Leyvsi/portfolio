@@ -1,12 +1,20 @@
 from datetime import datetime
+from uuid import uuid4
 
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+# Ces dix modèles décrivent le schéma actuel sans ouvrir eux-mêmes de base.
+# Les id sont des clés primaires ; ForeignKey crée une contrainte SQL, alors
+# que relationship facilite la navigation entre objets Python.
+# Les default/onupdate de dates sont appliqués par SQLAlchemy, pas par un
+# déclencheur SQL permanent ; create_all ne rejoue pas les migrations Alembic.
 db = SQLAlchemy()
 
 
+# Un compte peut porter plusieurs contributions. Pseudo et email sont uniques
+# indépendamment ; is_admin et is_banned sont décidés côté serveur.
 class User(db.Model):
     """User and administrator account."""
 
@@ -23,17 +31,25 @@ class User(db.Model):
     stories = db.relationship("Story", back_populates="author")
     comments = db.relationship("Comment", back_populates="user")
     votes = db.relationship("Vote", back_populates="user")
+    comment_likes = db.relationship(
+        'CommentLike', back_populates='user', cascade='all, delete-orphan',
+        passive_deletes=True
+    )
     proposals = db.relationship("Proposal", back_populates="user")
     theories = db.relationship("Theory", back_populates="author")
 
+    # Werkzeug génère un hachage salé adapté aux mots de passe. On conserve
+    # ce hachage pour vérifier une saisie ultérieure, jamais le mot de passe brut.
     def set_password(self, password):
         """Hash the password before storing it."""
         self.password_hash = generate_password_hash(password)
 
+    # Comparer par la fonction Werkzeug, sans tenter de déchiffrer le hachage.
     def check_password(self, password):
         """Check a password against its hash."""
         return check_password_hash(self.password_hash, password)
 
+    # La représentation publique du compte exclut expressément password_hash.
     def to_dict(self):
         return {
             "id": self.id,
@@ -47,6 +63,8 @@ class User(db.Model):
         }
 
 
+# Une catégorie regroupe des dossiers ; son nom est unique, son id est la
+# référence conservée dans stories.category_id.
 class Category(db.Model):
     """Story category."""
 
@@ -59,12 +77,28 @@ class Category(db.Model):
     stories = db.relationship("Story", back_populates="category")
 
 
+# Le dossier a un auteur et une catégorie obligatoires, sans ON DELETE explicite.
+# Le slug unique sert aux liens lisibles ; les images restent des références de
+# fichiers/URL, pas des fichiers binaires stockés dans cette table.
 class Story(db.Model):
     """Criminal story."""
 
     __tablename__ = "stories"
 
     id = db.Column(db.Integer, primary_key=True)
+
+    # NULL signifie actif. La date UTC suffit à dater le retrait sans dupliquer
+    # cet état dans un booléen ; restaurer ne touche à aucune collection liée.
+    archived_at = db.Column(db.DateTime, nullable=True)
+
+    # Une nouvelle valeur à chaque création/transition invalide aussi un ancien
+    # aperçu après restauration/réarchivage ou réutilisation d'un id numérique.
+    # Le défaut SQL sentinelle permet l'ajout portable aux anciennes tables ;
+    # la purge le refuse. Les créations ORM reçoivent toujours une vraie révision.
+    management_revision = db.Column(
+        db.String(32), nullable=False, unique=True,
+        default=lambda: uuid4().hex, server_default='00000000000000000000000000000000'
+    )
 
     slug = db.Column(
         db.String(150),
@@ -126,6 +160,9 @@ class Story(db.Model):
         back_populates="stories"
     )
 
+    # Ces collections du dossier utilisent all, delete-orphan côté ORM : leur
+    # gestion peut supprimer un enfant retiré de la collection. Les règles SQL
+    # ON DELETE sont distinctes et exigent des contraintes effectivement actives.
     comments = db.relationship(
         "Comment",
         back_populates="story",
@@ -150,6 +187,8 @@ class Story(db.Model):
         cascade="all, delete-orphan"
     )
 
+    # Sérialiser les colonnes du dossier sans parcourir ses collections liées :
+    # les contributions sont lues par leurs routes dédiées, pas imbriquées ici.
     def to_dict(self):
         return {
             "id": self.id,
@@ -171,6 +210,8 @@ class Story(db.Model):
         }
 
 
+# Chaque théorie dépend d'un dossier (CASCADE). Son auteur peut devenir NULL
+# selon la contrainte SQL SET NULL, sans effacer le texte de la contribution.
 class Theory(db.Model):
     """Theory submitted for a story."""
 
@@ -234,6 +275,9 @@ class Theory(db.Model):
     )
 
 
+# Même principe pour les commentaires : dossier obligatoire, auteur nullable.
+# Le pseudo copié dans username demeure même si user_id devient NULL : ce
+# comportement ne constitue pas à lui seul une anonymisation des données.
 class Comment(db.Model):
     """Comment posted on a story."""
 
@@ -297,6 +341,21 @@ class Comment(db.Model):
         back_populates="comments"
     )
 
+    # Nom distinct de l'ancien compteur reports : les lignes sont désormais
+    # reliées au commentaire ; la FK protège aussi une suppression SQL directe.
+    moderation_reports = db.relationship(
+        'Report', back_populates='comment', cascade='all, delete-orphan',
+        passive_deletes=True
+    )
+    # Les nouveaux likes identifient chacun leur auteur. La colonne likes
+    # ci-dessus reste l'historique : elle n'est ni convertie ni remise à zéro.
+    comment_likes = db.relationship(
+        'CommentLike', back_populates='comment', cascade='all, delete-orphan',
+        passive_deletes=True
+    )
+
+    # Le pseudo copié est conservé dans le JSON même si user_id vaut NULL.
+    # Les signalements sont comptés séparément par la couche API.
     def to_dict(self):
         return {
             "id": self.id,
@@ -312,6 +371,8 @@ class Comment(db.Model):
         }
 
 
+# Les deux références sont obligatoires et portent CASCADE. La contrainte
+# composite ci-dessous interdit deux votes du même compte pour un même dossier.
 class Vote(db.Model):
     """Vote submitted by a user for a story."""
 
@@ -358,6 +419,8 @@ class Vote(db.Model):
         back_populates="votes"
     )
 
+    # L'unicité porte sur le couple, pas sur chacune des deux colonnes isolée.
+    # Elle complète le précontrôle API et protège aussi des insertions concurrentes.
     __table_args__ = (
         db.UniqueConstraint(
             "user_id",
@@ -367,6 +430,28 @@ class Vote(db.Model):
     )
 
 
+class CommentLike(db.Model):
+    """Un like individuel, distinct de l'ancien compteur de clics."""
+
+    __tablename__ = 'comment_likes'
+    id = db.Column(db.Integer, primary_key=True)
+    comment_id = db.Column(
+        db.Integer, db.ForeignKey('comments.id', name='fk_comment_likes_comment', ondelete='CASCADE'),
+        nullable=False, index=True
+    )
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('users.id', name='fk_comment_likes_user', ondelete='CASCADE'),
+        nullable=False
+    )
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    comment = db.relationship('Comment', back_populates='comment_likes')
+    user = db.relationship('User', back_populates='comment_likes')
+    __table_args__ = (db.UniqueConstraint('user_id', 'comment_id', name='unique_user_comment_like'),
+                      {'mysql_engine': 'InnoDB'})
+
+
+# Une proposition reste distincte des dossiers publiés et commence en pending.
+# Son auteur est obligatoire ; aucune conversion automatique en Story n'existe.
 class Proposal(db.Model):
     """Story proposal submitted by a user."""
 
@@ -422,6 +507,8 @@ class Proposal(db.Model):
     )
 
 
+# Un signalement ne vise que Comment. type/target_id restent des propriétés
+# compatibles en Python/JSON, jamais une seconde référence stockée en parallèle.
 class Report(db.Model):
     """Report submitted for moderation."""
 
@@ -432,15 +519,35 @@ class Report(db.Model):
         primary_key=True
     )
 
-    type = db.Column(
-        db.String(100),
-        nullable=False
+    comment_id = db.Column(
+        db.Integer,
+        db.ForeignKey('comments.id', name='fk_reports_comment', ondelete='CASCADE'),
+        nullable=False, index=True
     )
+    comment = db.relationship('Comment', back_populates='moderation_reports')
 
-    target_id = db.Column(
-        db.String(100),
-        nullable=False
-    )
+    @property
+    def type(self):
+        return 'comment'
+
+    @type.setter
+    def type(self, value):
+        if value != 'comment':
+            raise ValueError('Seuls les signalements de commentaires sont autorisés.')
+
+    @property
+    def target_id(self):
+        return str(self.comment_id)
+
+    @target_id.setter
+    def target_id(self, value):
+        # Compatibilité des anciennes préparations Python : aucune normalisation
+        # ambiguë, aucune conversion de type autre que la chaîne canonique.
+        if (not isinstance(value, str) or not value.isascii() or
+                not value.isdecimal() or value.startswith('0') or len(value) > 10 or
+                not 1 <= int(value) <= 2147483647):
+            raise ValueError('Identifiant de commentaire canonique requis.')
+        self.comment_id = int(value)
 
     reason = db.Column(
         db.Text,
@@ -459,6 +566,7 @@ class Report(db.Model):
         nullable=False
     )
 
+    # Garder le contrat HTTP historique sans conserver de cible textuelle en SQL.
     def to_dict(self):
         return {
             "id": self.id,
@@ -473,6 +581,8 @@ class Report(db.Model):
         }
 
 
+# Une mise à jour référence un dossier et suit sa suppression par CASCADE.
+# La clé étrangère ne garantit pas que sa catégorie soit réellement Cold Case.
 class ColdCaseUpdate(db.Model):
     """Update attached to a cold case story."""
 
@@ -509,6 +619,8 @@ class ColdCaseUpdate(db.Model):
         back_populates="cold_case_updates"
     )
 
+    # Fournir les champs de lecture et une date ISO, sans modifier le dossier
+    # ni vérifier sa catégorie : ce sont des responsabilités distinctes.
     def to_dict(self):
         return {
             "id": self.id,

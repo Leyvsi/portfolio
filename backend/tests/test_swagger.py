@@ -14,8 +14,17 @@ import test_reports as report_suite
 class SwaggerTests(unittest.TestCase):
     METHODS = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
     AUTH_REQUIRED = {
+        ("/votes/{story_id}", "get"), ("/votes/{story_id}", "delete"),
+        ("/comments/{comment_id}/like", "get"), ("/comments/{comment_id}/like", "delete"),
+        ("/admin/stories/{story_id}/deletion-preview", "get"),
+        ("/admin/stories/{story_id}/deletion-confirmations", "post"),
+        ("/admin/stories/{story_id}", "delete"),
+        ("/admin/stories", "get"), ("/admin/stories/{story_id}", "get"),
+        ("/admin/stories/{story_id}/archive", "post"),
+        ("/admin/stories/{story_id}/restore", "post"),
         ("/me", "get"), ("/users", "get"), ("/admin/reports", "get"),
         ("/proposals", "get"), ("/admin/users/{username}/ban", "delete"),
+        ("/admin/users/{user_id}/ban", "post"),
         ("/votes/{story_id}", "post"), ("/reports", "post"),
         ("/stories/{story_id}/comments", "post"),
         ("/comments/{comment_id}/like", "post"),
@@ -24,8 +33,15 @@ class SwaggerTests(unittest.TestCase):
         ("/theories/{theory_id}/like", "post"), ("/proposals", "post"),
     }
     ADMIN_REQUIRED = {
+        ("/admin/stories/{story_id}/deletion-preview", "get"),
+        ("/admin/stories/{story_id}/deletion-confirmations", "post"),
+        ("/admin/stories/{story_id}", "delete"),
+        ("/admin/stories", "get"), ("/admin/stories/{story_id}", "get"),
+        ("/admin/stories/{story_id}/archive", "post"),
+        ("/admin/stories/{story_id}/restore", "post"),
         ("/users", "get"), ("/proposals", "get"), ("/admin/reports", "get"),
         ("/admin/users/{username}/ban", "delete"),
+        ("/admin/users/{user_id}/ban", "post"),
     }
     OPTIONAL_AUTH = {("/users", "post"), ("/logout", "post")}
     INPUTS = {
@@ -68,7 +84,9 @@ class SwaggerTests(unittest.TestCase):
 
     def tearDown(self):
         self.db.session.rollback()
+        self.models.Story.query.update({self.models.Story.archived_at: None})
         self.models.Vote.query.delete()
+        self.models.CommentLike.query.delete()
         self.models.Report.query.filter(self.models.Report.id > 1).delete()
         self.models.Comment.query.filter(self.models.Comment.id > 1).delete()
         self.models.Theory.query.filter(self.models.Theory.id > 1).delete()
@@ -118,16 +136,39 @@ class SwaggerTests(unittest.TestCase):
         return self.resolve(response["content"]["application/json"]["schema"])
 
     def call(self, path, method, *, user_id=1, csrf=True):
+        # Chaque opération de contrat part d?un dossier actif indépendant.
+        self.db.session.get(self.models.Story, 1).archived_at = None
+        self.db.session.commit()
         self.client = self.app.test_client()
         if user_id is not None:
             self.authenticate(user_id)
         actual = "/api/v1" + path.format(
             story_id=1, theory_id=1, comment_id=1, case_id=1,
-            slug="audit-story", username="banned",
+            slug="audit-story", username="banned", user_id=2,
         )
         kwargs = {"headers": {"X-CSRF-Token": "reports-csrf"} if csrf else {}}
         if method == "post" and path in self.INPUTS:
             kwargs["json"] = self.INPUTS[path]
+        if user_id == 3 and (path.endswith('/deletion-preview') or path.endswith('/deletion-confirmations') or method == 'delete' and path == '/admin/stories/{story_id}'):
+            self.client.post('/api/v1/admin/stories/1/archive', headers={"X-CSRF-Token": "reports-csrf"})
+            preview = self.client.get('/api/v1/admin/stories/1/deletion-preview').get_json()
+            body = {'preview_token': preview['preview_token'], 'typed_title': 'Audit', 'confirm_contributions': True}
+            if path.endswith('/deletion-confirmations'):
+                kwargs['json'] = body
+            if method == 'delete':
+                confirmation = self.client.post('/api/v1/admin/stories/1/deletion-confirmations', json=body,
+                    headers={"X-CSRF-Token": "reports-csrf"}).get_json()
+                kwargs['headers'].update({'If-Match': preview['resource_etag'], 'X-Deletion-Confirmation': confirmation['confirmation_token']})
+                # Le test de contrat doit rester independant des operations suivantes.
+                result = self.client.open(actual, method=method.upper(), **kwargs)
+                if result.status_code == 200:
+                    self.db.session.add(self.models.Story(id=1, slug='audit-story', title='Audit', summary='Summary', content='Content', category_id=1, author_id=1))
+                    self.db.session.flush()
+                    self.db.session.add_all([self.models.Comment(id=1, story_id=1, user_id=1, username='reader', text='Comment'), self.models.Theory(id=1, story_id=1, user_id=1, title='Theory', content='Evidence'), self.models.ColdCaseUpdate(id=1, story_id=1, content='Update')])
+                    self.db.session.flush()
+                    self.db.session.add(self.models.Report(id=1, comment_id=1, reason='Spam'))
+                    self.db.session.commit()
+                return result
         return self.client.open(actual, method=method.upper(), **kwargs)
 
     def assert_matches_schema(self, value, schema):
@@ -322,16 +363,28 @@ class SwaggerTests(unittest.TestCase):
 
     def test_documented_status_codes_match_existing_contracts(self):
         expected = {
+            ("/admin/stories/{story_id}/deletion-preview", "get"): {200,401,403,404,409,500,503},
+            ("/admin/stories/{story_id}/deletion-confirmations", "post"): {200,400,401,403,404,409,412,428,500,503},
+            ("/admin/stories/{story_id}", "delete"): {200,400,401,403,404,409,412,428,500,503},
+            ("/admin/stories", "get"): {200,400,401,403,500},
+            ("/admin/stories/{story_id}", "get"): {200,401,403,404,500},
+            ("/admin/stories/{story_id}/archive", "post"): {200,401,403,404,500},
+            ("/admin/stories/{story_id}/restore", "post"): {200,401,403,404,500},
             ("/login", "post"): {200,400,401,403,500}, ("/me", "get"): {200,401,403,500},
             ("/logout", "post"): {200,403,500}, ("/users", "get"): {200,401,403,500},
             ("/users", "post"): {201,400,401,403,500},
-            ("/admin/users/{username}/ban", "delete"): {200,401,403,404,500},
+            ("/admin/users/{username}/ban", "delete"): {200,401,403,404,409,500},
+            ("/admin/users/{user_id}/ban", "post"): {200,401,403,404,409,500},
             ("/stories", "get"): {200,500}, ("/stories/slug/{slug}", "get"): {200,404,500},
             ("/votes/{story_id}", "post"): {201,401,403,404,409,500},
+            ("/votes/{story_id}", "get"): {200,401,403,404,500},
+            ("/votes/{story_id}", "delete"): {200,401,403,404,500},
             ("/coldcases/{case_id}/updates", "get"): {200,404,500},
             ("/stories/{story_id}/comments", "get"): {200,404,500},
             ("/stories/{story_id}/comments", "post"): {201,400,401,403,404,500},
-            ("/comments/{comment_id}/like", "post"): {200,401,403,404,500},
+            ("/comments/{comment_id}/like", "post"): {200,401,403,404,409,500},
+            ("/comments/{comment_id}/like", "get"): {200,401,403,404,409,500},
+            ("/comments/{comment_id}/like", "delete"): {200,401,403,404,409,500},
             ("/comments/{comment_id}/report", "post"): {201,400,401,403,404,500},
             ("/stories/{story_id}/theories", "get"): {200,404,500},
             ("/stories/{story_id}/theories", "post"): {201,400,401,403,404,500},

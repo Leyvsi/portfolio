@@ -320,14 +320,16 @@ class ProposalsBanTests(unittest.TestCase):
             self.assertEqual(self.request("ban", user_id=3, raw='["invalid"]').status_code, 200)
             get_json.assert_not_called()
 
-    def test_admin_self_ban_remains_allowed_and_next_request_is_blocked(self):
-        self.assertEqual(self.request("ban", user_id=3, username="admin").status_code, 200)
+    def test_admin_self_ban_is_refused_and_admin_keeps_access(self):
+        # Nouvelle règle 6A : l'ancien comportement autorisant l'auto-ban est
+        # remplacé explicitement par un refus métier, sans perte de session.
+        self.assert_error(self.request("ban", user_id=3, username="admin"), 409)
         admin = self.db.session.get(self.models.User, 3)
-        self.assertTrue(admin.is_banned)
+        self.assertFalse(admin.is_banned)
         self.assertTrue(admin.is_admin)
-        self.assert_error(self.request("get", user_id=3), 403)
+        self.assertEqual(self.request("get", user_id=3).status_code, 200)
         with self.client.session_transaction() as session:
-            self.assertNotIn("user_id", session)
+            self.assertEqual(session["user_id"], 3)
         self.assertEqual(self.models.User.query.count(), 4)
 
 

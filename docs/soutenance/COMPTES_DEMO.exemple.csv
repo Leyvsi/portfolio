@@ -1,0 +1,3 @@
+role,pseudo,email,mot_de_passe_dans_copie_privee_uniquement
+lecteur,lecteur_demo,lecteur-demo@example.invalid,A_RENSEIGNER_UNIQUEMENT_HORS_DU_DEPOT
+administrateur,admin_demo,admin-demo@example.invalid,A_RENSEIGNER_UNIQUEMENT_HORS_DU_DEPOT

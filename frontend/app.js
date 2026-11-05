@@ -1,4 +1,6 @@
 // IDs des catégories MySQL vérifiées pour le projet Portfolio.
+// L'association aux catégories 1 et 2 est une hypothèse actuelle de l'interface ;
+// une autre base doit préparer ces identifiants ou ce classement sera incomplet.
 const storyCategories = [
   { id: 1, label: 'Histoires résolues', type: 'resolved' },
   { id: 2, label: 'Cold Cases', type: 'coldcase' }
@@ -8,7 +10,31 @@ function getStoryCategory(story) {
     ['resolved', 'coldcase'].includes(category.type));
 }
 
+// Ordre des six dossiers originaux dans les rubriques uniquement. Les autres
+// dossiers gardent entre eux l'ordre reçu ; l'accueil conserve les plus récents.
+const editorialStoryOrder = new Map([
+  ['golden-state-killer', 1], ['chris-watts', 2], ['michelle-carter', 3],
+  ['anthonioz', 1], ['noirval', 2], ['manoir-de-l-ombre', 3]
+]);
+function compareEditorialStories(left, right) {
+  return (editorialStoryOrder.get(left.slug) ?? Number.MAX_SAFE_INTEGER) -
+    (editorialStoryOrder.get(right.slug) ?? Number.MAX_SAFE_INTEGER);
+}
+
 const defaultStoryImage = 'images/default-story.svg';
+// Illustrations IA fournies pour les six dossiers : correspondance explicite par slug.
+// Les PNG fournis sont conservés octet pour octet, sans réencodage.
+const originalStoryIllustrations = Object.freeze({
+  'golden-state-killer': Object.freeze({ src: 'images/golden-state-killer.png', width: 1672, height: 941 }),
+  'chris-watts': Object.freeze({ src: 'images/chris-watts.png', width: 1672, height: 941 }),
+  'michelle-carter': Object.freeze({ src: 'images/michelle-carter.png', width: 1672, height: 941 }),
+  'anthonioz': Object.freeze({ src: 'images/mystere-anthonioz.png', width: 1671, height: 941 }),
+  'noirval': Object.freeze({ src: 'images/inconnue-noirval.png', width: 1671, height: 941 }),
+  'manoir-de-l-ombre': Object.freeze({ src: 'images/manoir-ombre.png', width: 1670, height: 941 })
+});
+function getOriginalStoryIllustration(story) {
+  return Object.hasOwn(originalStoryIllustrations, story.slug) ? originalStoryIllustrations[story.slug] : null;
+}
 const demoStoryImages = Object.freeze({
   'demo-f32-20261024-v1-tableau-salle-bleue': 'images/tableau-salle-bleue.webp',
   'demo-f32-20261024-v1-medaille-pavillon-ferme': 'images/medaille-pavillon-ferme.webp',
@@ -16,6 +42,8 @@ const demoStoryImages = Object.freeze({
   'demo-f32-20261024-v1-carnet-tour-nord': 'images/carnet-tour-nord.webp'
 });
 
+// Essayer l'URL HTTP(S), l'illustration connue du slug, puis le SVG local permet
+// de garder une carte lisible quand une image manque, sans accepter de schéma actif.
 function getStoryImageSources(story) {
   const sources = [];
   if (typeof story.image_url === 'string' && story.image_url.trim()) {
@@ -27,13 +55,16 @@ function getStoryImageSources(story) {
       // Une URL inutilisable laisse la place au fichier local ou au placeholder.
     }
   }
-  const localImage = demoStoryImages[story.slug];
+  const localImage = getOriginalStoryIllustration(story)?.src || demoStoryImages[story.slug];
   if (typeof localImage === 'string') sources.push(localImage);
   sources.push(defaultStoryImage);
   return [...new Set(sources)];
 }
 
+// Avancer d'une source à la suivante sur l'événement error, puis masquer l'image
+// si toutes échouent. La borne finale empêche une boucle sur le SVG indisponible.
 function createStoryImage(story, detail = false) {
+  const illustration = getOriginalStoryIllustration(story);
   const frame = document.createElement('div');
   frame.className = 'story-media';
   const image = document.createElement('img');
@@ -43,11 +74,31 @@ function createStoryImage(story, detail = false) {
   image.loading = detail ? 'eager' : 'lazy';
   image.decoding = 'async';
   const sources = getStoryImageSources(story);
+  const figure = illustration ? document.createElement('figure') : null;
+  const caption = illustration ? document.createElement('figcaption') : null;
+  if (figure) {
+    figure.className = 'story-illustration';
+    caption.className = 'story-image-caption';
+    caption.textContent = detail ?
+      'Illustration générée par IA, sans valeur de photographie ou de preuve authentique.' :
+      'Illustration générée par IA';
+    figure.append(frame, caption);
+  }
   let index = 0;
   let exhausted = false;
+  // Le texte alternatif précise si l'image affichée est le visuel de remplacement.
   function selectSource() {
+    // Une URL API différente garde sa priorité, sans lui attribuer une provenance IA.
+    const isIllustration = Boolean(illustration &&
+      new URL(sources[index], document.baseURI).href === new URL(illustration.src, document.baseURI).href);
+    image.width = isIllustration ? illustration.width : 1200;
+    image.height = isIllustration ? illustration.height : 675;
+    frame.dataset.illustration = String(isIllustration);
+    frame.style.aspectRatio = isIllustration ? illustration.width + ' / ' + illustration.height : '';
+    if (caption) caption.hidden = !isIllustration;
     image.alt = sources[index] === defaultStoryImage ?
       'Image à venir pour le dossier : ' + story.title :
+      isIllustration ? 'Illustration générée par IA pour le dossier : ' + story.title :
       'Illustration du dossier : ' + story.title;
     image.src = sources[index];
   }
@@ -67,9 +118,11 @@ function createStoryImage(story, detail = false) {
   });
   frame.append(image);
   selectSource();
-  return frame;
+  return figure || frame;
 }
 
+// Construire les éléments du DOM et utiliser textContent affiche les valeurs API
+// comme du texte, au lieu de les interpréter comme du HTML provenant d’un membre.
 function makeCard(story) {
   const card = document.createElement('article');
   card.className = 'case-card';
@@ -96,6 +149,8 @@ let pageStories = [];
 function showCards(items) {
   storyList.replaceChildren(...items.map(makeCard));
 }
+// La recherche filtre en mémoire les dossiers déjà chargés, sans requête SQL
+// ni appel API à chaque frappe ; elle porte sur le titre et le résumé.
 if (search) search.addEventListener('input', () => {
   const q = search.value.toLocaleLowerCase('fr').trim();
   const found = pageStories.filter(story =>
@@ -105,6 +160,8 @@ if (search) search.addEventListener('input', () => {
     found.length > 0 || pageStories.length === 0;
 });
 
+// Charger l'API puis filtrer selon la page ; l'accueil garde au plus trois dossiers.
+// En cas d'erreur, un message remplace l'attente : donnees.js n'est pas un repli.
 async function loadStories() {
   storyFeedback.textContent = 'Chargement des histoires…';
   storyList.setAttribute('aria-busy', 'true');
@@ -114,6 +171,7 @@ async function loadStories() {
     const type = storyList.dataset.storyType;
     pageStories = type === 'all' ? stories.slice(0, 3) :
       stories.filter(story => getStoryCategory(story)?.type === type);
+    if (['resolved', 'coldcase'].includes(type)) pageStories.sort(compareEditorialStories);
     showCards(pageStories);
     if (!stories.length) {
       storyFeedback.textContent = 'Aucune histoire n’est disponible pour le moment.';
@@ -135,7 +193,54 @@ async function loadStories() {
 }
 if (storyList) loadStories();
 
+// Intertitres approuvés : correspondance exacte par slug, sans interpréter le HTML.
+const historicalStoryHeadings = new Map([
+  ["golden-state-killer", new Set([
+    "👥 L'ENFANCE ET LA JEUNESSE DE JOSEPH DEANGELO",
+    "🕒 AVANT LE DRAME : LA DOUBLE VIE ET LES REpÉRAGES",
+    "💀 LE DÉROULEMENT DU RITUEL ET LES MEURTRES",
+    "🎙️ INTERROGATOIRE ET CHUTE",
+    "⚖️ LE PROCÈS ET LE VERDICT HISTORIQUE"
+])],
+  ["chris-watts", new Set([
+    "👥 RENCONTRE ET APPARENCE DE BONHEUR",
+    "🕒 LA GLISSADE : LA RENCONTRE DE NICHOL KESSINGER",
+    "💀 LE DÉROULEMENT DU DRAME DU 13 AOÛT 2018",
+    "🎙️ UN INTERROGATOIRE SOUS HAUTE TENSION PSYCHOLOGIQUE",
+    "⚖️ LE PROCÈS ET LE DESTIN DU TUEUR"
+])],
+  ["michelle-carter", new Set([
+    "👥 LA RENCONTRE ET LES FRAGILITÉS COMMUNES",
+    "🕒 AVANT LE DRAME : LA QUÊTE OBSESSIONNELLE D'ATTENTION",
+    "💀 LE CRIME TEXTUEL DU 12 JUILLET 2014",
+    "⚖️ UN PROCÈS JURIDIQUE SANS PRÉCÉDENT"
+])],
+  ["anthonioz", new Set([
+    "👥 L'ENFANCE DE LÉA ET SA RENCONTRE AVEC LA MONTAGNE",
+    "🕒 AVANT LE DRAME : UNE ROUTE DE TOURMENTE",
+    "💀 LE DÉROULEMENT DE LA DISPARITION",
+    "🔬 L'ÉNIGME DES EMPREINTES DANS LA NEIGE",
+    "🎙️ LES INTERROGATOIRES ET LES COMPTES RENDUS"
+])],
+  ["noirval", new Set([
+    "👥 UNE APPARITION DE NULLE PART",
+    "🕒 AVANT LE DRAME : LE MYSTÈRE DES SIGNAUX LUMINEUX",
+    "💀 LA DÉCOUVERTE ET L'AUTOPSIE SANS RÉPONSES",
+    "🔬 DES INDICES SOIGNEUSEMENT EFFACÉS",
+    "⚖️ LES PISTES DE L'ESPIONNAGE ET LA CONCLUSION"
+])],
+  ["manoir-de-l-ombre", new Set([
+    "👥 LA FAMILLE BELMONT ET LA VIE AU DOMAINE",
+    "🕒 LA DERNIÈRE MÉLODIE DU 12 SEPTEMBRE",
+    "💀 LE CONSTAT DE L'IMPOSSIBLE ÉVAPORATION",
+    "🔬 UN MANOIR FERMÉ DE L'INTÉRIEUR",
+    "🎙️ LES RECHERCHES ET LES THÉORIES DE LA POLICE"
+])]
+]);
+
 const detailTitle = document.getElementById('detail-titre');
+// Le slug de l'URL est transmis à l'API ; un 404 affiche un dossier introuvable.
+// Les paragraphes du récit sont créés comme texte dans le DOM.
 async function loadStory() {
   const feedback = document.getElementById('detail-feedback');
   detailTitle.parentElement.style.overflowWrap = 'anywhere';
@@ -159,10 +264,13 @@ async function loadStory() {
       imageContainer.hidden = false;
     }
     const content = document.getElementById('detail-contenu');
+    const headings = historicalStoryHeadings.get(story.slug);
     story.content.split(/\r?\n/).forEach(line => {
-      const paragraph = document.createElement('p');
-      paragraph.textContent = line;
-      content.append(paragraph);
+      const isHeading = headings?.has(line) === true;
+      const block = document.createElement(isHeading ? 'h2' : 'p');
+      if (isHeading) block.className = 'story-subheading';
+      block.textContent = line;
+      content.append(block);
     });
     if (category) {
       document.getElementById('retour-dossier').href =
@@ -171,6 +279,9 @@ async function loadStory() {
     } else {
       feedback.textContent = 'La catégorie de ce dossier n’est pas configurée.';
     }
+    // La même page accueille histoires et Cold Cases ; transmettre l'id de l'API.
+    if (typeof mountStoryComments === 'function') mountStoryComments(story.id);
+    if (typeof mountStoryLike === 'function') mountStoryLike(story);
   } catch (error) {
     detailTitle.textContent = error.status === 404 ?
       'Dossier introuvable' : 'Lecture impossible';
@@ -195,7 +306,10 @@ if (theoryForm) {
   const fields = [storySelect, titleField, contentField];
   let storyIds = new Set();
   let sending = false;
+  let uncertainTheory = false;
 
+  // Les options utilisent les vrais id de l'API, et non le rang dans une liste.
+  // Bloquer l'envoi tant qu'ils ne sont pas disponibles évite une mauvaise référence.
   async function loadTheoryStories() {
     storySelect.disabled = true;
     button.disabled = true;
@@ -230,9 +344,11 @@ if (theoryForm) {
     }
   }
 
+  // Intercepter submit pour valider, bloquer le double envoi puis vérifier /me.
+  // Une création confirmée efface la saisie ; un résultat incertain interdit le renvoi.
   theoryForm.addEventListener('submit', async event => {
     event.preventDefault();
-    if (sending) return;
+    if (sending || uncertainTheory) return;
     if (storyIds.size === 0) {
       feedback.textContent = 'Les dossiers ne sont pas disponibles. Attendez la fin du chargement ou rechargez la page.';
       return;
@@ -242,6 +358,7 @@ if (theoryForm) {
     theoryForm.setAttribute('aria-busy', 'true');
     feedback.textContent = '';
     const disabledBefore = fields.map(field => field.disabled);
+    let postStarted = false;
 
     try {
       const selected = storySelect.value;
@@ -273,11 +390,15 @@ if (theoryForm) {
           !/^[\x21-\x7e]+$/.test(current.csrf_token)) {
         throw new Error('Impossible de vérifier votre session. Reconnectez-vous puis réessayez.');
       }
+      postStarted = true;
       await createTheory(storyId, title, content);
       theoryForm.reset();
-      feedback.textContent = 'Votre théorie a été publiée.';
+      feedback.textContent = 'Théorie publiée.';
     } catch (error) {
-      if (error.status === 401) {
+      if (postStarted && (!error.status || error.status >= 500 || error.code === 'UNEXPECTED_STATUS')) {
+        uncertainTheory = true;
+        feedback.textContent = 'Résultat incertain. Vérifiez les théories publiées. Aucun nouvel envoi sur cette page.';
+      } else if (error.status === 401) {
         feedback.textContent = 'Votre session est absente ou a expiré. Connectez-vous pour proposer une théorie ; votre saisie est conservée.';
       } else if (error.status === 403) {
         feedback.textContent = 'Envoi refusé. ' + error.message + ' Rechargez la page ou reconnectez-vous.';
@@ -288,7 +409,7 @@ if (theoryForm) {
       }
     } finally {
       fields.forEach((field, index) => { field.disabled = disabledBefore[index]; });
-      button.disabled = false;
+      button.disabled = uncertainTheory;
       theoryForm.setAttribute('aria-busy', 'false');
       sending = false;
     }
@@ -308,6 +429,8 @@ if (proposalForm) {
   ];
   let sending = false;
 
+  // Même protection contre les doubles soumissions et même vérification de session.
+  // La catégorie est ajoutée au contenu : elle n'est pas envoyée comme category_id.
   proposalForm.addEventListener('submit', async event => {
     event.preventDefault();
     if (sending) return;
@@ -370,6 +493,8 @@ if (proposalForm) {
 
 const signupForm = document.getElementById('signup-form');
 if (signupForm) {
+  // Une inscription peut aussi partir avec une session existante : obtenir son
+  // CSRF avant le POST ; un 401 de /me indique simplement une inscription anonyme.
   signupForm.addEventListener('submit', async event => {
     event.preventDefault();
     const feedback = signupForm.querySelector('.feedback');
@@ -403,6 +528,8 @@ if (signupForm) {
 
 const loginForm = document.getElementById('login-form');
 if (loginForm) {
+  // Les deux écrans utilisent la même connexion API. L’entrée admin vérifie le
+  // rôle avant de rediriger, mais seule l'autorisation Flask protège les données.
   loginForm.addEventListener('submit', async event => {
     event.preventDefault();
     const feedback = loginForm.querySelector('.feedback');
@@ -429,31 +556,147 @@ if (loginForm) {
   });
 }
 
+// La même zone est présente sur toutes les pages. /me décide de l'identité ;
+// ni le nom affiché ni le lien Administration ne donnent un droit côté serveur.
 const sessionControls = document.getElementById('session-controls');
 if (sessionControls) {
   const loginLink = sessionControls.querySelector('a');
   const feedback = document.getElementById('session-feedback');
-  getCurrentUser().then(data => {
+  let currentUser = null;
+  let version = 0;
+  let reading = null;
+  let writing = false;
+  let returnedFromCache = false;
+
+  function sessionData(data) {
+    if (data?.status !== 'success' || !isContributionId(data.user?.id) || typeof data.user.username !== 'string' ||
+        !data.user.username || typeof data.user.is_admin !== 'boolean' ||
+        typeof data.csrf_token !== 'string' || !data.csrf_token) {
+      throw new Error('État de connexion incohérent.');
+    }
+    return data.user;
+  }
+
+  function endDisplayedSession() {
+    if (typeof window.dispatchEvent === 'function' && typeof Event === 'function') {
+      window.dispatchEvent(new Event('session-ended'));
+    }
+  }
+
+  function anonymous(message = '') {
+    if (currentUser) endDisplayedSession();
+    currentUser = null;
+    loginLink.hidden = false;
+    sessionControls.replaceChildren(loginLink);
+    feedback.textContent = message;
+  }
+
+  function unknown() {
+    if (currentUser) endDisplayedSession();
+    currentUser = null;
+    const retry = document.createElement('button');
+    retry.type = 'button'; retry.className = 'outline'; retry.textContent = 'Vérifier la connexion';
+    retry.addEventListener('click', refreshSession);
+    sessionControls.replaceChildren(retry);
+    feedback.textContent = 'État de connexion indisponible. Vérifiez avant de continuer.';
+  }
+
+  function connected(data) {
+    const user = sessionData(data);
+    if (currentUser && (currentUser.id !== user.id || currentUser.is_admin !== user.is_admin)) endDisplayedSession();
+    currentUser = user;
     const username = document.createElement('span');
-    username.textContent = data.user.username + ' ';
+    username.textContent = user.username + (user.is_admin ? ' — Administrateur' : ' — Membre');
     const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'btn';
-    button.textContent = 'Déconnexion';
+    button.type = 'button'; button.className = 'btn'; button.textContent = 'Déconnexion';
     sessionControls.replaceChildren(username, button);
-    button.addEventListener('click', async () => {
-      feedback.textContent = '';
-      button.disabled = true;
-      try {
-        await logout();
-        sessionControls.replaceChildren(loginLink);
-      } catch (error) {
-        feedback.textContent = error.message;
-        button.disabled = false;
+    if (user.is_admin) {
+      const admin = document.createElement('a');
+      admin.href = 'admin-dashboard.html'; admin.className = 'outline'; admin.textContent = 'Administration';
+      sessionControls.append(admin);
+    }
+    button.addEventListener('click', () => disconnect(button, user.id));
+  }
+
+  async function refreshSession() {
+    if (writing) return;
+    const current = ++version;
+    reading?.abort(); reading = new AbortController();
+    sessionControls.setAttribute('aria-busy', 'true');
+    try {
+      const data = await getCurrentUser({ signal: reading.signal });
+      if (current !== version) return;
+      connected(data); feedback.textContent = '';
+    } catch (error) {
+      if (current !== version) return;
+      if ([401, 403].includes(error.status)) anonymous(error.status === 403 ? 'Compte indisponible. Reconnectez-vous.' : '');
+      else unknown();
+    } finally {
+      if (current === version) sessionControls.setAttribute('aria-busy', 'false');
+    }
+  }
+
+  async function disconnect(button, displayedId) {
+    if (writing || button.disabled) return;
+    writing = true; button.disabled = true;
+    const current = ++version;
+    reading?.abort(); reading = new AbortController();
+    let sent = false;
+    sessionControls.setAttribute('aria-busy', 'true');
+    feedback.textContent = 'Vérification de la session…';
+    try {
+      const data = await getCurrentUser({ signal: reading.signal });
+      if (current !== version) return;
+      const user = sessionData(data);
+      if (user.id !== displayedId) {
+        connected(data); feedback.textContent = 'Compte modifié : état relu, aucune déconnexion envoyée.';
+        return;
       }
-    });
-  }).catch(error => {
-    // Sans session, le lien Connexion est déjà affiché.
-    if (error.status !== 401) feedback.textContent = error.message;
+      sent = true;
+      await logout();
+      if (current !== version) return;
+      anonymous('Vous êtes déconnecté.');
+    } catch (error) {
+      if (current !== version) return;
+      if (!sent && [401, 403].includes(error.status)) anonymous('Votre session est absente ou expirée.');
+      else {
+        // Une réponse perdue ne prouve pas la déconnexion. Relire sans renvoyer
+        // le POST et ne jamais annoncer un succès avec un ancien état local.
+        try {
+          const data = await getCurrentUser({ signal: reading.signal });
+          if (current !== version) return;
+          connected(data);
+          feedback.textContent = 'Déconnexion non confirmée. Votre session est encore active.';
+        } catch (readError) {
+          if (current !== version) return;
+          if ([401, 403].includes(readError.status)) anonymous('Session absente après vérification.');
+          else unknown();
+        }
+      }
+    } finally {
+      writing = false;
+      if (current === version) {
+        button.disabled = false;
+        sessionControls.setAttribute('aria-busy', 'false');
+      } else if (returnedFromCache) {
+        returnedFromCache = false;
+        endDisplayedSession();
+        refreshSession();
+      }
+    }
+  }
+
+  window.addEventListener('pagehide', () => {
+    version += 1; reading?.abort(); currentUser = null; returnedFromCache = false;
+    sessionControls.replaceChildren(); feedback.textContent = '';
   });
+  window.addEventListener('pageshow', event => {
+    if (!event.persisted) return;
+    if (writing) {
+      returnedFromCache = true;
+      feedback.textContent = 'Déconnexion en cours : vérification de la session à sa fin.';
+    } else refreshSession();
+  });
+  window.addEventListener('focus', refreshSession);
+  refreshSession();
 }

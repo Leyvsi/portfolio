@@ -114,33 +114,51 @@ a:hover {
     margin-top:30px;
 }
 
-.btn,.outline {
+.btn,.outline,#admin-dashboard button:where(:not(.btn):not(.outline)) {
     display:inline-block;
-    border:1px solid #d76d32;
+    border:1px solid #f5a579;
     border-radius:8px;
     padding:11px 18px;
     font:inherit;
+    min-height:44px;
+    max-width:100%;
+    white-space:normal;
+    overflow-wrap:anywhere;
     cursor:pointer;
 }
 
 .btn {
-    background:#d76d32;
-    color:#fff;
+    background:#e4783c;
+    color:#09090b;
     font-weight:700;
 }
 
-.btn:hover {
-    background:#ba5523;
+.btn:hover:not(:disabled) {
+    background:#f5a579;
     text-decoration:none;
 }
 
-.btn:disabled {
-    opacity:.55;
+.outline,#admin-dashboard button:where(:not(.btn):not(.outline)) {
+    background:#141316;
+    color:#f7f3ef;
+}
+
+.outline:hover:not(:disabled),#admin-dashboard button:where(:not(.btn):not(.outline)):hover:not(:disabled) {
+    background:#262020;
+    text-decoration:none;
+}
+
+.btn:disabled,.outline:disabled,#admin-dashboard button:disabled {
+    background:#262326;
+    color:#c7beb8;
+    border-color:#8b7d76;
+    opacity:1;
     cursor:not-allowed;
 }
 
-.outline {
-    color:#f7f3ef;
+.btn:focus-visible,.outline:focus-visible,#admin-dashboard button:focus-visible {
+    outline:4px solid #f5a579;
+    outline-offset:3px;
 }
 
 .section {
@@ -391,4 +409,214 @@ footer a {
 
 .detail-media {
     margin:22px 0;
+}
+
+/* Notices lisibles avant l'envoi, sans nouveau champ ni interruption du formulaire. */
+.data-notice {
+    margin:0 0 8px;
+    padding:14px 16px;
+    border-left:3px solid #e4783c;
+    border-radius:6px;
+    background:#262020;
+    color:#f7f3ef;
+    font-size:.94rem;
+    overflow-wrap:anywhere;
+}
+
+/* Ces liens concernent seulement le brouillon HTML conserve hors du site servi. */
+.privacy-draft a:focus-visible {
+    outline:2px solid #f5a579;
+    outline-offset:4px;
+}
+
+.privacy-draft .draft-skip-link {
+    display:inline-block;
+    margin:12px 24px;
+}
+
+/* Les règles restent limitées à la zone publique des commentaires. */
+.story-comments {
+    margin-top:36px;
+    padding-top:24px;
+    border-top:1px solid #514744;
+    overflow-wrap:anywhere;
+}
+
+.story-comments[hidden],.story-comments [hidden] {
+    display:none;
+}
+
+.story-comments .comment-card {
+    padding:18px 0;
+    border-bottom:1px solid #514744;
+}
+
+.story-comments .comment-text {
+    white-space:pre-wrap;
+}
+
+.story-comments form {
+    margin-top:24px;
+}
+
+.story-comments button {
+    align-self:flex-start;
+    max-width:100%;
+    white-space:normal;
+}
+
+/* Les J'aime publics utilisent les contrôles natifs, sans toucher au dashboard. */
+.like-control {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:12px;
+    margin-top:18px;
+    overflow-wrap:anywhere;
+}
+
+.like-control .feedback {
+    flex-basis:100%;
+    margin:0;
+}
+
+.like-control button[aria-pressed="true"]:not(:disabled) {
+    border-color:#f5a579;
+    background:#38241c;
+}
+
+.like-control button:focus-visible {
+    outline:4px solid #f5a579;
+    outline-offset:3px;
+}
+
+#session-controls {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:12px;
+    overflow-wrap:anywhere;
+}
+
+.session-feedback {
+    max-width:1120px;
+    margin:12px auto;
+    padding:0 24px;
+}
+
+.session-feedback:empty {
+    display:none;
+}
+
+#session-controls button:focus-visible {
+    outline:4px solid #f5a579;
+    outline-offset:3px;
+}
+
+.report-comment-text {
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}
+
+/* Lecture des dossiers : seules les chaînes approuvées sont des intertitres. */
+#detail-resume,#detail-contenu {
+    max-width:70ch;
+    line-height:1.8;
+    font-size:1.05rem;
+    overflow-wrap:anywhere;
+}
+
+#detail-contenu p {
+    margin:0 0 1.25rem;
+}
+
+#detail-contenu p:empty {
+    display:none;
+}
+
+#detail-contenu .story-subheading {
+    color:#f5a579;
+    font-size:clamp(1.15rem,2.2vw,1.4rem);
+    font-weight:700;
+    line-height:1.4;
+    margin:2rem 0 .75rem;
+}
+
+/* Réduire l'emplacement provisoire sans changer les ressources ni leur repli. */
+.detail-media .story-media {
+    height:clamp(140px,24vw,260px);
+    min-height:0;
+    aspect-ratio:auto;
+}
+
+.detail-media .story-image[src$="default-story.svg"] {
+    object-fit:contain;
+}
+
+/* Illustrations IA : fichier entier, proportions réelles et légende hors de l'image. */
+.story-illustration {
+    margin:0;
+    min-width:0;
+    max-width:100%;
+}
+
+.story-media[data-illustration="true"] .story-image {
+    object-fit:contain;
+}
+
+.detail-media .story-media[data-illustration="true"] {
+    height:auto;
+    max-height:560px;
+}
+
+.story-image-caption {
+    margin:.5rem 0 0;
+    color:#c7beb8;
+    font-size:.82rem;
+    line-height:1.45;
+    overflow-wrap:anywhere;
+}
+
+.story-image-caption[hidden] {
+    display:none;
+}
+
+/* Séparer les commandes, sans modifier les cartes des sept indicateurs. */
+#admin-stories-list > .panel {
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.75rem;
+    min-width:0;
+    overflow-wrap:anywhere;
+}
+
+#admin-stories-list > .panel > h3,#admin-stories-list > .panel > p {
+    margin:0;
+}
+
+#admin-stories-list > .panel > a {
+    display:inline-flex;
+    align-items:center;
+    min-height:44px;
+    max-width:100%;
+}
+
+#admin-dashboard dialog {
+    background:#141316;
+    color:#f7f3ef;
+    border:1px solid #8b7d76;
+    border-radius:13px;
+    overflow-wrap:anywhere;
+}
+
+#admin-dashboard dialog > button {
+    margin-top:1rem;
+    margin-right:.75rem;
+}
+
+@media(max-width:560px) {
+    .detail {
+        padding:18px;
+    }
 }

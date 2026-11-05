@@ -1,110 +1,56 @@
 # Soutenance — Les Petits Enquêteurs
 
-Ces quatre fiches permettent de réviser les questions du jury avec des réponses courtes, des explications simples et des exemples tirés du projet. Elles sont destinées à un niveau bac. Le présent README est un index de navigation : **ce n’est pas une cinquième fiche de questions**.
+Documentation publique actualisée le 3 novembre 2026 pour le portfolio Holberton. Le code a été livré sur GitHub en 6H.11 (`a850919`, branche `feature/frontend-api-integration`). Le lot 6H.12 a confirmé les parcours locaux dans Edge avec SQLite en mémoire. **La publication du code est réalisée ; le site n’est pas déployé publiquement.**
 
-## Sommaire
+## Documents de référence
 
-- [Choisir sa fiche](#choisir-sa-fiche)
-- [Origine et intégrité](#origine-et-intégrité)
-- [Comment réviser](#comment-réviser)
-- [Portée des validations](#portée-des-validations)
-- [Limites à connaître](#limites-à-connaître)
-- [Petit glossaire Git](#petit-glossaire-git)
-- [Documentation technique](#documentation-technique)
+La [validation de la candidate 6H.22.4](VALIDATION_LOT6H22_4.md) présente les nouveaux
+essais et leurs limites. Le [complément des migrations](ERRATA_MIGRATIONS_LOT6H22_4.md)
+précise les changements de repères par rapport au référentiel pédagogique figé.
+La [correction ciblée 6H.22.6](VALIDATION_LOT6H22_6.md) complète ces preuves
+historiques pour le harnais SQLite et l’exclusion des quatre documents internes.
 
-## Choisir sa fiche
-
-| Fiche | Responsabilité déclarée par l’équipe | Identifiants | Questions |
-|---|---|---|---:|
-| [Mahamadou — Base de données et intégration](fiche-mahamadou.md) | MySQL, SQLAlchemy, base de données et intégration | MAH-01 à MAH-18 | 18 |
-| [Mélissa — Frontend](fiche-melissa.md) | HTML, CSS, JavaScript et expérience utilisateur | MEL-01 à MEL-18 | 18 |
-| [Sylvie — Backend Flask et API](fiche-sylvie.md) | Routes, sécurité, authentification et permissions | SYL-01 à SYL-18 | 18 |
-| [Fiche commune](fiche-commune.md) | Architecture, démonstration, limites et organisation | COM-01 à COM-22 | 22 |
-| **Total** | **Quatre fiches historiques** | | **76** |
-
-La répartition reprend les déclarations de l’équipe. Elle n’attribue pas chaque fichier ou correction à une personne : chacun doit confirmer ses contributions personnelles.
-
-## Origine et intégrité
-
-Questions-réponses historiques récupérées de la réponse Codex de l’étape 15.1 du **25 octobre 2026**, fondée sur le commit `dec5c7ef4c753970bd94014b37b59b035e1877f1`. Audit de référence : étape 15.8.1 ; préparation documentaire : étape 15.8.2, au commit `857190654457b15d7324adde8c920d9fdd3db0c8`.
-
-Les formulations des questions et des réponses courtes originales sont conservées. Les explications, exemples, identifiants de repérage et références facilitent la révision. **VALIDÉE** signifie conforme aux sources ; ce statut ne constitue pas une validation en production.
-
-Empreinte SHA-256 du texte historique complet : `218cf13b814a1f20a4258f1f6b24ab600b296bc62baab1c23610a36905ace4cd`.
-
-**Portée des preuves :** les résultats de tests et de rendu Mermaid sont historiques. Aucun test fonctionnel, rendu de diagramme, serveur, migration ou accès Aiven n’est exécuté pendant cette préparation. Les droits des illustrations restent à confirmer.
-
-La réponse historique est conservée dans le journal local de la conversation Codex. Ce journal privé n’est pas publié avec les fiches. Son texte comporte les quatre fiches ; les deux représentations identiques du même message ont été comptées une seule fois lors de la récupération.
-
-Les séries historiques conservent **18 + 18 + 18 + 22 questions**, sans ajout ni doublon exact. Les identifiants de repérage MAH, MEL, SYL et COM correspondent à la numérotation retrouvée lors de l’audit 15.8.1.
-
-Les passages d’accompagnement ont été actualisés : les trois diagrammes viennent du README approuvé et les 14 liens Windows absolus d’origine sont devenus des liens relatifs. Les explications et exemples complètent les réponses courtes ; ils ne les remplacent pas.
-
-## Comment réviser
-
-1. Lire les repères de sa fiche, puis les questions communes.
-2. Dire la réponse courte à voix haute, sans apprendre uniquement une formule.
-3. Utiliser l’explication simple pour comprendre le raisonnement.
-4. Montrer l’exemple et retrouver le fichier cité.
-5. Préciser ce qui est vérifié dans les sources, historique, partiel ou non vérifié.
-
-Chaque question utilise les mêmes rubriques : **Question du jury**, **Réponse courte à dire**, **Explication simple**, **Exemple concret**, **Référence technique** et **Statut de validation**.
-
-Les liens techniques pointent vers les sources du dépôt. Les numéros de ligne correspondent au commit de référence et peuvent évoluer ensuite.
-
-## Portée des validations
-
-| Mention | Ce qu’elle signifie |
+| Support | Contenu |
 |---|---|
-| **VALIDÉE** | La formulation est conforme au code ou à la documentation examinés. Elle ne prouve pas une exécution en production. |
-| **Preuve historique** | Le résultat vient d’une campagne antérieure, sans nouvelle exécution pendant cette préparation. |
-| **Partiellement implémenté** | Une partie du parcours existe, mais pas l’ensemble des fonctions envisagées. |
-| **NON CONFIRMÉE** | Une preuve ou une décision de l’équipe manque. |
-| **Non vérifié** | Le contrôle réel n’a pas été effectué dans ce périmètre. |
+| [README principal](../../README.md) | Objectif, fonctionnalités, technologies, équipe et limites |
+| [Installation et lancement scolaire](../../LIVRAISON_SCOLAIRE.md) | Copie neuve, dépendances, kit isolé et création automatique des comptes fictifs |
+| [Guide technique](GUIDE_TECHNIQUE.md) | Architecture, dix modèles SQLAlchemy, API, authentification, indicateurs et limites |
+| [Validation scolaire](VALIDATION_SCOLAIRE.md) | Campagnes effectivement exécutées, organisation des tests et périmètre des preuves |
+| [Provenance des ressources livrées](PROVENANCE_RESSOURCES.md) | SVG fourni et diagrammes, sans licence globale implicite |
 
-**75 réponses sont validées.** [COM-21](fiche-commune.md#com-21) conserve une **priorité proposée, à confirmer par l’équipe**. Ce classement ne signale pas une erreur technique ; il distingue une suggestion d’une décision confirmée.
+Ces documents accompagnent la candidate ; les bilans datés conservent leur périmètre historique. Les bilans classés internes, sorties de console privée, accès, reçus bruts et scripts ponctuels ne sont pas des pièces à publier.
 
-Les **439 tests réussis** — 205 backend, 226 frontend et 8 lanceur — sont une preuve historique rapportée dans le [README principal](../../README.md#tests-et-validation). Ils n’ont pas été relancés. Les tests SQLite et les simulations DOM/API ne valident pas à eux seuls MySQL Aiven, un navigateur réel, les migrations déployées ou une installation vierge complète.
+## Diagrammes
 
-Les diagrammes approuvés ont été validés antérieurement avec Mermaid 11.16.0 : syntaxe, navigateur local et XML des SVG. Leur réutilisation dans les fiches ne constitue pas une nouvelle exécution de ces contrôles. L’affichage Mermaid sur GitHub reste non vérifié.
+Les trois diagrammes ont été rendus et contrôlés localement en 6H.4, puis livrés en 6H.11. Les PNG permettent leur lecture sans moteur Mermaid. Ils décrivent l’architecture et les relations ; ils ne prouvent pas un déploiement MySQL. Les mentions de port et de base du lanceur général doivent être distinguées du kit scolaire sur `127.0.0.1:5064`, avec SQLite mémoire.
 
-La [PR #16](https://github.com/Leyvsi/portfolio/pull/16) était ouverte en Draft et non fusionnée lors de la lecture autorisée de l’étape 15.8.1, le 25 octobre 2026. Son état n’est pas relu pendant la création locale de ces documents.
+| Sujet | Source Mermaid | SVG | PNG |
+|---|---|---|---|
+| Architecture | [Source](preuves-lot6h4/diagrammes/diagram-1.mmd) | [SVG](preuves-lot6h4/diagrammes/diagram-1.svg) | [PNG](preuves-lot6h4/diagrammes/diagram-1.png) |
+| Dix tables et treize clés étrangères | [Source](preuves-lot6h4/diagrammes/diagram-2.mmd) | [SVG](preuves-lot6h4/diagrammes/diagram-2.svg) | [PNG](preuves-lot6h4/diagrammes/diagram-2.png) |
+| Flux d’une contribution | [Source](preuves-lot6h4/diagrammes/diagram-3.mmd) | [SVG](preuves-lot6h4/diagrammes/diagram-3.svg) | [PNG](preuves-lot6h4/diagrammes/diagram-3.png) |
 
-## Limites à connaître
+![Architecture de l’application](preuves-lot6h4/diagrammes/diagram-1.png)
 
-- Administration limitée à la consultation : aucune action de publication, suppression ou modération dans le tableau.
-- Propositions enregistrées en `pending`, sans transformation automatique en histoire.
-- Pas d’interface pour commenter, voter, liker, signaler ou bannir, même si des routes existent.
-- Actualisation manuelle du lecteur après création d’une théorie.
-- Catégories dépendantes des identifiants `1` et `2`.
-- Listes sans pagination, aucune récupération de mot de passe et aucun téléchargement d’image dans les propositions.
-- Installation et données de démonstration non validées de bout en bout sur une base vierge.
-- MySQL/Aiven, TLS réel et révision Alembic déployée non vérifiés dans cet audit.
-- Droits et provenance des illustrations non confirmés.
-- Les 332 alertes historiques de `git diff --check` sur `frontend/styles.css` sont liées aux CRLF enregistrés ; aucune correction CSS n’est comprise ici.
+## Fiches de révision de l’équipe
 
-La démonstration nécessite un environnement préparé et explicitement autorisé, avec des données fictives et des comptes adaptés. Elle ne doit pas improviser une migration ou une écriture sur une base distante.
+| Fiche | Responsabilité déclarée | Questions historiques |
+|---|---|---:|
+| [Mélissa](fiche-melissa.md) | Frontend | 18 |
+| [Sylvie](fiche-sylvie.md) | Backend Flask et API REST | 18 |
+| [Mahamadou](fiche-mahamadou.md) | Base de données SQLAlchemy et intégration | 18 |
+| [Fiche commune](fiche-commune.md) | Architecture et explications partagées | 22 |
 
-## Petit glossaire Git
+Ces 76 questions sont conservées avec leurs repères historiques. Certaines réponses et les anciens supports techniques décrivent des étapes antérieures : neuf tables, fonctions alors absentes, recettes alors non exécutées ou publication encore à préparer. Pour l’état actuel, utiliser les documents de référence ci-dessus. Ne pas suivre une ancienne commande de lancement sans vérifier son périmètre.
 
-Cet encadré complète les fiches et **ne fait pas partie des 76 questions historiques**.
+La répartition reprend les responsabilités communiquées par l’équipe. Les fiches n’établissent pas l’auteur individuel de chaque fichier ou correction.
 
-| Terme | Explication simple |
-|---|---|
-| **Branche** | Une ligne de travail qui permet de préparer des changements avant leur intégration à la branche principale. |
-| **Commit** | Un enregistrement versionné d’un état du projet, identifié par une empreinte et accompagné d’un message. |
-| **Pull Request** | Une proposition d’intégration d’une branche dans une autre, avec un espace pour examiner le diff et discuter des changements. |
-| **Draft** | Une Pull Request encore en préparation. Elle permet de partager le travail et les réserves avant de demander son passage en revue finale. |
+## Points à expliquer au jury
 
-Créer une PR ne fusionne pas les branches. Ajouter un commit à sa branche source publiée peut compléter le contenu de cette PR ; toute publication reste soumise aux autorisations prévues.
-
-## Documentation technique
-
-- [README principal](../../README.md)
-- [README frontend](../../frontend/README.md)
-- [Images et droits](../../frontend/images/README.md)
-- [Modèles SQLAlchemy](../../backend/models.py)
-- [Routes API](../../backend/api/v1/views/)
-- [Lanceur local](../../run_local.py)
-
-L’archive narrative locale `frontend/histoires-originales.json` reste exclue du suivi Git et de ces documents.
+- Le navigateur, le DOM, Flask, SQLAlchemy et le moteur de base ont des rôles distincts.
+- Les contrôles de rôle sont effectués côté serveur ; ouvrir le HTML administrateur ne donne aucun droit.
+- Le dashboard affiche sept valeurs issues du serveur, avec un périmètre particulier pour les dossiers archivés.
+- Les propositions restent en attente ; un signalement ne déclenche pas une modération automatique.
+- SQLite mémoire facilite une démonstration synthétique, mais ne valide pas MySQL, les migrations réelles ou la durabilité.
+- Les résultats des tests historiques, des contrôles de livraison et d’Edge ne s’additionnent pas.
+- L’application n’est ni déployée publiquement ni annoncée entièrement conforme au RGPD.

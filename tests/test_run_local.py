@@ -51,7 +51,8 @@ class LocalFrontendTests(unittest.TestCase):
         self.assertEqual(self.calls, [])
 
     def test_html_css_and_js_are_served_on_the_same_origin(self):
-        for name in ("index.html", "histoires.html", "coldcases.html", "dossier.html", "styles.css", "api.js", "app.js"):
+        for name in ("index.html", "histoires.html", "coldcases.html", "dossier.html", "styles.css", "api.js", "app.js",
+                     "admin-users.js", "admin-stories.js", "admin-dashboard.js"):
             with self.subTest(file=name):
                 response = self.client.get("/" + name, buffered=True)
                 self.assertEqual(response.status_code, 200)
@@ -67,6 +68,23 @@ class LocalFrontendTests(unittest.TestCase):
         self.assertEqual(svg.findall(".//{http://www.w3.org/2000/svg}image"), [])
         self.assertEqual(svg.findall(".//{http://www.w3.org/2000/svg}script"), [])
 
+    def test_frontend_responses_prevent_stale_pages_and_scripts_in_browser_cache(self):
+        for path in ("/", "/histoires.html", "/coldcases.html", "/admin-dashboard.html",
+                     "/app.js", "/api.js", "/admin-dashboard.js", "/styles.css",
+                     "/images/default-story.svg"):
+            with self.subTest(path=path):
+                response = self.client.get(path, buffered=True)
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.headers.getlist("Cache-Control"), ["no-store"])
+                reread = self.client.get(path, buffered=True, headers={
+                    "If-Modified-Since": "Fri, 01 Jan 2100 00:00:00 GMT",
+                    "If-None-Match": '"ancienne-version"',
+                })
+                self.assertEqual(reread.status_code, 200)
+                self.assertEqual(reread.data, response.data)
+                self.assertEqual(reread.headers.getlist("Cache-Control"), ["no-store"])
+        self.assertEqual(self.calls, [])
+
     def test_missing_image_is_a_404_without_creating_any_file(self):
         path = self.launcher.FRONTEND_ROOT / "images" / "absent-offline-test-file.webp"
         self.assertFalse(path.exists())
@@ -77,6 +95,7 @@ class LocalFrontendTests(unittest.TestCase):
         for method in ("GET", "POST", "PATCH", "DELETE", "OPTIONS"):
             response = self.client.open("/api/v1/stories", method=method, buffered=True)
             self.assertEqual(response.data, b"API passthrough")
+            self.assertIsNone(response.headers.get("Cache-Control"))
             self.assertEqual(self.calls[-1], (method, "/api/v1/stories"))
 
     def test_static_post_is_not_served_as_a_successful_file_response(self):
@@ -89,6 +108,14 @@ class LocalFrontendTests(unittest.TestCase):
                 response = self.client.get(path, buffered=True)
                 self.assertEqual(response.status_code, 404)
                 self.assertEqual(response.data, b"API passthrough")
+
+    def test_incomplete_privacy_page_and_internal_draft_remain_unavailable(self):
+        for path in ("/confidentialite.html", "/CONFIDENTIALITE_LOT6H20_2_BROUILLON.html",
+                     "/docs/soutenance/CONFIDENTIALITE_LOT6H20_2_BROUILLON.html",
+                     "/images/../../docs/soutenance/CONFIDENTIALITE_LOT6H20_2_BROUILLON.html"):
+            for method in ("GET", "HEAD"):
+                with self.subTest(path=path, method=method):
+                    self.assertEqual(self.client.open(path, method=method, buffered=True).status_code, 404)
 
     def test_main_prepares_one_loopback_server_without_starting_it_in_this_test(self):
         fake = types.ModuleType("index")

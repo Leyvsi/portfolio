@@ -4,6 +4,7 @@ from logging.config import fileConfig
 from flask import current_app
 
 from alembic import context
+from migrations.sqlite_safety import sqlite_migration_scope
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -15,6 +16,8 @@ fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
 
 
+# Retrouver le moteur déjà configuré par Flask-Migrate, avec compatibilité
+# entre versions de Flask-SQLAlchemy. Ne pas importer ce module pour un audit statique.
 def get_engine():
     try:
         # this works with Flask-SQLAlchemy<3 and Alchemical
@@ -24,6 +27,8 @@ def get_engine():
         return current_app.extensions['migrate'].db.engine
 
 
+# Alembic reçoit l'URL complète et échappe les % pour sa configuration.
+# Cette valeur peut contenir des identifiants : ne pas l'afficher ni la journaliser.
 def get_engine_url():
     try:
         return get_engine().url.render_as_string(hide_password=False).replace(
@@ -45,12 +50,16 @@ target_db = current_app.extensions['migrate'].db
 # ... etc.
 
 
+# Les métadonnées décrivent les tables des modèles pour comparer le schéma
+# lors d'une génération de révision ; elles ne prouvent pas l'état de la base déployée.
 def get_metadata():
     if hasattr(target_db, 'metadatas'):
         return target_db.metadatas[None]
     return target_db.metadata
 
 
+# Le mode offline produit les instructions SQL sans connexion à la base.
+# Il ne vérifie pas leur application ni la révision réellement installée.
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
 
@@ -72,6 +81,8 @@ def run_migrations_offline():
         context.run_migrations()
 
 
+# Le mode online ouvre une connexion et applique les révisions dans le contexte
+# transactionnel Alembic ; ce chemin n'est pas exécuté pendant l'étape documentaire.
 def run_migrations_online():
     """Run migrations in 'online' mode.
 
@@ -83,6 +94,7 @@ def run_migrations_online():
     # this callback is used to prevent an auto-migration from being generated
     # when there are no changes to the schema
     # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
+    # Éviter une révision vide quand autogenerate ne détecte aucun changement.
     def process_revision_directives(context, revision, directives):
         if getattr(config.cmd_opts, 'autogenerate', False):
             script = directives[0]
@@ -97,14 +109,19 @@ def run_migrations_online():
     connectable = get_engine()
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=get_metadata(),
-            **conf_args
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
+        if connection.dialect.name == 'sqlite':
+            # Reconstruction de tables parent : maintenance exclusive requise.
+            # L'enveloppe vérifie l'intégrité et réactive les FK après rollback.
+            with sqlite_migration_scope(connection):
+                context.configure(connection=connection,
+                                  target_metadata=get_metadata(), **conf_args)
+                with context.begin_transaction():
+                    context.run_migrations()
+        else:
+            context.configure(connection=connection,
+                              target_metadata=get_metadata(), **conf_args)
+            with context.begin_transaction():
+                context.run_migrations()
 
 
 if context.is_offline_mode():

@@ -10,7 +10,9 @@
 		<header class="header">
 			<div class="top">
 				<a class="logo" href="index.html">◈ LES PETITS <span>ENQUÊTEURS</span></a>
-				<a class="outline" href="connexion.html">Connexion</a>
+				<div id="session-controls" role="group" aria-label="Compte utilisateur" aria-busy="true">
+					<a class="outline" href="connexion.html">Connexion</a>
+				</div>
 			</div>
 			<nav class="nav" aria-label="Navigation principale">
 				<a href="index.html">Accueil</a>
@@ -21,6 +23,7 @@
 			</nav>
 		</header>
 		<main>
+			<p id="session-feedback" class="feedback session-feedback" role="status"></p>
 			<section class="page-title">
 				<p class="eyebrow">COMMUNAUTÉ</p>
 				<h1>Analyse & Théories</h1>
@@ -29,7 +32,8 @@
 			<section class="section">
 				<div class="panel">
 					<h2>Partager une analyse</h2>
-					<form id="theory-form" class="demo-form" method="post" aria-busy="true">
+					<form id="theory-form" class="demo-form" method="post" aria-busy="true" aria-describedby="theory-data-notice">
+						<p id="theory-data-notice" class="data-notice"><strong>Publication de votre théorie.</strong> Votre titre et votre analyse seront consultables sans connexion sur le dossier actif. Évitez les coordonnées privées et les informations personnelles inutiles concernant vous-même ou des tiers. L’information complète sur les traitements reste en préparation.</p>
 						<label for="sujet">Dossier</label>
 						<select id="sujet" name="story_id" required disabled>
 							<option value="">Choisir un dossier</option>
@@ -38,7 +42,7 @@
 						<input id="theory-title" name="title" maxlength="200" required placeholder="Titre de votre théorie">
 						<label for="avis">Votre avis</label>
 						<textarea id="avis" name="content" rows="5" required placeholder="Votre analyse..."></textarea>
-						<button class="btn" type="submit" disabled>Envoyer</button>
+						<button class="btn" type="submit" disabled aria-describedby="theory-data-notice">Envoyer</button>
 						<p class="feedback" aria-live="polite">Chargement des dossiers...</p>
 					</form>
 				</div>
@@ -60,7 +64,6 @@
 			Les Petits Enquêteurs · Projet étudiant
 			<a href="admin-connexion.html">Administration</a>
 		</footer>
-		<script src="donnees.js"></script>
 		<script src="api.js"></script>
 		<script src="app.js"></script>
 		<script src="theories-list.js"></script>

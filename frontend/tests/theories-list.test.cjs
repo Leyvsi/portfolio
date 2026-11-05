@@ -126,7 +126,8 @@ function mount(options = {}) {
       if (options.fetch) return options.fetch(url, request, calls);
       if (url === '/api/v1/stories') return response(200, options.stories === undefined ? stories : options.stories);
       if (url === '/api/v1/me') return response(200, { csrf_token: 'isolated-test-token' });
-      if (method === 'POST') return response(201, { status: 'success' });
+      if (method === 'POST') return response(201, { status: 'success',
+        theory: theory(Number(url.split('/')[4]), JSON.parse(request.body)) });
       const id = Number(url.split('/')[4]);
       return response(200, options.theories === undefined ? [theory(id)] : options.theories);
     }
@@ -148,10 +149,15 @@ function mount(options = {}) {
 test('HTML preserves the complete creation form and adds an independent reader after it', () => {
   const normalizeLineEndings = value => value.replace(/\r\n/g, '\n');
   const actualForm = html.match(/<form id="theory-form"[\s\S]*?<\/form>/)[0];
-  assert.equal(normalizeLineEndings(actualForm), normalizeLineEndings(originalForm));
+  // Conserver la comparaison integrale de l'ancien formulaire, hors seuls ajouts 6E.2.
+  const historicalForm = value => normalizeLineEndings(value)
+    .replace(/ aria-describedby="theory-data-notice"/g, '')
+    .replace(/\n[\t ]*<p id="theory-data-notice" class="data-notice">[\s\S]*?<\/p>/, '');
+  assert.equal((actualForm.match(/id="theory-data-notice"/g) || []).length, 1);
+  assert.equal(historicalForm(actualForm), normalizeLineEndings(originalForm));
   for (const lineEnding of ['\n', '\r\n']) {
     const formattedForm = normalizeLineEndings(actualForm).replace(/\n/g, lineEnding);
-    assert.equal(normalizeLineEndings(formattedForm), normalizeLineEndings(originalForm));
+    assert.equal(historicalForm(formattedForm), normalizeLineEndings(originalForm));
   }
   const reader = html.indexOf('id="published-theories"');
   assert.ok(reader > html.indexOf('</form>'));
@@ -435,7 +441,7 @@ test('the reader coexists with real creation handlers without changing their inp
   assert.deepEqual(JSON.parse(posts[0].body), { title: 'Titre conservé', content: 'Analyse conservée' });
   assert.ok(posts[0].headers['X-CSRF-Token']);
   assert.equal(form.resets, 1);
-  assert.match(form.feedback.textContent, /théorie a été publiée/);
+  assert.equal(form.feedback.textContent, 'Théorie publiée.');
   assert.equal(page.select.value, '42');
   assert.equal(page.list.children[0].querySelector('h3').textContent, 'Une piste');
   assert.equal(page.calls.filter(call => call.url === '/api/v1/me').length, 1);

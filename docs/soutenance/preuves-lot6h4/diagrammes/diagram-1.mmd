@@ -1,0 +1,30 @@
+flowchart TB
+  subgraph NAV["Navigateur"]
+    HTML["HTML et CSS"]
+    DOM["DOM : page en mémoire"]
+    JS["app.js, theories-list.js et admin-dashboard.js"]
+    APIJS["api.js : fetch, JSON, cookies et CSRF"]
+    HTML --> DOM
+    JS -->|"lit et modifie"| DOM
+    JS --> APIJS
+  end
+  subgraph MACHINE["Machine qui héberge le site local"]
+    subgraph PROCESSUS["Un processus Python : 127.0.0.1:5000"]
+      RUN["run_local.py : répartiteur WSGI"]
+      STATIC["SharedDataMiddleware"]
+      FLASK["Flask : routes et contrôles selon la requête"]
+      ORM["SQLAlchemy : requêtes et transactions"]
+      RUN -->|"GET et HEAD de ressources"| STATIC
+      RUN -->|"API et autres méthodes"| FLASK
+      FLASK --> ORM
+    end
+    subgraph DISQUE["Système de fichiers"]
+      FRONT["frontend/ : HTML, CSS, JS, images"]
+      SQLITE[("Fichier SQLite : moteur embarqué")]
+    end
+    STATIC -->|"lit les fichiers publics"| FRONT
+    ORM -->|"si une URL SQLite est choisie"| SQLITE
+  end
+  APIJS -->|"HTTP : JSON et statuts"| RUN
+  STATIC -->|"ressources publiques"| HTML
+  ORM -.->|"groupe Aiven complet : PyMySQL et TLS"| MYSQL[("Serveur MySQL Aiven")]
